@@ -1,6 +1,6 @@
 import { userMessage } from "../src/security/errors";
 import React, { useState, useEffect, useRef } from "react";
-import { Pressable, Switch } from "react-native";
+import { Pressable, Switch, View } from "react-native";
 import { router } from "expo-router";
 import * as Location from "expo-location";
 import * as Crypto from "expo-crypto";
@@ -34,6 +34,7 @@ import {
 } from "../src/ui/primitives";
 import { SettingsSection } from "../src/ui/SettingsSection";
 import { HeartRateZoneSettings } from "../src/ui/HeartRateZoneSettings";
+import { accentColors, type AccentColor } from "../src/domain/appearance";
 import { useTheme, brand } from "../src/ui/theme";
 import {
   health,
@@ -322,7 +323,7 @@ export default function Settings() {
           <Txt style={{ flex: 1 }}>Share gender category in rankings</Txt>
           <Switch
             accessibilityLabel="Share gender category in rankings"
-            trackColor={{ true: brand.coral }}
+            trackColor={{ true: c.primary }}
             value={profile.shareLeaderboardGender === true}
             disabled={busy || !profile.leaderboardGender}
             onValueChange={(shareLeaderboardGender) =>
@@ -343,7 +344,7 @@ export default function Settings() {
           <Txt style={{ flex: 1 }}>Participate in public segments</Txt>
           <Switch
             accessibilityLabel="Participate in public segments"
-            trackColor={{ true: brand.coral }}
+            trackColor={{ true: c.primary }}
             disabled={busy}
             value={profile.segmentParticipation === true}
             onValueChange={(segmentParticipation) =>
@@ -355,7 +356,7 @@ export default function Settings() {
           <Txt style={{ flex: 1 }}>Share age group in rankings</Txt>
           <Switch
             accessibilityLabel="Share age group in rankings"
-            trackColor={{ true: brand.coral }}
+            trackColor={{ true: c.primary }}
             value={profile.shareLeaderboardAge === true}
             disabled={busy || !profile.birthYear}
             onValueChange={(shareLeaderboardAge) =>
@@ -367,7 +368,7 @@ export default function Settings() {
           <Txt style={{ flex: 1 }}>Share weight group in rankings</Txt>
           <Switch
             accessibilityLabel="Share weight group in rankings"
-            trackColor={{ true: brand.coral }}
+            trackColor={{ true: c.primary }}
             value={profile.shareLeaderboardWeight === true}
             disabled={busy || !profile.weightKg}
             onValueChange={(shareLeaderboardWeight) =>
@@ -393,6 +394,29 @@ export default function Settings() {
           value={profile.theme}
           onChange={(theme) => void act(() => updateProfile({ theme }))}
         />
+        <Txt size="caption" weight="600">Accent colour</Txt>
+        <Row style={{ flexWrap: "wrap", gap: 10 }}>
+          {(Object.keys(accentColors) as AccentColor[]).map((key) => {
+            const option = accentColors[key];
+            const selected = (profile.accentColor ?? "orange") === key;
+            return (
+              <Pressable
+                key={key}
+                accessibilityRole="radio"
+                accessibilityLabel={`${option.label} accent`}
+                accessibilityState={{ checked: selected, disabled: busy }}
+                disabled={busy}
+                onPress={() => void act(() => updateProfile({ accentColor: key }))}
+                style={{ minHeight: 48, minWidth: 88, padding: 10, borderRadius: 12,
+                  borderWidth: selected ? 2 : 1, borderColor: selected ? c.accent : c.line,
+                  flexDirection: "row", alignItems: "center", gap: 8 }}
+              >
+                <View style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: option.fill }} />
+                <Txt size="caption" weight={selected ? "700" : "400"}>{option.label}</Txt>
+              </Pressable>
+            );
+          })}
+        </Row>
         <Row between>
           <Txt style={{ flex: 1 }}>Increase contrast</Txt>
           <Switch
@@ -402,7 +426,7 @@ export default function Settings() {
             onValueChange={(highContrast) =>
               void act(() => updateProfile({ highContrast }))
             }
-            trackColor={{ true: brand.coral }}
+            trackColor={{ true: c.primary }}
           />
         </Row>
         <Txt size="caption" color={c.muted}>
@@ -425,7 +449,7 @@ export default function Settings() {
             onValueChange={(autoPause) =>
               void act(() => updateProfile({ autoPause }))
             }
-            trackColor={{ true: brand.coral }}
+            trackColor={{ true: c.primary }}
           />
         </Row>
       </SettingsSection>

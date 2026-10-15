@@ -984,7 +984,7 @@ function CircleControl({
             width: size,
             height: size,
             borderRadius: size / 2,
-            backgroundColor: primary ? brand.coral : c.soft,
+            backgroundColor: primary ? c.primary : c.soft,
             alignItems: "center",
             justifyContent: "center",
             opacity: disabled ? 0.4 : 1,

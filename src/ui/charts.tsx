@@ -138,7 +138,7 @@ export function LineChart({
                 }
                 y1={0}
                 y2={height}
-                stroke={brand.coral}
+                stroke={c.accent}
                 strokeWidth={2}
                 strokeDasharray="4 4"
               />
@@ -159,13 +159,14 @@ export function LineChart({
 }
 export const Trace = memo(function Trace({
   points,
-  color = brand.coral,
+  color,
   size = 180,
 }: {
   points?: Sample[];
   color?: string;
   size?: number;
 }) {
+  const { c } = useTheme();
   const path = useMemo(
     () =>
       points?.length
@@ -182,7 +183,7 @@ export const Trace = memo(function Trace({
     >
       <Path
         d={path}
-        stroke={color}
+        stroke={color ?? c.accent}
         strokeWidth="2"
         fill="none"
         strokeLinecap="round"
@@ -191,7 +192,7 @@ export const Trace = memo(function Trace({
       <Path
         d={path}
         transform="translate(3 2)"
-        stroke={color}
+        stroke={color ?? c.accent}
         strokeWidth=".6"
         opacity=".45"
         fill="none"
@@ -202,7 +203,7 @@ export const Trace = memo(function Trace({
 export function Bars({
   values,
   labels,
-  color = brand.coral,
+  color,
 }: {
   values: number[];
   labels: string[];
@@ -234,7 +235,7 @@ export function Bars({
 }
 export function ProgressBar({
   value,
-  color = brand.coral,
+  color,
 }: {
   value: number;
   color?: string;
@@ -255,7 +256,7 @@ export function ProgressBar({
         style={{
           width: `${Math.max(0, Math.min(100, value * 100))}%`,
           height: 6,
-          backgroundColor: color,
+          backgroundColor: color ?? c.primary,
           borderRadius: 3,
         }}
       />

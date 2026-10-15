@@ -5,6 +5,13 @@ Project: `/Users/ojayitsinghtanwar/Desktop/rivl`
 
 ## 1. Read this first
 
+### Accent colours — 15 October 2026
+
+Added optional validated Profile.accentColor, preserving orange for old profiles. Six named choices in Settings → Display & accessibility: Orange, Blue, Purple, Green, Teal, Pink. Theme exposes readable light/dark accent plus bright primary fill; native tabs, shared controls, Record actions, switches, default charts/progress follow the choice. Existing profile storage/cloud settings persist it without a schema migration. Brand logo and semantic multi-colour zone series remain unchanged. Source palette: src/domain/appearance.ts.
+
+TypeScript, all 469 tests / 70 suites and development security passed. Simulator selected Blue then Purple, captured themed controls and selected swatch, restored Orange. Screenshot proof is under /private/tmp/rivl-accent-check. Release build succeeded; installed in place on physical iPhone, preserving container, evidence /private/tmp/rivl-phone-accent-build.log and /private/tmp/rivl-phone-accent-install.json. Launch outcome is separate from installation.
+
+
 ### Recurrent physical touch freeze, candidate correction — 15 October 2026
 
 User reported ALL touches stop and narrowed a repeatable trigger to Training → Creators → Import a shared program. Captured the physical app on Home while reported frozen. RIVL remained a live process; a hang-thread diagnosis was not obtained: CoreDevice capture/process services worked, but Instruments saw the device offline and LLDB never attached. Initial app-switcher screenshot incidentally included other apps; private temporary evidence only, do not publish it.

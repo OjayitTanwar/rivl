@@ -56,7 +56,7 @@ export default function Navigation() {
               style={{
                 width: 8,
                 height: 8,
-                backgroundColor: brand.coral,
+                backgroundColor: c.primary,
                 borderRadius: 4,
                 alignSelf: "flex-end",
                 marginBottom: 10,

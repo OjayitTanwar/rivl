@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { AccessibilityInfo, Platform, useColorScheme } from "react-native";
 import { useStore } from "../state/store";
+import { accentColors } from "../domain/appearance";
 export { brand } from "./brand";
 const light = {
   bg: "#FFFFFF",
@@ -16,6 +17,7 @@ const light = {
   line: "#E3E3DA",
   soft: "#F5F4EF",
   accent: "#BC2D1D",
+  primary: "#FF4B35",
   good: "#197344",
   blue: "#1267A3",
   nav: "#FFFFFF",
@@ -29,6 +31,7 @@ const dark = {
   line: "#35373A",
   soft: "#292C2D",
   accent: "#FF705B",
+  primary: "#FF4B35",
   good: "#45DF8A",
   blue: "#3BA7FF",
   nav: "#17181B",
@@ -85,14 +88,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     ? dark
     : light;
   const highContrast = Boolean(profile?.highContrast || contrast);
+  const palette = accentColors[profile?.accentColor ?? "orange"] ?? accentColors.orange;
   const value = useMemo(
     () => ({
-      c: highContrast ? { ...c, muted: c.text, line: c.muted } : c,
+      c: { ...c, accent: c.dark ? palette.dark : palette.light, primary: palette.fill,
+        ...(highContrast ? { muted: c.text, line: c.muted } : {}) },
       reduceMotion,
       reduceTransparency,
       contrast: highContrast,
     }),
-    [c, highContrast, reduceMotion, reduceTransparency],
+    [c, palette, highContrast, reduceMotion, reduceTransparency],
   );
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }

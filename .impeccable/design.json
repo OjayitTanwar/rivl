@@ -368,6 +368,45 @@
       "passwordToggle": true,
       "clearAction": "controlled focused single line; custom trailing slot wins",
       "evidence": "Simulator blank/focused Creator fields; typing and clearing passed. No saved program or physical keyboard validation."
+    },
+    "userAccentPalette": {
+      "default": "orange",
+      "storage": "Profile.accentColor",
+      "source": "src/domain/appearance.ts",
+      "colors": {
+        "orange": [
+          "#BC2D1D",
+          "#FF705B",
+          "#FF4B35"
+        ],
+        "blue": [
+          "#165AA8",
+          "#8CB9FF",
+          "#8CB9FF"
+        ],
+        "purple": [
+          "#7040AD",
+          "#C3A5FF",
+          "#C3A5FF"
+        ],
+        "green": [
+          "#216C3E",
+          "#8DD5A3",
+          "#8DD5A3"
+        ],
+        "teal": [
+          "#087063",
+          "#64D5BC",
+          "#64D5BC"
+        ],
+        "pink": [
+          "#A52D65",
+          "#FF98BE",
+          "#FF98BE"
+        ]
+      },
+      "order": "light accent, dark accent, primary fill",
+      "exceptions": "Brand logo artwork and semantic HR/zone colours"
     }
   },
   "components": [

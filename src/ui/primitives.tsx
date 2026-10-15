@@ -224,7 +224,7 @@ export function Button({
           gap: 8,
           backgroundColor:
             variant === "primary"
-              ? brand.coral
+              ? c.primary
               : variant === "secondary"
                 ? "transparent"
                 : "transparent",
@@ -1058,7 +1058,7 @@ function SelectorOption({
         paddingVertical: 12,
         borderRadius: 24,
         borderWidth: 1,
-        borderColor: selected ? brand.coral : c.line,
+        borderColor: selected ? c.primary : c.line,
         opacity: pressed ? 0.85 : 1,
       })}
     >
@@ -1089,7 +1089,7 @@ export function Segmented<T extends string>({
   onChange: (v: T) => void;
   compact?: boolean;
 }) {
-  const { reduceMotion } = useTheme();
+  const { c, reduceMotion } = useTheme();
   const switchMotion = React.useContext(SelectionMotionContext);
   const [rects, setRects] = useState<
     Record<string, { x: number; width: number; height: number }>
@@ -1168,7 +1168,7 @@ export function Segmented<T extends string>({
               width,
               height: selected.height,
               borderRadius: 24,
-              backgroundColor: brand.coral,
+              backgroundColor: c.primary,
             }}
           />
         )}

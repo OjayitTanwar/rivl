@@ -98,6 +98,7 @@ export interface Profile {
   weeklyGoal: number;
   visibility: Visibility;
   theme: "system" | "light" | "dark";
+  accentColor?: import("./appearance").AccentColor;
   highContrast: boolean;
   autoPause: boolean;
   privacyZones: PrivacyZone[];

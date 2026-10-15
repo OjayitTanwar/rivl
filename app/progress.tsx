@@ -159,7 +159,7 @@ export default function Progress() {
                   values: history.map((h) =>
                     chart === "distance" ? h.distance / 1000 : h.load,
                   ),
-                  color: brand.coral,
+                  color: c.accent,
                 },
               ]}
               height={190}
@@ -212,7 +212,7 @@ export default function Progress() {
                           borderRadius: 8,
                           alignItems: "center",
                           justifyContent: "center",
-                          backgroundColor: h.load ? brand.coral : c.soft,
+                          backgroundColor: h.load ? c.primary : c.soft,
                           borderWidth: day === h.date ? 2 : 0,
                           borderColor: c.text,
                           opacity: pressed ? 0.7 : 1,
@@ -301,7 +301,7 @@ export default function Progress() {
                 {
                   label: "Fatigue",
                   values: history.map((h) => h.fatigue),
-                  color: brand.coral,
+                  color: c.accent,
                 },
                 {
                   label: "Form",

@@ -34,7 +34,7 @@ export function XPBar({ value }: { value: number }) {
         style={{
           height: 8,
           borderRadius: 4,
-          backgroundColor: brand.coral,
+          backgroundColor: c.primary,
           width: width.interpolate({
             inputRange: [0, 1],
             outputRange: ["0%", "100%"],

@@ -536,7 +536,7 @@ export default function Detail() {
                 width: `${replayFraction * 100}%`,
                 height: 5,
                 borderRadius: 4,
-                backgroundColor: brand.coral,
+                backgroundColor: c.primary,
               }}
             />
           </View>
@@ -770,7 +770,7 @@ export default function Detail() {
                           (powerBests.find((best) => best.seconds === seconds)
                             ?.watts ?? NaN) / powerFactor,
                       ),
-                      color: brand.coral,
+                      color: c.accent,
                     },
                     ...(compareHistory && visibleHistoryCurve.length
                       ? [

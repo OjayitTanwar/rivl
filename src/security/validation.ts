@@ -109,6 +109,9 @@ export function profileInput(profile: Profile): Profile {
     throw new AppFailure("validation", "Choose a valid activity visibility.");
   if (!["system", "light", "dark"].includes(profile.theme))
     throw new AppFailure("validation", "Choose a valid appearance.");
+  if (profile.accentColor !== undefined &&
+      !["orange", "blue", "purple", "green", "teal", "pink"].includes(profile.accentColor))
+    throw new AppFailure("validation", "Choose a valid accent colour.");
   if (!Array.isArray(profile.privacyZones) || profile.privacyZones.length > 50)
     throw new AppFailure("validation", "You can save up to 50 privacy zones.");
   const handle = textInput(profile.handle, "Handle", 30);
