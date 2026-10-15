@@ -143,7 +143,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const syncing = useRef<Promise<void> | null>(null);
   const initialized = useRef(false);
   const activityWrites = useRef<Promise<void>>(Promise.resolve());
+  const loadRevision = useRef(0);
   const load = useCallback(async (s: Session | null) => {
+    const revision = ++loadRevision.current;
     current.current = s;
     setSession(s);
     if (!s) {
@@ -165,7 +167,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       database.list<Segment>("segment:" + s.userId + ":"),
       database.list<SegmentEffort>("effort:" + s.userId + ":"),
     ]);
-    if (current.current?.userId !== s.userId) return;
+    if (revision !== loadRevision.current || current.current?.userId !== s.userId) return;
     setProfile(p ?? defaultProfile(s.userId));
     setActivities(
       a

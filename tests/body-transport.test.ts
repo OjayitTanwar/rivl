@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { apiJson } from "../src/security/transport";
+import { apiFetch, apiJson } from "../src/security/transport";
 
 const url = "https://routing.example/routes";
 function nativeResponse(
@@ -126,6 +126,93 @@ describe("bounded JSON transport", () => {
     const rejected = expect(request).rejects.toMatchObject({ kind: "timeout" });
     await vi.advanceTimersByTimeAsync(20);
     await rejected;
+    expect(vi.getTimerCount()).toBe(0);
+  });
+});
+
+describe("backend fetch deadlines", () => {
+  it("settles even when the fetch implementation ignores abort", async () => {
+    vi.useFakeTimers();
+    const transport = vi.fn<typeof fetch>(() => new Promise(() => {}));
+    const pending = apiFetch(url, transport, 30)(url);
+    const assertion = expect(pending).rejects.toMatchObject({
+      kind: "timeout",
+    });
+    await vi.advanceTimersByTimeAsync(30);
+    await assertion;
+    expect(transport.mock.calls[0]?.[1]?.signal?.aborted).toBe(true);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it("keeps the original deadline through a stalled native JSON body", async () => {
+    vi.useFakeTimers();
+    const transport = vi.fn<typeof fetch>(
+      async () =>
+        ({
+          ...nativeResponse(() => new Promise(() => {})),
+          json: () => new Promise(() => {}),
+        }) as Response,
+    );
+    const response = await apiFetch(url, transport, 30)(url);
+    await vi.advanceTimersByTimeAsync(20);
+    const assertion = expect(response.json()).rejects.toMatchObject({
+      kind: "timeout",
+    });
+    await vi.advanceTimersByTimeAsync(10);
+    await assertion;
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it("honors caller cancellation after headers, including ignored native abort", async () => {
+    const caller = new AbortController();
+    const remove = vi.spyOn(caller.signal, "removeEventListener");
+    const transport = vi.fn<typeof fetch>(async () =>
+      nativeResponse(() => new Promise(() => {})),
+    );
+    const response = await apiFetch(url, transport)(url, {
+      signal: caller.signal,
+    });
+    const assertion = expect(response.text()).rejects.toMatchObject({
+      kind: "cancelled",
+    });
+    caller.abort();
+    await assertion;
+    expect(remove).toHaveBeenCalledWith("abort", expect.any(Function));
+  });
+
+  it("preserves Response metadata, clones, HTTP errors and binary consumers", async () => {
+    vi.useFakeTimers();
+    const transport = vi.fn<typeof fetch>(
+      async () =>
+        new Response("failure", {
+          status: 429,
+          headers: { "x-request-id": "test-id" },
+        }),
+    );
+    const response = await apiFetch(url, transport)(url);
+    expect(response).toBeInstanceOf(Response);
+    expect(response.status).toBe(429);
+    expect(response.headers.get("x-request-id")).toBe("test-id");
+    const clone = response.clone();
+    expect(await response.text()).toBe("failure");
+    expect(new TextDecoder().decode(await clone.arrayBuffer())).toBe("failure");
+    expect(response.bodyUsed).toBe(true);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it("keeps a stalled clone bounded after another body finishes", async () => {
+    vi.useFakeTimers();
+    const stalled = nativeResponse(() => new Promise(() => {}));
+    const original = new Response("done");
+    original.clone = () => stalled;
+    const response = await apiFetch(url, async () => original, 30)(url);
+    const clone = response.clone();
+    expect(await response.text()).toBe("done");
+    const assertion = expect(clone.text()).rejects.toMatchObject({
+      kind: "timeout",
+    });
+    await vi.advanceTimersByTimeAsync(30);
+    await assertion;
     expect(vi.getTimerCount()).toBe(0);
   });
 });

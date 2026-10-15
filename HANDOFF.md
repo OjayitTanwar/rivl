@@ -5,6 +5,15 @@ Project: `/Users/ojayitsinghtanwar/Desktop/rivl`
 
 ## 1. Read this first
 
+### Stability corrections and current phone build — 15 October 2026
+
+User reported intermittent stuck screens and unresponsive buttons and explicitly requested physical installation. Fixed: authenticated navigator now stays mounted during refresh errors, with matching-profile hydration required for initial gates; load revisions reject out-of-order same-owner cache snapshots; Field clear slots reserve width; keyboard-open selector taps persist and whole-form switch motion is suppressed while typing. LoadingJourney loops are non-interaction animations, and hidden full-screen loader children are unmounted so invisible loops do not keep the interaction queue active. Backend fetch and body consumers now have actual rejection deadlines even when cancellation is ignored, including clones and post-header abort.
+
+Checks: whole-project TypeScript, 469 tests in 70 suites and development security passed; final hydration-gate refinement passed TypeScript and diff checks. Native flow passed Creators draft typing → History → Creators retention → clear → RIVL → Nutrition → Health → Record, without saving or starting recording. Simulator shut down after this check. Device/audio/GPS/Health/Watch and every-screen certification are not implied.
+
+Standalone Release build succeeded from current source. Embedded bundle includes only the selected new RIVL backend, not the old project reference. Installed in place on iPhone 15 (`00008120-000E05E00C81A01E`), bundle `app.rivl.training`; no uninstall/purge. Signing expires 22 October 2026 at 21:54:41 IST. Evidence: `/private/tmp/rivl-phone-stability-build.log`, `/private/tmp/rivl-phone-stability-install.json`, `/private/tmp/rivl-phone-stability-launch.json`. Launch was rejected by iOS security/trust. codesign --verify --deep --strict passes; the renewed profile includes this UDID and allows the app entitlement keys. User was asked to trust/verify the developer in Settings; launch is pending that step, not established.
+
+
 ### Latest backend, feature and input batch — 15 October 2026
 
 User explicitly chose the new RIVL backend and approved storing existing worker credentials in its Vault plus activating the queue-only scheduler. Both ignored app env files now target `xsfxptlnmcxtrsudjkdq`. Fourteen migrations are deployed; worker scheduler `rivl-workers` is active every two minutes, ran successfully and dispatches zero Edge calls for empty queues. Private dispatch ACL and public-table RLS checks passed. Neither app environment nor current native plist had API pins, so no pin was changed/disabled. Existing installed phone build still uses its previously embedded configuration until rebuilt.

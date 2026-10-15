@@ -7,9 +7,11 @@ import Navigation from "../../src/ui/Navigation";
 import { Notice, Screen } from "../../src/ui/primitives";
 import { useTheme } from "../../src/ui/theme";
 export default function Layout() {
-  const { loading, session, error, refresh } = useStore(),
+  const { loading, session, profile, error, refresh } = useStore(),
     { c } = useTheme();
-  if (loading)
+  // Preserve mounted tabs and editor state during authenticated refreshes.
+  const hydrated = !!session && profile?.id === session.userId;
+  if (loading && !hydrated)
     return (
       <View
         style={{
@@ -22,7 +24,7 @@ export default function Layout() {
         <LoadingJourney large fullScreen label="Getting your training ready…" />
       </View>
     );
-  if (error)
+  if (error && !hydrated)
     return (
       <Screen title="RIVL couldn’t load">
         <Notice text={error} retry={refresh} />

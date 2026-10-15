@@ -34,12 +34,14 @@ export function LoadingJourney({
           duration: 2200,
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
+          isInteraction: false,
         }),
         Animated.timing(progress, {
           toValue: 0,
           duration: 2200,
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
+          isInteraction: false,
         }),
       ]),
     );

@@ -45,7 +45,7 @@ export function FullScreenLoadingProvider({
         onRequestClose={continueLoading}
         statusBarTranslucent
       >
-        <SafeAreaView
+        {visible.length > 0 && <SafeAreaView
           style={{ flex: 1, backgroundColor: c.bg }}
           accessibilityViewIsModal
         >
@@ -75,7 +75,7 @@ export function FullScreenLoadingProvider({
               onPress={continueLoading}
             />
           </View>
-        </SafeAreaView>
+        </SafeAreaView>}
       </Modal>
     </LoadingContext.Provider>
   );

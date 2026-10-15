@@ -428,8 +428,9 @@ export function Field({
   const editable = props.editable !== false && !props.readOnly;
   const active = focused && editable;
   const password = props.secureTextEntry === true;
-  const canClear = clearable && active && !password && !props.multiline &&
-    Boolean(props.value?.length) && Boolean(props.onChangeText) && !trailing;
+  const reserveClearAction = clearable && !password && !props.multiline &&
+    Boolean(props.onChangeText) && !trailing && editable;
+  const canClear = reserveClearAction && active && Boolean(props.value?.length);
   return (
     <Stack gap={6} style={containerStyle}>
       {!hideLabel && (
@@ -512,6 +513,8 @@ export function Field({
           >
             <X size={18} color={c.muted} />
           </Pressable>
+        ) : reserveClearAction ? (
+          <View pointerEvents="none" accessible={false} style={{ width: 44, height: 44, marginRight: -10 }} />
         ) : null}
       </View>
       {error ? <Txt size="caption" color={c.accent} accessibilityRole="alert">{error}</Txt> : helper ? <Txt size="caption" color={c.muted}>{helper}</Txt> : null}
@@ -556,7 +559,8 @@ export function Screen({
     { width } = useWindowDimensions();
   const switchOffset = useRef(new Animated.Value(0)).current;
   const switchMotion = React.useCallback(() => {
-    if (reduceMotion) return;
+    if (reduceMotion || Keyboard.isVisible()) return;
+    switchOffset.stopAnimation();
     switchOffset.setValue(4);
     Animated.spring(switchOffset, {
       toValue: 0,
@@ -1058,6 +1062,8 @@ export function Segmented<T extends string>({
     <ScrollView
       ref={scroll}
       horizontal
+      keyboardShouldPersistTaps="handled"
+      bounces={false}
       showsHorizontalScrollIndicator={false}
       onLayout={({ nativeEvent: { layout } }) => setViewport(layout.width)}
       onScroll={({ nativeEvent }) => {

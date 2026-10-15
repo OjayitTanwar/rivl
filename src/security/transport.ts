@@ -179,6 +179,8 @@ export function apiFetch(
   timeoutMs = 25000,
 ): typeof fetch {
   const base = checkedBase(baseUrl);
+  if (!Number.isFinite(timeoutMs) || timeoutMs <= 0)
+    throw new AppFailure("validation", "The request limits are invalid.");
   return async (input, init) => {
     checkDestination(base, input);
     const controller = new AbortController();
@@ -187,41 +189,100 @@ export function apiFetch(
       (typeof Request !== "undefined" && input instanceof Request
         ? input.signal
         : null);
-    const cancel = () => controller.abort();
-    if (source?.aborted) cancel();
-    else source?.addEventListener("abort", cancel, { once: true });
-    let expired = false;
-    const timer = setTimeout(() => {
-      expired = true;
-      controller.abort();
-    }, timeoutMs);
-    try {
-      if (controller.signal.aborted)
-        throw new AppFailure("cancelled", "The request was cancelled.");
-      const response = await transport(input, {
-        ...init,
-        signal: controller.signal,
-        redirect: "error",
-      });
-      if (response.url && new URL(response.url).origin !== base.origin)
-        throw new AppFailure(
-          "forbidden",
-          "The service redirected to an unexpected destination.",
-        );
-      return response;
-    } catch (error) {
-      if (expired)
-        throw new AppFailure(
-          "timeout",
-          "The connection timed out. Retry when you have a stable connection.",
-          true,
-        );
-      if (source?.aborted)
-        throw new AppFailure("cancelled", "The request was cancelled.");
-      throw error;
-    } finally {
+    let stopped: AppFailure | undefined;
+    let rejectStopped!: (error: AppFailure) => void;
+    const interruption = new Promise<never>((_, reject) => {
+      rejectStopped = reject;
+    });
+    // A response can be discarded without reading its body. Still observe a later
+    // deadline rejection, while retaining it for a subsequent body consumer.
+    void interruption.catch(() => {});
+    const cleanup = () => {
       clearTimeout(timer);
       source?.removeEventListener("abort", cancel);
+    };
+    const stop = (error: AppFailure) => {
+      if (stopped) return;
+      stopped = error;
+      rejectStopped(error);
+      controller.abort();
+      cleanup();
+    };
+    const cancel = () =>
+      stop(new AppFailure("cancelled", "The request was cancelled."));
+    const timer = setTimeout(
+      () =>
+        stop(
+          new AppFailure(
+            "timeout",
+            "The connection timed out. Retry when you have a stable connection.",
+            true,
+          ),
+        ),
+      timeoutMs,
+    );
+    if (source?.aborted) cancel();
+    else source?.addEventListener("abort", cancel, { once: true });
+    const guarded = async <T>(operation: () => Promise<T>): Promise<T> => {
+      if (stopped) throw stopped;
+      try {
+        return await Promise.race([operation(), interruption]);
+      } catch (error) {
+        if (stopped) throw stopped;
+        throw error;
+      }
+    };
+    // Keep the actual native Response, including headers, status and URL. Bind
+    // native methods to their original receiver rather than rebuilding a response
+    // (which can change binary bodies and empty-response semantics on iOS).
+    let unreadResponses = 0;
+    const wrap = (response: Response): Response => {
+      unreadResponses += 1;
+      let finished = false;
+      return new Proxy(response, {
+        get(target, property) {
+          const value = Reflect.get(target, property, target);
+          if (property === "clone") return () => wrap(target.clone());
+          if (typeof value !== "function") return value;
+          if (
+            [
+              "json",
+              "text",
+              "arrayBuffer",
+              "blob",
+              "formData",
+              "bytes",
+            ].includes(String(property))
+          )
+            return async (...args: unknown[]) => {
+              try {
+                return await guarded(() => value.apply(target, args));
+              } finally {
+                if (!finished) {
+                  finished = true;
+                  unreadResponses -= 1;
+                  if (unreadResponses === 0) cleanup();
+                }
+              }
+            };
+          return value.bind(target);
+        },
+      });
+    };
+    try {
+      const response = await guarded(() =>
+        transport(input, {
+          ...init,
+          signal: controller.signal,
+          redirect: "error",
+        }),
+      );
+      if (response.url) checkDestination(base, response.url);
+      return wrap(response);
+    } catch (error) {
+      cleanup();
+      controller.abort();
+      throw error;
     }
   };
 }

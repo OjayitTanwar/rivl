@@ -7,9 +7,11 @@ import { Notice, Screen } from "./primitives";
 import { useTheme } from "./theme";
 /** Workspace groups are root siblings: their tab bars replace the global bar. */
 export function WorkspaceAuth({ children }: { children: React.ReactNode }) {
-  const { loading, session, error, refresh } = useStore(),
+  const { loading, session, profile, error, refresh } = useStore(),
     { c } = useTheme();
-  if (loading)
+  // Preserve mounted tabs and editor state during authenticated refreshes.
+  const hydrated = !!session && profile?.id === session.userId;
+  if (loading && !hydrated)
     return (
       <View
         style={{
@@ -26,7 +28,7 @@ export function WorkspaceAuth({ children }: { children: React.ReactNode }) {
         />
       </View>
     );
-  if (error)
+  if (error && !hydrated)
     return (
       <Screen title="RIVL couldn’t load">
         <Notice text={error} retry={refresh} />
