@@ -1,3 +1,8 @@
+import {
+  classifyTrackCandidates,
+  type TrackCandidate,
+} from "../../../src/domain/track-candidates";
+import { loadPathNetwork } from "../../../src/services/path-network";
 import React, { useCallback, useRef, useState } from "react";
 import { Alert, Platform, Switch } from "react-native";
 import { useFocusEffect } from "expo-router";
@@ -43,6 +48,8 @@ export default function CommunityTracks() {
     [error, setError] = useState("");
   const lock = useRef(false),
     generation = useRef(0);
+  const [candidates, setCandidates] = useState<TrackCandidate[] | null>(null);
+  const [limitedMap, setLimitedMap] = useState(false);
   const [area, setArea] = useState<Coordinate>(),
     [cells, setCells] = useState<ObservedTrackCell[]>([]),
     [loaded, setLoaded] = useState(false);
@@ -52,6 +59,7 @@ export default function CommunityTracks() {
       setError("");
       setSnapshot(null);
       setCells([]);
+      setCandidates(null);
       setLoaded(false);
       setArea(undefined);
       if (owner)
@@ -217,6 +225,7 @@ export default function CommunityTracks() {
               const center = await plannerLocation();
               const result = await nearbyObservedTracks(center.lat, center.lng);
               if (ownerRef.current === id && generation.current === version) {
+                setCandidates(null);
                 setArea(center);
                 setCells(result);
                 setLoaded(true);
@@ -239,6 +248,63 @@ export default function CommunityTracks() {
               visits: 1,
             }))}
           />
+        )}
+        {area && loaded && (
+          <Button
+            title="Compare mapped paths"
+            variant="secondary"
+            loading={pending}
+            disabled={pending}
+            onPress={() =>
+              void act(async (id) => {
+                const version = generation.current;
+                const network = await loadPathNetwork(area, "all");
+                if (ownerRef.current === id && generation.current === version) {
+                  setCandidates(
+                    classifyTrackCandidates(
+                      network.features ?? [],
+                      cells.filter(
+                        (cell) => Date.parse(cell.expiresAt) > Date.now(),
+                      ),
+                    ),
+                  );
+                  setLimitedMap(network.limited);
+                }
+              })
+            }
+          />
+        )}
+        {candidates !== null && (
+          <Stack gap={12}>
+            <Txt weight="600">Mapped path candidates</Txt>
+            <Txt size="caption" color={c.muted}>
+              OpenStreetMap classifications. Nearby community evidence covers
+              coarse areas and cannot identify a particular path. Shared map
+              nodes indicate junctions; absence of shared nodes does not prove
+              physical separation, safety or legal access. © OpenStreetMap
+              contributors, ODbL.
+            </Txt>
+            {limitedMap && (
+              <Txt color={c.muted}>Map results are partial in this area.</Txt>
+            )}
+            {!candidates.length && (
+              <Txt color={c.muted}>
+                No supported mapped paths returned here.
+              </Txt>
+            )}
+            {candidates.slice(0, 30).map((candidate) => (
+              <ListRow
+                key={candidate.wayId}
+                title={candidate.mapClaim
+                  .replace(/^mapped_/, "")
+                  .replace(/_/g, " ")}
+                detail={`OSM way ${candidate.wayId} · ${candidate.sports.join(" / ")} · ${candidate.nearbyObservedArea ? "Observed activity nearby" : "No nearby corroborated area"} · ${candidate.topology === "shares_road_nodes" ? "Mapped road junction" : candidate.topology === "no_shared_road_nodes" ? "No shared road nodes in returned map" : "Road topology unavailable"}`}
+              />
+            ))}
+            {candidates.length > 30 && (
+              <Txt color={c.muted}>Showing the first 30 mapped candidates.</Txt>
+            )}
+          </Stack>
         )}
         {loaded && (
           <Txt color={c.muted}>

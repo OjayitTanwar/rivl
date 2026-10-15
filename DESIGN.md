@@ -233,7 +233,7 @@ Content primitives and Record overlays use no authored shadows. Depth comes from
 
 Content retains Record-derived corners (14 logical units): cards and map containers use `card`, fields and route previews use `field`, and compact status tags use `pill`. Shared primary, quiet and danger buttons use `button` (18); outlined secondary buttons use `button-secondary` (24); compact scope triggers use `field` (14). Segmented option outlines and their moving Coral selection pill use `segment` (24). Circular icon buttons use `control` (24) around a 48-unit square touch frame. Circular recording actions retain their dedicated geometry.
 
-Planner search/overlay containers and Progress calendar cells still carry local (8) corners; they do not change the shared tokens. Lists use thin dividers (1) where appropriate. Cards remain flat with a theme divider stroke (1) by default; the fixed dark option removes the stroke. Fields and secondary buttons carry a theme divider stroke. Maps clip their content to their rounded container. Route strokes use round caps and joins so geometry remains readable at turns.
+Planner search/overlay containers and Progress calendar cells still carry local (8) corners; they do not change the shared tokens. Lists use thin dividers (1) where appropriate. Cards remain flat with a theme divider stroke (1) by default; the fixed dark option removes the stroke. Secondary buttons carry a theme divider stroke; fields use quiet filled surfaces and a focus/error outline. Maps clip their content to their rounded container. Route strokes use round caps and joins so geometry remains readable at turns.
 
 ## Components
 
@@ -259,7 +259,9 @@ Solid content groups. Cards use theme surface, `card` corners and padding, and `
 
 ### Inputs / Fields
 
-Labeled native text fields. Labels use caption semibold, switching to theme accent on editable focus. The 14-unit wrapper uses theme surface for editable fields and soft fill for read-only fields, a divider stroke (1.5) that becomes theme accent on editable focus, horizontal padding (14) and an optional leading/trailing slot with gap (10). Text uses body (17), vertical padding (14), theme foreground or muted read-only text, and theme accent for caret and selection. The wrapper has minimum height (56); multiline text has minimum height (112) and top alignment. Hidden visual labels retain accessible names. Native underline is suppressed on Android. Errors use a separate alert-role `Notice` with a drawn warning icon and optional retry. Focus is conveyed through label and border, without a glow.
+Labeled native text fields use quiet filled theme-soft surfaces, a 12-unit radius and 16-unit horizontal padding. Minimum height is 52; text uses body 17 with 12-unit vertical padding. Multiline minimum text height is 108 with top alignment. Caption semibold labels remain muted, turn accent on error, and tapping a label focuses its input. Idle fields have no visible outline except in high contrast; editable focus/error shows a thin 1-unit accent stroke. Disabled fields retain the fill with reduced opacity. Caret/selection use theme accent. Hidden labels retain accessible names. Password fields expose a 44-unit Show/Hide control; focused controlled single-line text fields expose a 44-unit Clear action unless a custom trailing slot owns that space. Optional error text announces as an alert; helper copy sits beneath the field. Caller props, secure entry, keyboard type and form state remain native.
+
+15 October simulator evidence: normal dark blank/focused Creator fields, typing and clearing passed after fixing label-to-input focus. No program was saved. Light/enlarged frames were unsettled and are not validation; no physical keyboard/screen-reader or whole-app claim follows.
 
 ### Navigation
 

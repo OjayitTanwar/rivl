@@ -355,7 +355,20 @@
         "name": "screen-gutter",
         "value": "760px"
       }
-    ]
+    ],
+    "fieldRefreshOct15": {
+      "radius": 12,
+      "minimumHeight": 52,
+      "horizontalPadding": 16,
+      "verticalPadding": 12,
+      "fill": "theme.soft",
+      "idleBorder": "transparent; muted in high contrast",
+      "focusBorder": "1px theme.accent",
+      "labelFocusesInput": true,
+      "passwordToggle": true,
+      "clearAction": "controlled focused single line; custom trailing slot wins",
+      "evidence": "Simulator blank/focused Creator fields; typing and clearing passed. No saved program or physical keyboard validation."
+    }
   },
   "components": [
     {

@@ -39,6 +39,16 @@ import { SettingsSection } from "../../src/ui/SettingsSection";
 import { useTheme } from "../../src/ui/theme";
 import { useFullScreenLoading } from "../../src/ui/loading-state";
 import { AppFailure, userMessage } from "../../src/security/errors";
+import {
+  buildTrainingProgression,
+  type ProgressionOptions,
+} from "../../src/domain/training-progression";
+import { CreatorTrainingRepository } from "../../src/services/creator-training-repository";
+import {
+  speakNavigation,
+  stopNavigationVoice,
+} from "../../src/services/navigation-voice";
+const creatorRepository = new CreatorTrainingRepository(database);
 const repository = new TrainingRepository(database);
 const sportLabels = { run: "Run", ride: "Ride", walk: "Walk", hike: "Hike" };
 const durationKeys = [
@@ -65,16 +75,18 @@ function IntervalClock({
   session,
   onFinish,
   foreground,
+  spoken,
 }: {
   session: TrainingSession;
   onFinish: () => void;
   foreground: boolean;
+  spoken: boolean;
 }) {
   const { c, reduceMotion } = useTheme(),
     [now, setNow] = useState(Date.now()),
     last = useRef<string | null>(null),
     finished = useRef(false);
-  const position = trainingPosition(session, now);
+  const position = trainingPosition(session, foreground ? Date.now() : now);
   useEffect(() => {
     setNow(Date.now());
     if (!foreground || session.state !== "running") return;
@@ -106,6 +118,28 @@ function IntervalClock({
     foreground,
     reduceMotion,
     onFinish,
+  ]);
+  useEffect(() => {
+    const owner = `training:${session.id}`;
+    if (
+      foreground &&
+      spoken &&
+      session.state === "running" &&
+      !position.complete
+    )
+      speakNavigation(
+        `${position.stage?.label}. ${position.remainingSec} seconds.`,
+        { owner, repeat: true },
+      );
+    return () => stopNavigationVoice(owner);
+    // Announce only stage/state changes, never every clock tick or missed stage.
+  }, [
+    session.id,
+    session.state,
+    position.index,
+    position.complete,
+    foreground,
+    spoken,
   ]);
   return (
     <Stack gap={12}>
@@ -181,6 +215,19 @@ export default function GuidedTraining({
     });
   const [focused, setFocused] = useState(false),
     [foreground, setForeground] = useState(AppState.currentState === "active");
+  const [spoken, setSpoken] = useState(false);
+  const [progression, setProgression] = useState<TrainingPlan | null>(null);
+  const [progressionOptions, setProgressionOptions] =
+    useState<ProgressionOptions>({
+      weeks: 4,
+      sessionsPerWeek: 3,
+      weeklyPercent: 5,
+      feedback: "repeat",
+    });
+  useEffect(() => {
+    setSpoken(false);
+    setProgression(null);
+  }, [owner]);
   const lock = useRef(false);
   const read = async (id: string) => {
     const [plans, session, history] = await Promise.all([
@@ -417,13 +464,22 @@ export default function GuidedTraining({
                   key={session.id}
                   session={session}
                   foreground={foreground && focused}
+                  spoken={spoken}
                   onFinish={complete}
                 />
                 <Txt size="caption" color={c.muted}>
-                  The timer continues while away. Text and haptic cues play
-                  while this screen is open. Ending guidance keeps your recorded
-                  workout.
+                  The timer continues while away. Spoken and haptic cues play
+                  only while this screen is open. Spoken guidance uses the same
+                  installed voice as navigation. Ending guidance keeps your
+                  recorded workout.
                 </Txt>
+                <Button
+                  title={
+                    spoken ? "Spoken guidance: on" : "Enable spoken guidance"
+                  }
+                  variant="quiet"
+                  onPress={() => setSpoken((value) => !value)}
+                />
                 <Button
                   title={
                     session.state === "running"
@@ -452,6 +508,124 @@ export default function GuidedTraining({
                       () => transition("end"),
                     )
                   }
+                />
+              </SettingsSection>
+            )}
+            {ready && view === "plans" && progression && (
+              <SettingsSection title="Build a progressive program">
+                <Txt>{progression.title}</Txt>
+                <Choice
+                  label="Weeks"
+                  value={String(progressionOptions.weeks)}
+                  options={[2, 4, 8, 12].map((value) => ({
+                    value: String(value),
+                    label: String(value),
+                  }))}
+                  onChange={(weeks) =>
+                    setProgressionOptions((value) => ({
+                      ...value,
+                      weeks: Number(weeks),
+                    }))
+                  }
+                />
+                <Choice
+                  label="Sessions per week"
+                  value={String(progressionOptions.sessionsPerWeek)}
+                  options={[1, 2, 3, 4].map((value) => ({
+                    value: String(value),
+                    label: String(value),
+                  }))}
+                  onChange={(sessionsPerWeek) =>
+                    setProgressionOptions((value) => ({
+                      ...value,
+                      sessionsPerWeek: Number(sessionsPerWeek),
+                    }))
+                  }
+                />
+                <Choice
+                  label="How did your base session feel?"
+                  value={progressionOptions.feedback}
+                  options={[
+                    {
+                      value: "comfortable" as const,
+                      label: "Comfortable · progress",
+                    },
+                    { value: "repeat" as const, label: "Keep it steady" },
+                    {
+                      value: "reduce" as const,
+                      label: "Too much · reduce 10%",
+                    },
+                  ]}
+                  onChange={(feedback) =>
+                    setProgressionOptions((value) => ({ ...value, feedback }))
+                  }
+                />
+                <Choice
+                  label="Work duration increase per build week"
+                  value={String(progressionOptions.weeklyPercent)}
+                  options={[0, 5, 10].map((value) => ({
+                    value: String(value),
+                    label: `${value}%`,
+                  }))}
+                  onChange={(weeklyPercent) =>
+                    setProgressionOptions((value) => ({
+                      ...value,
+                      weeklyPercent: Number(weeklyPercent),
+                    }))
+                  }
+                />
+                <Txt size="caption" color={c.muted}>
+                  Only Comfortable increases work. Every fourth week reduces
+                  work by 20%. Other durations stay the same. Suggested days can
+                  be edited in Creator studio. This uses your feedback, not an
+                  automatic fitness assessment.
+                </Txt>
+                {(() => {
+                  try {
+                    const preview = buildTrainingProgression(
+                      progression,
+                      progressionOptions,
+                      { id: "preview", creatorName: "You", now: Date.now() },
+                    );
+                    return (
+                      <Txt>
+                        {preview.sessions.length} sessions · first{" "}
+                        {preview.sessions[0]?.workout.workSec}s work · last{" "}
+                        {preview.sessions.at(-1)?.workout.workSec}s work per
+                        repetition
+                      </Txt>
+                    );
+                  } catch (e) {
+                    return <Notice text={userMessage(e)} />;
+                  }
+                })()}
+                <Button
+                  title="Save program draft"
+                  disabled={!!pending}
+                  onPress={() =>
+                    void perform("Saving program", async (id) => {
+                      const program = buildTrainingProgression(
+                        { ...progression, ownerId: id },
+                        progressionOptions,
+                        {
+                          id: randomUUID(),
+                          creatorName: "You",
+                          now: Date.now(),
+                        },
+                      );
+                      await creatorRepository.save(program, null);
+                      if (ownerRef.current === id) {
+                        setProgression(null);
+                        router.push("/training-creators");
+                      }
+                    })
+                  }
+                />
+                <Button
+                  title="Cancel program"
+                  variant="quiet"
+                  disabled={!!pending}
+                  onPress={() => setProgression(null)}
                 />
               </SettingsSection>
             )}
@@ -557,6 +731,15 @@ export default function GuidedTraining({
                         title={plan.title}
                         detail={`${sportLabels[plan.sport]} · ${formatTrainingDuration(trainingDuration(trainingStages(plan)))} · ${plan.repeats} repetition${plan.repeats === 1 ? "" : "s"}`}
                         onPress={() => open(plan)}
+                      />
+                      <Button
+                        title={`Build program from ${plan.title}`}
+                        variant="quiet"
+                        disabled={!!pending}
+                        onPress={() => {
+                          setProgression(plan);
+                          setError("");
+                        }}
                       />
                       <Button
                         title={`Start ${plan.title}`}

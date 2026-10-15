@@ -35,6 +35,9 @@ import {
   Footprints,
   Mountain,
   TriangleAlert,
+  Eye,
+  EyeOff,
+  X,
 } from "lucide-react-native";
 import { router } from "expo-router";
 import { brand, type, useTheme } from "./theme";
@@ -404,6 +407,9 @@ export function Field({
   style,
   onFocus,
   onBlur,
+  helper,
+  error,
+  clearable = true,
   ...props
 }: TextInputProps & {
   label: string;
@@ -411,34 +417,48 @@ export function Field({
   leading?: React.ReactNode;
   trailing?: React.ReactNode;
   containerStyle?: StyleProp<ViewStyle>;
+  helper?: string;
+  error?: string;
+  clearable?: boolean;
 }) {
-  const { c } = useTheme();
+  const { c, contrast } = useTheme();
   const [focused, setFocused] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const input = useRef<TextInput>(null);
   const editable = props.editable !== false && !props.readOnly;
   const active = focused && editable;
+  const password = props.secureTextEntry === true;
+  const canClear = clearable && active && !password && !props.multiline &&
+    Boolean(props.value?.length) && Boolean(props.onChangeText) && !trailing;
   return (
-    <Stack gap={8} style={containerStyle}>
+    <Stack gap={6} style={containerStyle}>
       {!hideLabel && (
-        <Txt size="caption" weight="600" color={active ? c.accent : c.text}>
-          {label}
-        </Txt>
+        <Pressable accessible={false} onPress={() => editable && input.current?.focus()}>
+          <Txt size="caption" weight="600" color={error ? c.accent : c.muted}>
+            {label}
+          </Txt>
+        </Pressable>
       )}
       <View
         style={{
           flexDirection: "row",
           alignItems: props.multiline ? "flex-start" : "center",
           gap: 10,
-          minHeight: 56,
-          paddingHorizontal: 14,
-          borderRadius: 14,
-          backgroundColor: editable ? c.surface : c.soft,
-          borderWidth: 1.5,
-          borderColor: active ? c.accent : c.line,
+          minHeight: 52,
+          paddingHorizontal: 16,
+          borderRadius: 12,
+          backgroundColor: c.soft,
+          borderWidth: 1,
+          borderColor: error || active ? c.accent : contrast ? c.muted : "transparent",
+          opacity: editable ? 1 : 0.65,
         }}
       >
         {leading}
         <TextInput
           {...props}
+          ref={input}
+          secureTextEntry={password && !passwordVisible}
+          clearButtonMode="never"
           accessibilityLabel={props.accessibilityLabel ?? label}
           accessibilityState={{
             ...props.accessibilityState,
@@ -460,8 +480,8 @@ export function Field({
             {
               flex: 1,
               minWidth: 0,
-              minHeight: props.multiline ? 112 : 53,
-              paddingVertical: 14,
+              minHeight: props.multiline ? 108 : 50,
+              paddingVertical: 12,
               paddingHorizontal: 0,
               fontSize: type.body,
               color: editable ? c.text : c.muted,
@@ -471,7 +491,30 @@ export function Field({
           ]}
         />
         {trailing}
+        {!trailing && password && editable ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={passwordVisible ? "Hide password" : "Show password"}
+            accessibilityState={{ checked: passwordVisible }}
+            onPress={() => setPasswordVisible((visible) => !visible)}
+            hitSlop={4}
+            style={{ minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center", marginRight: -10 }}
+          >
+            {passwordVisible ? <EyeOff size={20} color={c.muted} /> : <Eye size={20} color={c.muted} />}
+          </Pressable>
+        ) : canClear ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Clear ${label.toLowerCase()}`}
+            onPress={() => { props.onChangeText?.(""); input.current?.focus(); }}
+            hitSlop={4}
+            style={{ minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center", marginRight: -10 }}
+          >
+            <X size={18} color={c.muted} />
+          </Pressable>
+        ) : null}
       </View>
+      {error ? <Txt size="caption" color={c.accent} accessibilityRole="alert">{error}</Txt> : helper ? <Txt size="caption" color={c.muted}>{helper}</Txt> : null}
     </Stack>
   );
 }

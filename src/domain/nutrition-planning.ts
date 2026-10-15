@@ -23,6 +23,7 @@ export type NutritionRecipe = {
   name: string;
   ingredients: RecipeIngredient[];
   yieldGrams: number;
+  sourceUrl?: string;
   updatedAt: number;
 };
 export type PlannedMeal = {
@@ -87,6 +88,13 @@ export function validateNutritionRecipe(recipe: NutritionRecipe) {
     recipe.name.length > 100
   )
     fail("Enter a recipe name up to 100 characters.");
+  if (
+    recipe.sourceUrl !== undefined &&
+    (typeof recipe.sourceUrl !== "string" ||
+      recipe.sourceUrl.length > 2000 ||
+      !/^https:\/\//.test(recipe.sourceUrl))
+  )
+    fail("Choose a valid recipe source link.");
   grams(recipe.yieldGrams, 100000);
   if (
     !Array.isArray(recipe.ingredients) ||

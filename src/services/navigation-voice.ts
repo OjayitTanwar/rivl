@@ -12,6 +12,7 @@ let preparing: Promise<void> | undefined;
 let generation = 0;
 let operations: Promise<void> = Promise.resolve();
 let lastMessage = "";
+let currentOwner: string | undefined;
 let lastSpokenAt = 0;
 const noveltyVoices = new Set([
   "albert",
@@ -111,13 +112,14 @@ function enqueue(operation: () => Promise<void>): void {
 
 export function speakNavigation(
   message: string,
-  options: { repeat?: boolean } = {},
+  options: { repeat?: boolean; owner?: string } = {},
 ): void {
   const text = message.trim();
   if (!text) return;
   const now = Date.now();
   if (!options.repeat && text === lastMessage && now - lastSpokenAt < 1500)
     return;
+  currentOwner = options.owner;
   lastMessage = text;
   lastSpokenAt = now;
   const current = ++generation;
@@ -161,7 +163,9 @@ export function speakNavigation(
   });
 }
 
-export function stopNavigationVoice(): void {
+export function stopNavigationVoice(owner?: string): void {
+  if (owner !== undefined && currentOwner !== owner) return;
+  currentOwner = undefined;
   generation++;
   lastMessage = "";
   lastSpokenAt = 0;

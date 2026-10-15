@@ -3,6 +3,7 @@ const auth = vi.hoisted(() => ({
   resetPasswordForEmail: vi.fn(),
   exchangeCodeForSession: vi.fn(),
   updateUser: vi.fn(),
+  getSession: vi.fn(),
 }));
 vi.mock("../src/services/supabase", () => ({
   supabase: { auth },
@@ -20,6 +21,10 @@ beforeEach(() => {
     error: null,
   });
   auth.updateUser.mockResolvedValue({ data: {}, error: null });
+  auth.getSession.mockResolvedValue({
+    data: { session: { user: { id: "a" } } },
+    error: null,
+  });
 });
 it("sends the reset email to a normalized address for the app deep link", async () => {
   await beginPasswordRecovery(" Runner@Example.com ");
@@ -42,9 +47,9 @@ it("exchanges the recovery code before offering to save the password", async () 
   expect(user.id).toBe("a");
   expect(auth.exchangeCodeForSession).toHaveBeenCalledWith("recovery-code");
   expect(auth.updateUser).toHaveBeenCalledWith({ password: "braveriver12" });
-  expect(
-    auth.updateUser.mock.invocationCallOrder[0]!,
-  ).toBeGreaterThan(auth.exchangeCodeForSession.mock.invocationCallOrder[0]!);
+  expect(auth.updateUser.mock.invocationCallOrder[0]!).toBeGreaterThan(
+    auth.exchangeCodeForSession.mock.invocationCallOrder[0]!,
+  );
 });
 it("rejects an incomplete recovery link without touching the session", async () => {
   await expect(finishPasswordRecovery("", "braveriver12")).rejects.toThrow(
@@ -57,16 +62,16 @@ it("rejects an expired recovery link", async () => {
     data: {},
     error: { message: "invalid link" },
   });
-  await expect(finishPasswordRecovery("old-code", "braveriver12")).rejects.toThrow(
-    "invalid link",
-  );
+  await expect(
+    finishPasswordRecovery("old-code", "braveriver12"),
+  ).rejects.toThrow("invalid link");
   expect(auth.updateUser).not.toHaveBeenCalled();
 });
 it("keeps requesting a fresh password if the exchange returned no user", async () => {
   auth.exchangeCodeForSession.mockResolvedValue({ data: {}, error: null });
-  await expect(finishPasswordRecovery("empty-code", "braveriver12")).rejects.toThrow(
-    "expired",
-  );
+  await expect(
+    finishPasswordRecovery("empty-code", "braveriver12"),
+  ).rejects.toThrow("expired");
   expect(auth.updateUser).not.toHaveBeenCalled();
 });
 it("does not treat a failed password save as success", async () => {
@@ -82,5 +87,32 @@ it("rejects a password below the signup minimum", async () => {
   await expect(finishPasswordRecovery("good-code", "short")).rejects.toThrow(
     "12–128",
   );
+  expect(auth.updateUser).not.toHaveBeenCalled();
+});
+
+it("retries a failed save without consuming the single-use reset code again", async () => {
+  auth.updateUser.mockResolvedValueOnce({
+    data: {},
+    error: { message: "temporarily offline" },
+  });
+  await expect(
+    finishPasswordRecovery("retryable-code", "braveriver12"),
+  ).rejects.toThrow("temporarily offline");
+  expect(
+    (await finishPasswordRecovery("retryable-code", "anotherpassword12")).id,
+  ).toBe("a");
+  expect(auth.exchangeCodeForSession).toHaveBeenCalledTimes(1);
+  expect(auth.updateUser).toHaveBeenLastCalledWith({
+    password: "anotherpassword12",
+  });
+});
+it("refuses to reset another athlete after the active session changes", async () => {
+  auth.getSession.mockResolvedValue({
+    data: { session: { user: { id: "b" } } },
+    error: null,
+  });
+  await expect(
+    finishPasswordRecovery("changed-session-code", "braveriver12"),
+  ).rejects.toThrow("account changed");
   expect(auth.updateUser).not.toHaveBeenCalled();
 });

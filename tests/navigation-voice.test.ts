@@ -175,4 +175,32 @@ describe("single navigation voice", () => {
       "You have arrived.",
     ]);
   });
+  it("a training cleanup never stops a newer navigation prompt", async () => {
+    const api = await import("../src/services/navigation-voice");
+    api.speakNavigation("Work one.", { owner: "training:one" });
+    await settle();
+    api.speakNavigation("Turn left.");
+    await settle();
+    const stops = speech.stop.mock.calls.length;
+    api.stopNavigationVoice("training:one");
+    await settle();
+    expect(speech.stop).toHaveBeenCalledTimes(stops);
+    expect(speech.speak.mock.calls.at(-1)?.[0]).toBe("Turn left.");
+  });
+  it("training cleanup cancels its pending voice preparation", async () => {
+    let resolveVoices!: (value: unknown[]) => void;
+    speech.getAvailableVoicesAsync.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveVoices = resolve;
+        }),
+    );
+    const api = await import("../src/services/navigation-voice");
+    api.speakNavigation("Work one.", { owner: "training:one" });
+    await settle();
+    api.stopNavigationVoice("training:one");
+    resolveVoices([voice("samantha.enhanced")]);
+    await settle();
+    expect(speech.speak).not.toHaveBeenCalled();
+  });
 });

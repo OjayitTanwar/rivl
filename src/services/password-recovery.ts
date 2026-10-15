@@ -27,6 +27,16 @@ export async function beginPasswordRecovery(email: string): Promise<void> {
   if (error) throw error;
 }
 
+// A PKCE code is single-use. Keep only the most recent exchanged attempt in
+// memory so a transient password-save failure can be retried without trying
+// to consume that code again. Never persist recovery codes or passwords.
+let recoveryAttempt: {
+  code: string;
+  user: Promise<User>;
+  expiresAt: number;
+} | null = null;
+let saving = false;
+
 export async function finishPasswordRecovery(
   code: string,
   password: string,
@@ -38,18 +48,55 @@ export async function finishPasswordRecovery(
       "This password-reset link is incomplete. Request a fresh email.",
     );
   const newPassword = passwordInput(password, true);
-  const { data, error } = await client.auth.exchangeCodeForSession(code);
-  if (error) throw error;
-  if (!data.user)
+  if (saving)
     throw new AppFailure(
       "auth",
-      "The password-reset link has expired. Request a fresh email.",
+      "A password change is already in progress. Please wait.",
     );
-  // Change the password while the session just exchanged from the email is
-  // still the active one, before any other work can replace it.
-  const { error: updateError } = await client.auth.updateUser({
-    password: newPassword,
-  });
-  if (updateError) throw updateError;
-  return data.user;
+  saving = true;
+  try {
+    if (
+      !recoveryAttempt ||
+      recoveryAttempt.code !== code ||
+      recoveryAttempt.expiresAt <= Date.now()
+    ) {
+      const user = client.auth
+        .exchangeCodeForSession(code)
+        .then(({ data, error }) => {
+          if (error) throw error;
+          if (!data.user)
+            throw new AppFailure(
+              "auth",
+              "The password-reset link has expired. Request a fresh email.",
+            );
+          return data.user;
+        });
+      recoveryAttempt = { code, user, expiresAt: Date.now() + 15 * 60_000 };
+    }
+    const attempt = recoveryAttempt;
+    let user: User;
+    try {
+      user = await attempt.user;
+    } catch (error) {
+      if (recoveryAttempt === attempt) recoveryAttempt = null;
+      throw error;
+    }
+    const current = await client.auth.getSession();
+    if (current.error) throw current.error;
+    if (current.data.session?.user.id !== user.id) {
+      recoveryAttempt = null;
+      throw new AppFailure(
+        "auth",
+        "The signed-in account changed. Request a fresh password-reset email.",
+      );
+    }
+    const { error: updateError } = await client.auth.updateUser({
+      password: newPassword,
+    });
+    if (updateError) throw updateError;
+    recoveryAttempt = null;
+    return user;
+  } finally {
+    saving = false;
+  }
 }

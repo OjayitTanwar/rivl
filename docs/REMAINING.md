@@ -1,19 +1,19 @@
 # What remains
 
-Updated 14 October 2026. Source implementation, hosted deployment and device validation are separate milestones.
+Updated 15 October 2026. Source implementation, hosted deployment and device validation are separate milestones.
 
 ## First: make the online foundation reliable
 
-- Apply all current database migrations to the hosted project and deploy account deletion, deletion retry, segment processing and optional route-intent functions.
-- Operate bounded worker scheduling, backups, usage monitoring and moderation. Verify signup confirmation/recovery redirects, real email delivery, session expiry and account switching.
-- Test with two real accounts: private data isolation, invitations/acceptance, clubs, comments, blocking/reporting, sync retries and deletion. Reachability checks do not prove these flows.
-- Deploy and validate Creator Studio publication and community GPS contributions. Both have source code; hosted end-to-end operation is pending.
+- Done on the dedicated hosted project: 14 migrations, four functions, private queue-only worker scheduling every two minutes, and protected Vault credentials. Both app env files now target this project following explicit user approval. Installed phone releases still need rebuilding to adopt it.
+- Passed live: two actual password logins/token refreshes; private read/update and forged-owner denial; friendship request/immutable endpoints/accept/remove; logout. Both temporary accounts were deleted and deletion verified. Email confirmation delivery/recovery mail, signup experience and full application account-switching remain separate gates.
+- Still needed: backups/restore, capacity monitoring, moderation operations, richer clubs/comments/blocking/reporting and sync retry device flows. Apple/Google OAuth are currently disabled on the hosted project.
+- Creator Studio and GPS contribution RPCs are deployed with their schemas; full publication/contribution flows still need application-level validation.
 
 ## Features still to build or expand
 
-- Community track reconstruction: dedicated cycling/running track detection from corroborated traces plus map topology and moderated evidence. Current coarse observed-use cells do not establish a dedicated or safe track.
-- Guided training: spoken sessions, adaptive multi-week coaching, richer strength/power targets and verified importable open-source course content. Creator-authored interval programs and attributed JSON sharing exist.
-- Nutrition: camera barcode scanning, recipe URL imports, wider nutrient coverage and optional photo/voice intake. Current diary, search, typed barcode, recipes, goals, plans and groceries exist.
+- Community track reconstruction: dedicated cycling/running track detection from corroborated traces plus map topology and moderated evidence. Current coarse observed-use cells do not establish a dedicated or safe track. New OSM candidate comparison distinguishes mapped cycleways/running/shared paths and road junctions; it is not physical track reconstruction.
+- Guided training: richer strength/power targets, validated adaptive coaching and importable licensed course content remain. Opt-in foreground spoken cues and explicit progressive multiweek creator drafts are now implemented; device audio remains unverified.
+- Nutrition: camera barcode scanning, wider nutrient coverage and optional photo/voice intake. Current diary, search, typed barcode, recipes, goals, plans and groceries exist. Recipe URL import now previews structured ingredients and requires matching logged foods plus confirmed grams. Live website/native transport checks remain.
 - Health: additional HRV/readiness trends, blood pressure/cycle/medication experiences and supported device alerts. Current steps, sleep, hydration, weight, stairs, active energy and recorded HR peaks have source support.
 - Maps/safety: licensed offline maps, operated live safety sharing and delivery, richer verified terrain and community route data.
 - Advanced competition: remaining leaderboard filters, Local Legend and integrity checks on real hosted workouts.

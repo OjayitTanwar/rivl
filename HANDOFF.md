@@ -5,6 +5,19 @@ Project: `/Users/ojayitsinghtanwar/Desktop/rivl`
 
 ## 1. Read this first
 
+### Latest backend, feature and input batch — 15 October 2026
+
+User explicitly chose the new RIVL backend and approved storing existing worker credentials in its Vault plus activating the queue-only scheduler. Both ignored app env files now target `xsfxptlnmcxtrsudjkdq`. Fourteen migrations are deployed; worker scheduler `rivl-workers` is active every two minutes, ran successfully and dispatches zero Edge calls for empty queues. Private dispatch ACL and public-table RLS checks passed. Neither app environment nor current native plist had API pins, so no pin was changed/disabled. Existing installed phone build still uses its previously embedded configuration until rebuilt.
+
+Live two-account smoke passed actual password login/refresh, private read/update isolation, forged-owner rejection and friendship request/immutable endpoint/accept/remove; both ephemeral users were removed with deletion verified. Email delivery is not proven; hosted Apple/Google providers are disabled. Password-reset retry no longer re-exchanges a consumed PKCE code; deletion reauthentication verifies the current owner before committing.
+
+Larger source additions: opt-in foreground spoken interval cues sharing the selected voice with ownership-safe cancellation; transparent progressive multiweek programs saved privately to Creator Studio; bounded structured recipe URL preview with every ingredient matched to a logged food and confirmed grams before save; actual OSM mapped-path candidate comparison with nearby coarse evidence and road-node topology kept separate. No physical track separation/safety inference or automatic medical coaching. Native recipe transport cannot enforce streaming transfer bounds when RN supplies only response.text; decoded bound and deadline remain enforced.
+
+Shared Field now has quieter filled 52-unit controls, thin focus/error outlines, muted labels, 12-unit radius, password visibility and clear actions. Simulator blank/focused Creator screenshots are in `.impeccable/review/fields-oct15/`; typing/clear passed after fixing label-to-input focus. No program saved. Light/enlarged snapshots were unsettled and are not validation. Normal text and dark simulator appearance restored. No physical installation or full HIG/accessibility claim this batch.
+
+Latest source validation: TypeScript, 464 tests / 70 suites, development security check and diff whitespace check passed. Worker migration/live ACL checks are separate evidence; no all-15-SQL-suite claim for this batch. New-feature native populated flows, real voice/provider checks, health/Watch/BLE hardware, store distribution and the broader remaining queue remain in docs/REMAINING.md.
+
+
 ### Hosted reliability and GitHub source preview — 14 October 2026
 
 The user clarified that the backend must remain hosted; no always-on personal computer. Read-only public-key probes reached hosted Auth settings and zero-row headers for profiles, activities, published activities, clubs, memberships, comments and friendships. These establish reachability only, not login/RLS/migration/function verification. Hosted administrator/deployment access is not configured in this environment.

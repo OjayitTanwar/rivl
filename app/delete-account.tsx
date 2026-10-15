@@ -2,7 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { router } from "expo-router";
 import { useStore } from "../src/state/store";
-import { Screen, Txt, Stack, Field, Button, Notice } from "../src/ui/primitives";
+import {
+  Screen,
+  Txt,
+  Stack,
+  Field,
+  Button,
+  Notice,
+} from "../src/ui/primitives";
 import { userMessage } from "../src/security/errors";
 export default function DeleteAccount() {
   const {
@@ -20,6 +27,13 @@ export default function DeleteAccount() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState<"completed" | "requested" | null>(null);
+  useEffect(() => {
+    setMethod(null);
+    setPassword("");
+    setCode("");
+    setCodeSent(false);
+    setError("");
+  }, [session?.userId]);
   useEffect(() => {
     if (method !== null || !session) return;
     if (session.local) {
@@ -76,13 +90,20 @@ export default function DeleteAccount() {
   }
   if (result)
     return (
-      <Screen title={result === "completed" ? "Account deleted" : "Deletion requested"}>
+      <Screen
+        title={
+          result === "completed" ? "Account deleted" : "Deletion requested"
+        }
+      >
         <Txt>
           {result === "completed"
             ? "Your account and its data have been deleted."
             : "Your cloud account is locked for deletion. Cleanup will continue automatically. Data on this device has been removed."}
         </Txt>
-        <Button title="Return to sign in" onPress={() => router.replace("/auth")} />
+        <Button
+          title="Return to sign in"
+          onPress={() => router.replace("/auth")}
+        />
       </Screen>
     );
   function confirm(text: string, action: () => void) {
@@ -107,20 +128,34 @@ export default function DeleteAccount() {
         )}
         {session?.local ? (
           <Notice text="This is a local development account. Deletion removes its data from this device." />
+        ) : method === null ? (
+          <Txt>Checking your account…</Txt>
         ) : method === "password" ? (
-          <Field
-            label="Current password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            autoComplete="current-password"
-            maxLength={128}
-          />
+          <>
+            <Field
+              label="Current password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              autoComplete="current-password"
+              maxLength={128}
+            />
+            <Button
+              title="Confirm with an email code instead"
+              variant="secondary"
+              disabled={busy}
+              onPress={() => {
+                setMethod("code");
+                setPassword("");
+                setError("");
+              }}
+            />
+          </>
         ) : codeSent ? (
           <>
             <Txt>
-              Enter the code we emailed to {session?.email || "your address"}. It
-              expires shortly.
+              Enter the code we emailed to {session?.email || "your address"}.
+              It expires shortly.
             </Txt>
             <Field
               label="Code from the email"
@@ -166,14 +201,14 @@ export default function DeleteAccount() {
           loading={busy}
           disabled={
             !session ||
+            method === null ||
             (method === "password" && !password) ||
             (method === "code" && (!codeSent || code.trim().length < 6))
           }
           onPress={() =>
             confirm(
               "",
-              () =>
-                void (method === "code" ? removeWithCode() : remove()),
+              () => void (method === "code" ? removeWithCode() : remove()),
             )
           }
         />

@@ -1,3 +1,4 @@
+import { importRecipeUrl } from "../../src/services/recipe-import";
 import { WorkspaceExit } from "../../src/ui/WorkspaceExit";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Alert, Platform, Share } from "react-native";
@@ -124,6 +125,11 @@ export default function NutritionInsights({
     [mealType, setMealType] = useState<Meal>("breakfast"),
     [mealGrams, setMealGrams] = useState(""),
     [itemKey, setItemKey] = useState("");
+  const [recipeUrl, setRecipeUrl] = useState("");
+  const [recipeSource, setRecipeSource] = useState<string | undefined>();
+  const [unmatched, setUnmatched] = useState<string[]>([]);
+  const [importing, setImporting] = useState(false);
+  const importRevision = useRef(0);
   const lock = useRef(false);
   const read = async (id: string) => {
     const [goals, recipes, planned, entries] = await Promise.all([
@@ -144,6 +150,11 @@ export default function NutritionInsights({
       setError("");
       if (draftOwner.current !== owner) {
         setRecipeEdit(null);
+        importRevision.current += 1;
+        setImporting(false);
+        setUnmatched([]);
+        setRecipeUrl("");
+        setRecipeSource(undefined);
         setMealEdit(null);
         setGoalsEdit(false);
         draftOwner.current = owner;
@@ -264,6 +275,8 @@ export default function NutritionInsights({
     if (!ready || lock.current) return;
     setRecipeEdit({ original: recipe ?? null, id: recipe?.id ?? randomUUID() });
     setRecipeName(recipe?.name ?? "");
+    setRecipeSource(recipe?.sourceUrl);
+    setUnmatched([]);
     setYieldGrams(recipe ? String(recipe.yieldGrams) : "");
     setIngredients(recipe?.ingredients ?? []);
     setIngredientKey(foodOptions[0]?.value ?? "");
@@ -307,6 +320,33 @@ export default function NutritionInsights({
         mealEdit.original,
       );
     });
+  const loadRecipe = async () => {
+    if (!owner || !ready || lock.current) return;
+    const id = owner,
+      request = ++importRevision.current;
+    lock.current = true;
+    setImporting(true);
+    setError("");
+    try {
+      const preview = await importRecipeUrl(recipeUrl);
+      if (ownerRef.current !== id || request !== importRevision.current) return;
+      setRecipeEdit({ original: null, id: randomUUID() });
+      setRecipeName(preview.name);
+      setRecipeSource(preview.sourceUrl);
+      setUnmatched(preview.ingredients);
+      setIngredients([]);
+      setYieldGrams("");
+      setIngredientKey(foodOptions[0]?.value ?? "");
+      setIngredientGrams("");
+    } catch (e) {
+      if (ownerRef.current === id && request === importRevision.current)
+        setError(userMessage(e));
+    } finally {
+      lock.current = false;
+      if (ownerRef.current === id && request === importRevision.current)
+        setImporting(false);
+    }
+  };
   const editing = goalsEdit || !!recipeEdit || !!mealEdit;
   return (
     <Screen
@@ -541,13 +581,30 @@ export default function NutritionInsights({
                     finished batch weight to account for water gained or lost.
                     Unknown nutrients remain unavailable.
                   </Txt>
+                  {!!recipeSource && (
+                    <Txt size="caption" color={c.muted}>
+                      Source: {recipeSource}
+                    </Txt>
+                  )}
+                  {!!unmatched.length && (
+                    <Notice
+                      text={`Confirm ${unmatched.length} remaining ingredients. Match the next ingredient to one of your logged foods and enter its measured grams. Website quantities and nutrition are never assumed.`}
+                    />
+                  )}
+                  {!!unmatched.length && (
+                    <Txt weight="600">Next: {unmatched[0]}</Txt>
+                  )}
                   {ingredients.map((ingredient, index) => (
                     <ListRow
                       key={index}
                       title={`${ingredient.food.name} · ${number(ingredient.grams)} g`}
-                      detail="Tap to remove ingredient"
+                      detail={
+                        recipeSource && !recipeEdit.original
+                          ? "Confirmed measured ingredient"
+                          : "Tap to remove ingredient"
+                      }
                       onPress={() => {
-                        if (!pending)
+                        if (!pending && !(recipeSource && !recipeEdit.original))
                           setIngredients((prev) =>
                             prev.filter((_, i) => i !== index),
                           );
@@ -594,6 +651,7 @@ export default function NutritionInsights({
                               { food, grams: amount },
                             ]);
                             setIngredientGrams("");
+                            setUnmatched((prev) => prev.slice(1));
                             setError("");
                           } catch (e) {
                             setError(userMessage(e));
@@ -608,9 +666,14 @@ export default function NutritionInsights({
                   )}
                   <Button
                     title="Save recipe"
-                    disabled={!!pending}
+                    disabled={!!pending || unmatched.length > 0}
                     onPress={() =>
                       void perform("Saving recipe", (id) => {
+                        if (unmatched.length)
+                          throw new AppFailure(
+                            "validation",
+                            "Confirm every imported ingredient before saving.",
+                          );
                         if (!recipeEdit)
                           throw new AppFailure(
                             "validation",
@@ -621,6 +684,9 @@ export default function NutritionInsights({
                             id: recipeEdit.id,
                             ownerId: id,
                             name: recipeName.trim(),
+                            ...(recipeSource
+                              ? { sourceUrl: recipeSource }
+                              : {}),
                             ingredients,
                             yieldGrams: positive(yieldGrams),
                             updatedAt: Date.now(),
@@ -667,7 +733,28 @@ export default function NutritionInsights({
                   <Button
                     title="Create recipe"
                     onPress={() => openRecipe()}
-                    disabled={!!pending}
+                    disabled={!!pending || importing}
+                  />
+                  <Field
+                    label="Recipe website link"
+                    value={recipeUrl}
+                    onChangeText={setRecipeUrl}
+                    autoCapitalize="none"
+                    keyboardType="url"
+                    editable={!pending && !importing}
+                    maxLength={2000}
+                    placeholder="https://…"
+                  />
+                  <Txt size="caption" color={c.muted}>
+                    Import a website's structured ingredient list, then match
+                    every ingredient to a logged food and measured grams. The
+                    recipe stays a draft until you save.
+                  </Txt>
+                  <Button
+                    title={importing ? "Opening recipe…" : "Import recipe link"}
+                    variant="secondary"
+                    disabled={!!pending || importing || !recipeUrl.trim()}
+                    onPress={() => void loadRecipe()}
                   />
                   {!snapshot.recipes.length && (
                     <Txt color={c.muted}>No recipes saved yet.</Txt>

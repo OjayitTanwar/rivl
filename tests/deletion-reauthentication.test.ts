@@ -21,10 +21,12 @@ const from = vi.hoisted(() => {
   return { maybeSingle, eq, select, table };
 });
 const invoke = vi.hoisted(() =>
-  vi.fn<() => Promise<{
-    data: { accepted: boolean; state: string } | null;
-    error: { message: string } | null;
-  }>>(async () => ({
+  vi.fn<
+    () => Promise<{
+      data: { accepted: boolean; state: string } | null;
+      error: { message: string } | null;
+    }>
+  >(async () => ({
     data: { accepted: true, state: "requested" },
     error: null,
   })),
@@ -60,7 +62,9 @@ beforeEach(() => {
   });
   auth.getSession.mockResolvedValue({
     data: {
-      session: { user: { identities: [{ provider: "email" }] } },
+      session: {
+        user: { id: session.userId, identities: [{ provider: "email" }] },
+      },
     },
     error: null,
   });
@@ -70,14 +74,17 @@ it("offers password reauthentication only when the account has a password identi
   auth.getSession.mockResolvedValueOnce({
     data: {
       session: {
-        user: { identities: [{ provider: "google" }, { provider: "apple" }] },
+        user: {
+          id: session.userId,
+          identities: [{ provider: "google" }, { provider: "apple" }],
+        },
       },
     },
     error: null,
   });
   expect(await passwordDeletionAvailable(session)).toBe(false);
   auth.getSession.mockResolvedValueOnce({
-    data: { session: { user: {} } },
+    data: { session: { user: { id: session.userId } } },
     error: null,
   });
   expect(await passwordDeletionAvailable(session)).toBe(true);
@@ -174,4 +181,39 @@ it("reports an already-requested deletion without asking for the password again"
   state.row = { state: "requested" };
   expect(await requestDeletion(session, "wrong")).toBe("requested");
   expect(auth.signInWithPassword).not.toHaveBeenCalled();
+});
+
+it("refuses a stale deletion screen before emailing or verifying a code", async () => {
+  auth.getSession.mockResolvedValue({
+    data: { session: { user: { id: "other" } } },
+    error: null,
+  });
+  await expect(sendDeletionCode(session)).rejects.toThrow(
+    "account being deleted",
+  );
+  await expect(requestDeletionWithCode(session, "135246")).rejects.toThrow(
+    "account being deleted",
+  );
+  await expect(requestDeletion(session, "current-password")).rejects.toThrow(
+    "account being deleted",
+  );
+  expect(auth.signInWithOtp).not.toHaveBeenCalled();
+  expect(auth.verifyOtp).not.toHaveBeenCalled();
+  expect(auth.signInWithPassword).not.toHaveBeenCalled();
+  expect(invoke).not.toHaveBeenCalled();
+});
+it("does not submit after another sign-in replaces the reconfirmed account", async () => {
+  auth.getSession
+    .mockResolvedValueOnce({
+      data: { session: { user: { id: session.userId } } },
+      error: null,
+    })
+    .mockResolvedValueOnce({
+      data: { session: { user: { id: "other" } } },
+      error: null,
+    });
+  await expect(requestDeletionWithCode(session, "135246")).rejects.toThrow(
+    "account being deleted",
+  );
+  expect(invoke).not.toHaveBeenCalled();
 });
