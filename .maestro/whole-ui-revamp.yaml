@@ -1,0 +1,111 @@
+appId: app.rivl.training
+name: Unified RIVL UI review
+---
+- openLink: rivl://
+- extendedWaitUntil:
+    visible: "This week"
+    timeout: 20000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: unified-home
+- openLink: rivl://you
+- extendedWaitUntil:
+    visible: "Gear.*shoes.*bikes.*"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "Settings"
+    direction: UP
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: unified-you
+- tapOn: "Gear.*shoes.*bikes.*"
+- extendedWaitUntil:
+    visible: "Gear"
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: unified-gear
+- openLink: "rivl://maps?lat=51.5074&lng=-0.1278&place=London"
+- extendedWaitUntil:
+    visible: "Expand Routes around here"
+    timeout: 15000
+- extendedWaitUntil:
+    notVisible: "Drawing nearby paths.*"
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: unified-maps
+- openLink: "rivl://route-planner?lat=51.5074&lng=-0.1278&sport=ride"
+- extendedWaitUntil:
+    visible: "Plan a route"
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: unified-planner
+- openLink: rivl://routes
+- extendedWaitUntil:
+    visible: "Saved routes"
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: unified-routes
+- openLink: rivl://community
+- extendedWaitUntil:
+    visible: "Groups"
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: unified-groups
+- openLink: rivl://auto-record
+- extendedWaitUntil:
+    visible: "Start when you move"
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: unified-auto-start
+- openLink: rivl://progress
+- extendedWaitUntil:
+    visible: "Progress"
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: unified-progress
+- openLink: rivl://heatmap
+- extendedWaitUntil:
+    visible: "Personal.*"
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: unified-heatmap
+- openLink: rivl://offline-maps
+- extendedWaitUntil:
+    visible: "Offline.*"
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: unified-offline
+- openLink: rivl://settings
+- extendedWaitUntil:
+    visible: "Athlete profile"
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: unified-settings
+- tapOn: "Connected services"
+- extendedWaitUntil:
+    visible: "Mapbox fallback.*"
+    timeout: 15000
+- openLink: rivl://devices
+- extendedWaitUntil:
+    visible: "Devices & sensors"
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: unified-devices
+- openLink: rivl://watch
+- extendedWaitUntil:
+    visible: "No Apple Watch paired.*"
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: unified-watch

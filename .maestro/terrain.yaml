@@ -1,0 +1,16 @@
+appId: app.rivl.training
+---
+- launchApp
+- openLink: "rivl://flyover?kind=activity&id=demo-run-0"
+- extendedWaitUntil:
+    visible: "Terrain flyover"
+    timeout: 15000
+- extendedWaitUntil:
+    notVisible: "Loading terrain…"
+    timeout: 45000
+- assertNotVisible: "The terrain view couldn’t open.*"
+- assertNotVisible: "Terrain or map tiles could not load.*"
+- tapOn: "Play 3D flyover"
+- assertVisible: "Pause flyover"
+- waitForAnimationToEnd
+- takeScreenshot: terrain-oct10

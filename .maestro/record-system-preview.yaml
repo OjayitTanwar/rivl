@@ -1,0 +1,14 @@
+appId: app.rivl.training
+name: Current Record-led UI preview
+---
+- launchApp
+- openLink: rivl://
+- extendedWaitUntil:
+    visible: "This week"
+    timeout: 20000
+- takeScreenshot: record-style-home
+- openLink: rivl://auto-record
+- extendedWaitUntil:
+    visible: "Sport"
+    timeout: 20000
+- takeScreenshot: record-style-settings

@@ -1,0 +1,29 @@
+appId: app.rivl.training
+name: Review corrections and segment entry
+---
+- openLink: rivl://community
+- extendedWaitUntil:
+    visible: "Sign in to a cloud account"
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: unified-groups
+- openLink: rivl://segments
+- extendedWaitUntil:
+    visible: "No segments available yet"
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: unified-segments
+- openLink: "rivl://route-planner?lat=51.5074&lng=-0.1278&sport=ride"
+- extendedWaitUntil:
+    visible: "Drawing nearby paths.*"
+    timeout: 15000
+- takeScreenshot: loading-real-wait-a
+- takeScreenshot: loading-real-wait-b
+- extendedWaitUntil:
+    notVisible: "Drawing nearby paths.*"
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: unified-planner

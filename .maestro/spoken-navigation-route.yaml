@@ -1,0 +1,21 @@
+appId: app.rivl.training
+name: Find a walking route and start guidance
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "This week"
+    timeout: 15000
+- tapOn: "Record"
+- tapOn: "Routes"
+- tapOn: "Navigate to a place"
+- tapOn:
+    id: "navigation-destination"
+- inputText: "51.510,-0.125"
+- hideKeyboard
+- tapOn: "Find route and start guidance"
+- extendedWaitUntil:
+    visible: "Stop guidance"
+    timeout: 30000
+- assertVisible: "Repeat turn"
+- tapOn: "Stop guidance"
+- assertVisible: "Navigation stopped."

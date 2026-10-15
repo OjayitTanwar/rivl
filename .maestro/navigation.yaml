@@ -1,0 +1,25 @@
+appId: app.rivl.training
+name: Native navigation and accessibility
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Explore demo"
+    timeout: 30000
+- tapOn: "Explore demo"
+- extendedWaitUntil:
+    visible: "This week"
+    timeout: 15000
+- takeScreenshot: artifacts/ios-today
+- tapOn: "Progress"
+- assertVisible: "Fitness, fatigue & form"
+- tapOn: "Community"
+- assertVisible: "Feed"
+- tapOn: "You"
+- assertVisible: "Training profile"
+- tapOn: "Settings"
+- scrollUntilVisible:
+    element: "Dark"
+- tapOn: "Dark"
+- takeScreenshot: artifacts/ios-settings-dark
+

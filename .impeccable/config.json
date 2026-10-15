@@ -1,0 +1,44 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-color",
+        "value": "#203026",
+        "files": [
+          "app/activity/\\[id\\].tsx"
+        ],
+        "createdAt": "2026-10-10T09:03:11.449Z",
+        "reason": "Agent: existing completed=true saved-activity confirmation uses this intentional dark-theme green surface alongside the semantic success icon; preserve this status treatment."
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#e5efdd",
+        "files": [
+          "app/activity/\\[id\\].tsx"
+        ],
+        "createdAt": "2026-10-10T09:03:11.577Z",
+        "reason": "Agent: existing completed=true saved-activity confirmation uses this intentional light-theme green surface alongside the semantic success icon; preserve this status treatment."
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#203026",
+        "files": [
+          "app/activity/[id].tsx"
+        ],
+        "createdAt": "2026-10-12T10:58:48.634Z",
+        "reason": "Agent: preserve the existing dark saved-activity success surface previously reviewed on iPhone, with semantic green success icon."
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#e5efdd",
+        "files": [
+          "app/activity/[id].tsx"
+        ],
+        "createdAt": "2026-10-12T10:58:48.707Z",
+        "reason": "Agent: preserve the existing light saved-activity success surface previously reviewed on iPhone, with semantic green success icon."
+      }
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+appId: app.rivl.training
+name: Full-screen real satellite loading
+---
+- openLink: "rivl://route-planner?lat=51.5074&lng=-0.1278&sport=ride"
+- extendedWaitUntil:
+    visible: "Show satellite map"
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 5000
+- tapOn: "Show satellite map"
+- extendedWaitUntil:
+    visible: "Continue while it loads"
+    timeout: 15000
+- takeScreenshot: loading-full-screen
+- extendedWaitUntil:
+    notVisible: "Continue while it loads"
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: controls-planner

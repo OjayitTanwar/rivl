@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>WKApplication</key><true/>
+<key>WKCompanionAppBundleIdentifier</key><string>app.rivl.training</string>
+<key>NSHealthShareUsageDescription</key><string>RIVL reads measured heart rate during your watch workout.</string>
+<key>NSHealthUpdateUsageDescription</key><string>RIVL saves your watch workout and route to Apple Health.</string>
+<key>NSLocationWhenInUseUsageDescription</key><string>RIVL records your route during a workout.</string>
+<key>NSLocationAlwaysAndWhenInUseUsageDescription</key><string>RIVL records your workout route while the watch screen is dimmed.</string>
+<key>WKBackgroundModes</key><array><string>workout-processing</string><string>location</string></array>
+</dict></plist>

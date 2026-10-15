@@ -1,0 +1,27 @@
+appId: app.rivl.training
+name: Gear and automatic recording settings
+---
+- launchApp
+- openLink: rivl://
+- extendedWaitUntil:
+    visible: "Home"
+    timeout: 20000
+- openLink: rivl://gear
+- extendedWaitUntil:
+    visible: "Add gear"
+    timeout: 20000
+- takeScreenshot: gear
+- tapOn: "Add gear"
+- assertVisible: "Starting distance (km)"
+- takeScreenshot: gear-form
+- tapOn: "Save gear"
+- assertVisible: "Give your gear a name of 2–60 characters."
+- tapOn: "Cancel"
+- openLink: rivl://auto-record
+- extendedWaitUntil:
+    visible: "Automatic start"
+    timeout: 20000
+- assertVisible: "Sport"
+- assertVisible: "Review your activity before saving. Nothing is published automatically."
+
+- takeScreenshot: automatic-start

@@ -1,0 +1,15 @@
+appId: app.rivl.training
+---
+- launchApp
+- openLink: "rivl://suggested-routes"
+- extendedWaitUntil:
+    visible: "Find your next loop."
+    timeout: 15000
+- tapOn: "A 5 km walk around me"
+- inputText: "A 7 km walk around me"
+- assertVisible: "A 7 km walk around me"
+- tapOn: "Use request"
+- extendedWaitUntil:
+    visible: "7.00"
+    timeout: 10000
+- assertNotVisible: "Choose one activity and distance.*"

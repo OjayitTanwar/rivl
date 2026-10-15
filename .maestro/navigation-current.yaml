@@ -1,0 +1,32 @@
+appId: app.rivl.training
+name: Google navigation native preview
+---
+- stopApp
+- launchApp
+- openLink: rivl://navigate
+- extendedWaitUntil:
+    visible: "Where do you want to go?"
+    timeout: 15000
+- tapOn:
+    id: "navigation-destination"
+- eraseText
+- inputText: "Kensington Gardens London"
+- extendedWaitUntil:
+    visible: "Kensington Gardens.*"
+    timeout: 15000
+- takeScreenshot: .impeccable/review/places-oct12
+- tapOn:
+    point: "43%,39%"
+- hideKeyboard
+- tapOn: "Find routes"
+- tapOn:
+    text: "Allow While Using App"
+    optional: true
+- extendedWaitUntil:
+    visible: "Main route.*"
+    timeout: 30000
+- scrollUntilVisible:
+    element: "Add a detour on the map"
+- waitForAnimationToEnd
+- assertNotVisible: "Google Maps couldn’t load.*"
+- takeScreenshot: .impeccable/review/navigation-oct12

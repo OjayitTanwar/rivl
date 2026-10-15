@@ -1,0 +1,20 @@
+appId: app.rivl.training
+name: Settled map loading ground
+---
+- extendedWaitUntil:
+    visible: "This week"
+    timeout: 15000
+- openLink: "rivl://route-planner?lat=51.5074&lng=-0.1278&sport=ride"
+- waitForAnimationToEnd:
+    timeout: 500
+- extendedWaitUntil:
+    visible: "Drawing nearby paths.*"
+    timeout: 10000
+- takeScreenshot: loading-real-wait-a
+- takeScreenshot: loading-real-wait-b
+- extendedWaitUntil:
+    notVisible: "Drawing nearby paths.*"
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: unified-planner

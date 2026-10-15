@@ -1,0 +1,81 @@
+appId: app.rivl.training
+name: Terrain, offline paths, sensors and watch screens
+---
+- launchApp
+- openLink: "rivl://devices"
+- tapOn:
+    text: "Open"
+    optional: true
+# iOS 27 link confirmation is sometimes absent from XCUITest's tree.
+# This is the Open button observed in the captured iPhone 18 Pro prompt.
+- runFlow:
+    when:
+      notVisible: "Connect your sensors."
+    commands:
+      - tapOn:
+          point: "67%,55%"
+- extendedWaitUntil:
+    visible: "Connect your sensors."
+    timeout: 15000
+- waitForAnimationToEnd
+- takeScreenshot: artifacts/native/devices-oct10
+- tapOn: "Apple Watch"
+- extendedWaitUntil:
+    visible: "RIVL on your wrist."
+    timeout: 15000
+- waitForAnimationToEnd
+- takeScreenshot: artifacts/native/watch-oct10
+- openLink: "rivl://offline-maps"
+- extendedWaitUntil:
+    visible: "Take paths with you."
+    timeout: 15000
+- waitForAnimationToEnd
+- takeScreenshot: artifacts/native/offline-oct10
+- tapOn: "Leave blank for your current location"
+- inputText: "51.507,-0.128"
+- hideKeyboard
+- tapOn: "Download nearby path map"
+- extendedWaitUntil:
+    visible: "Downloaded .*road/path lines.*"
+    timeout: 30000
+- scrollUntilVisible:
+    element: "Remove area"
+- waitForAnimationToEnd
+- takeScreenshot: artifacts/native/offline-area-oct10
+- openLink: "rivl://segments"
+- extendedWaitUntil:
+    visible: "A stretch of possibility."
+    timeout: 15000
+- waitForAnimationToEnd
+- takeScreenshot: artifacts/native/segments-oct10
+- openLink: "rivl://activity/demo-run-0"
+- extendedWaitUntil:
+    visible: "3D flyover"
+    timeout: 15000
+- waitForAnimationToEnd
+- takeScreenshot: artifacts/native/activity-oct10
+- openLink: "rivl://flyover?kind=activity&id=demo-run-0"
+- extendedWaitUntil:
+    visible: "Terrain flyover"
+    timeout: 15000
+- extendedWaitUntil:
+    notVisible: "Loading terrain…"
+    timeout: 30000
+- assertNotVisible: "The terrain view couldn’t open.*"
+- assertNotVisible: "Terrain or map tiles could not load.*"
+- tapOn: "Play 3D flyover"
+- assertVisible: "Pause flyover"
+- waitForAnimationToEnd
+- takeScreenshot: artifacts/native/terrain-oct10
+- openLink: "rivl://heatmap"
+- extendedWaitUntil:
+    visible: "You’ve been places."
+    timeout: 15000
+- waitForAnimationToEnd
+- takeScreenshot: artifacts/native/heatmap-oct10
+- openLink: "rivl://suggested-routes"
+- extendedWaitUntil:
+    visible: "Find your next loop."
+    timeout: 15000
+- waitForAnimationToEnd
+- takeScreenshot: artifacts/native/suggestions-oct10

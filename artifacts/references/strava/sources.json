@@ -1,0 +1,45 @@
+{
+  "assets": [
+    {
+      "contentType": "image/webp",
+      "id": "534e612b37c6b978",
+      "kind": "image",
+      "name": "600x1300bb.webp",
+      "path": "/var/folders/9k/thqxp9sj3rq139pn90d_dbhw0000gn/T/browser-use/assets/af3ecffd-8aa3-4a61-877c-5a6ea9de20ef/534e612b37c6b978.webp",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/48/58/77/4858771e-bf02-e483-e890-3ffcf17552c4/AppStore-TodayTab-6.5-en-US.jpg/600x1300bb.webp"
+    },
+    {
+      "contentType": "image/webp",
+      "id": "9801c5aace21943d",
+      "kind": "image",
+      "name": "600x1300bb.webp",
+      "path": "/var/folders/9k/thqxp9sj3rq139pn90d_dbhw0000gn/T/browser-use/assets/af3ecffd-8aa3-4a61-877c-5a6ea9de20ef/9801c5aace21943d.webp",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/1d/ee/0c/1dee0cda-422e-229a-d93a-21660e75ea00/ASO-6.5-TrackWorkouts-en-US1201.jpg/600x1300bb.webp"
+    },
+    {
+      "contentType": "image/webp",
+      "id": "42575d86ad3544f7",
+      "kind": "image",
+      "name": "600x1300bb.webp",
+      "path": "/var/folders/9k/thqxp9sj3rq139pn90d_dbhw0000gn/T/browser-use/assets/af3ecffd-8aa3-4a61-877c-5a6ea9de20ef/42575d86ad3544f7.webp",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/2d/f2/7d/2df27d5a-ebf7-a552-a9ac-ea0bbace7506/ASO-6.5-Community-en-US-CopyA0805.jpg/600x1300bb.webp"
+    },
+    {
+      "contentType": "image/webp",
+      "id": "51823e55af8cb948",
+      "kind": "image",
+      "name": "600x1300bb.webp",
+      "path": "/var/folders/9k/thqxp9sj3rq139pn90d_dbhw0000gn/T/browser-use/assets/af3ecffd-8aa3-4a61-877c-5a6ea9de20ef/51823e55af8cb948.webp",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/4b/da/f0/4bdaf055-06fe-5073-c403-4629e64d019e/ASO-6.5-TrackWorkouts-en-US1201.jpg/600x1300bb.webp"
+    },
+    {
+      "contentType": "image/webp",
+      "id": "ba71769a9f5574c0",
+      "kind": "image",
+      "name": "600x1300bb.webp",
+      "path": "/var/folders/9k/thqxp9sj3rq139pn90d_dbhw0000gn/T/browser-use/assets/af3ecffd-8aa3-4a61-877c-5a6ea9de20ef/ba71769a9f5574c0.webp",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/3a/c3/7a/3ac37a75-81c4-f5dd-3a18-2d9a57e52b66/12-ASO-6.5-Hiking.jpg/600x1300bb.webp"
+    }
+  ],
+  "failures": []
+}

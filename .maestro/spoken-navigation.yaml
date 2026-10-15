@@ -1,0 +1,14 @@
+appId: app.rivl.training
+name: Open spoken navigation from Routes
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "This week"
+    timeout: 15000
+- tapOn: "Record"
+- tapOn: "Routes"
+- tapOn: "Navigate to a place"
+- assertVisible: "Where do you want to go?"
+- assertVisible: "Find route and start guidance"
+- assertVisible: "Walk"
+- assertVisible: "Cycle"

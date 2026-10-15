@@ -1,0 +1,31 @@
+appId: app.rivl.training
+name: Real route calculation full-screen load
+---
+- openLink: "rivl://route-planner?lat=51.5074&lng=-0.1278&sport=ride"
+- extendedWaitUntil:
+    visible: "Recenter map"
+    timeout: 30000
+- extendedWaitUntil:
+    notVisible: "Continue while it loads"
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: controls-planner
+- tapOn:
+    point: "25%,40%"
+- tapOn:
+    point: "75%,50%"
+- extendedWaitUntil:
+    visible: "2 stops"
+    timeout: 10000
+- tapOn: "Find paths"
+- extendedWaitUntil:
+    visible: "Continue while it loads"
+    timeout: 15000
+- takeScreenshot: loading-full-screen
+- extendedWaitUntil:
+    notVisible: "Continue while it loads"
+    timeout: 90000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: controls-route-result

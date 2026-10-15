@@ -1,0 +1,53 @@
+appId: app.rivl.training
+name: Native GPS recording, pause, and save
+---
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "This week"
+    timeout: 15000
+- tapOn: "Record"
+- tapOn:
+    id: "start-recording"
+- runFlow:
+    when:
+      visible: "Allow While Using App"
+    commands:
+      - tapOn: "Allow While Using App"
+- extendedWaitUntil:
+    visible: "Pause"
+    timeout: 20000
+- extendedWaitUntil:
+    notVisible: "Acquiring GPS"
+    timeout: 20000
+- takeScreenshot: artifacts/ios-native-gps
+- tapOn: "Pause"
+- assertVisible: "Resume"
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "This week"
+    timeout: 15000
+- tapOn: "Record"
+- assertVisible: "Resume"
+- tapOn: "Resume"
+- extendedWaitUntil:
+    visible: "Pause"
+    timeout: 15000
+- tapOn: "Finish"
+- runFlow:
+    when:
+      visible: "Finish anyway"
+    commands:
+      - tapOn: "Finish anyway"
+- scrollUntilVisible:
+    element: "Activity title"
+- tapOn:
+    id: "workout-title"
+- inputText: "Native GPS test"
+- pressKey: Enter
+- tapOn: "Save activity"
+- extendedWaitUntil:
+    visible: "Activity saved on your device."
+    timeout: 15000
+- assertVisible: "Native GPS test"

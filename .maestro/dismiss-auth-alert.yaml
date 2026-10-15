@@ -1,0 +1,9 @@
+appId: app.rivl.training
+name: Dismiss simulator password suggestion
+---
+- tapOn:
+    point: "30%,63%"
+- extendedWaitUntil:
+    visible: "Explore your world"
+    timeout: 15000
+- takeScreenshot: .impeccable/review/today-oct13

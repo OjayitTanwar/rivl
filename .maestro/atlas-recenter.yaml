@@ -1,0 +1,7 @@
+appId: app.rivl.training
+---
+- openLink: rivl://maps
+- tapOn: "Recenter map"
+- extendedWaitUntil:
+    visible: "Your position"
+    timeout: 15000

@@ -1,0 +1,14 @@
+appId: app.rivl.training
+name: Navigation voice selection
+---
+- openLink: rivl://navigate
+- extendedWaitUntil:
+    visible: "Where do you want to go?"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "Voice:.*"
+- tapOn: "Voice:.*"
+- extendedWaitUntil:
+    visible: "Rishi · en-IN"
+    timeout: 15000
+- takeScreenshot: .impeccable/review/navigation-voice-oct13

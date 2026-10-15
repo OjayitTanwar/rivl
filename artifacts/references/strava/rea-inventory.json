@@ -1,0 +1,1194 @@
+{
+  "evidence_id": "ev_824731d8cb67b9465b8f8d39a7e79afb5683d880d67a1d971f3bcdfd7a05cda9",
+  "subject": {
+    "name": "strava-484-10.xapk",
+    "digest": {
+      "sha256": "b780d0c82e638f147715dce69fc398161516a043581dc5561d7ecde9519d9df5"
+    },
+    "format": "zip",
+    "architecture": null,
+    "local_path": "/Users/ojayitsinghtanwar/Downloads/strava-484-10.xapk"
+  },
+  "provider": {
+    "id": "rea-artifact-graph",
+    "name": "REA safe artifact graph provider",
+    "version": "1"
+  },
+  "analysis_profile": null,
+  "predicate_type": "rea.analysis",
+  "operation": "inspect_artifact",
+  "parameters": {
+    "integrity_policy": "fail"
+  },
+  "raw_result": null,
+  "normalized_result": {
+    "inspection_id": "ai_384ddb89384dbb5629d138df0f18db069fd18e639cca068b860eb78acfe3745c",
+    "subject": {
+      "manifest_id": "agm_d14862faec6dc28eda2d1137c7cdf9a86201b81c2327544160a3c0d30ce1cab4",
+      "root_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+      "root_sha256": "b780d0c82e638f147715dce69fc398161516a043581dc5561d7ecde9519d9df5",
+      "root_format": "zip"
+    },
+    "substeps": [
+      {
+        "substep_id": "ais_16b4bf5aaf30cbf437cec255644afc352723b77e4b50826537510d3f20e4a1c0",
+        "operation": "inventory_artifact",
+        "status": "completed",
+        "evidence_id": "ev_e8b153f6b05877eef4cef33bf0e5ef799b0b117d91e22f102f43343f62ca28df",
+        "evidence": {
+          "evidence_id": "ev_e8b153f6b05877eef4cef33bf0e5ef799b0b117d91e22f102f43343f62ca28df",
+          "subject": {
+            "name": "strava-484-10.xapk",
+            "digest": {
+              "sha256": "b780d0c82e638f147715dce69fc398161516a043581dc5561d7ecde9519d9df5"
+            },
+            "format": "zip",
+            "architecture": null,
+            "local_path": "/Users/ojayitsinghtanwar/Downloads/strava-484-10.xapk"
+          },
+          "provider": {
+            "id": "rea-artifact-graph",
+            "name": "REA safe artifact graph provider",
+            "version": "1"
+          },
+          "analysis_profile": null,
+          "predicate_type": "rea.analysis",
+          "operation": "inventory_artifact",
+          "parameters": {
+            "integrity_policy": "fail"
+          },
+          "raw_result": null,
+          "normalized_result": {
+            "manifest": {
+              "manifest_id": "agm_d14862faec6dc28eda2d1137c7cdf9a86201b81c2327544160a3c0d30ce1cab4",
+              "root_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+              "root_sha256": "b780d0c82e638f147715dce69fc398161516a043581dc5561d7ecde9519d9df5",
+              "root_format": "zip",
+              "graph_sha256": "2d1a9771493e906aa7131847a0c81ccab4ef86fd94ec02f2be5d0b3006f2fcce",
+              "node_count": 31,
+              "occurrence_count": 31,
+              "edge_count": 30
+            },
+            "nodes": [
+              {
+                "artifact_id": "art_058c3f5895bff389c961f10a0a3a3f124a0c0606c7e19274be2ec7ded68e6e4a",
+                "format": "zip",
+                "sha256": "74345a9619bc4b8259cc0da3f0dac2da17e262c12ba997f5b69a119296f0c07d",
+                "size": 4696986,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_08e7f1481d98f64a9492c13c789665550e85d1a2f5e13ceb83c23822365c42e0",
+                "format": "zip",
+                "sha256": "35f8a8a02c288b192dc07e5ce37d2b0c6a5e07f2a86414bb963692d6b129d695",
+                "size": 1130706,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_12737c3094c0b949b0192e617c0ee0e0773fabaefc1ee73ff5f8fccb1af4838b",
+                "format": "zip",
+                "sha256": "d0f3cfe2908db45c042e602b4f2a7b9611148db38199373787c77a58b7b5bf65",
+                "size": 827602,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_32d8886da7d77dea8896c49f08a9752f0820ddc9210678993eb95df01e03e07c",
+                "format": "zip",
+                "sha256": "2cc29a962473b96771b373259679e7c2198e8e5768c5601e8dc24340c6cd6d75",
+                "size": 843986,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_3c7080777398bcab1af0075706ecce6cb79e8dcc5ecab971ed93d11ed151dc49",
+                "format": "zip",
+                "sha256": "bac9323406bb8a24fafdb98e1fce1b7d7f9fcb70c783c686e5d6335d11d06895",
+                "size": 872658,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_563c4007b80771ae35aa20fa03c327fc1c39df5ef4d290dd160ffab025f47749",
+                "format": "zip",
+                "sha256": "b57174bb08979b142d92ec75134f57c36c1187c7a324fe7cda8fc474691a886f",
+                "size": 5974949,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_6ab311512a0fa35a36e2897e70837ca4c169aac064b81603d3b191528ced173e",
+                "format": "zip",
+                "sha256": "16441e76c671ad7a71441a834fe94b6f27f6066e4a8231de7330c12fb401c478",
+                "size": 880850,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_6db57a92117c53c03092018abd34abd8b7e1e2cdb2ee392c605705d3de971082",
+                "format": "zip",
+                "sha256": "22d0ee7c75adb8f8d04a9707982019a216c03fe467af4d19f41a73e8afa53e93",
+                "size": 815314,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_6f97f2569404c30be42057679a3bd45eb12586c915ae4c1958b2c6898087969c",
+                "format": "zip",
+                "sha256": "aeb2bcb897d3ed0407d3d36bade118e8ee931d52ff5d1b088e22a51b713d5b23",
+                "size": 99643094,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_6ffbf9dc1d4260f342a779f3b442f3903b2df09b699038eb4af66bc6f52b35c1",
+                "format": "zip",
+                "sha256": "df411c60dc7f0cc2460ed24b2b20e98bf711b5d152268a91493a7aa1b75dbdc2",
+                "size": 807122,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_719ef20d080a9b3783194197b28ec6117f568015b9093d675e426df0070e0545",
+                "format": "zip",
+                "sha256": "fc0533253eab64f3ee691bba1e533ef9dc2f3040dffa764dfeecb46d40c06ff5",
+                "size": 7203328,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_74e5d130e07a17889154891c5287d2bfdf48003768a116f82a49fec1a6cc91b1",
+                "format": "zip",
+                "sha256": "d5dae3ce13cbb19866c06674651167a01294581926c14f4aefa321226010cd14",
+                "size": 831698,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_8844713d3dc6c5c42e0cb7102ec0b024187dc7b2df729c3383cae3922ebd0446",
+                "format": "zip",
+                "sha256": "87b7d8bf4af91c679fa5ee319b8d401486eba24e115abbe27898ebb14eb0a735",
+                "size": 7158917,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_8f8fa37b8a37f051dd1cf2e7a0749c3069b43f7a235af5e423f84c56e60484ef",
+                "format": "zip",
+                "sha256": "cf102720f6a408150f1e21563b325a07d6ee6e99717fd25f1d50c0a106cdfd7a",
+                "size": 938540,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_97a3abbd2b76bc3cbea999e744177f3e7e1d6101b15c03f5d7fb51be7d4c3439",
+                "format": "zip",
+                "sha256": "c28dad20ebc9921f5762ba55ef737ad176fb81221c7773be16c1342c52dc92a6",
+                "size": 790738,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_9b07bfe71ea6a53e25198a259bea9996a50db32d5298dec20257c00966ee2f8a",
+                "format": "zip",
+                "sha256": "184a2e4c126d3da11dc566a9d7c4560468000dddb8976dcdf16ad8208f16f177",
+                "size": 803026,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_a01379fb74d6365fcf5b99f468922318b3d456482df11be6fc030808a8b4853a",
+                "format": "zip",
+                "sha256": "472d3f12568b6a2d9b1c0a45c82c281a47a5d4dd77a5e51e92a520827e6e6b9d",
+                "size": 827602,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_ab5901e6b7cd0022701ecf2225c24486f7b26a6dbc3cb3d792e590df56fbf0a8",
+                "format": "zip",
+                "sha256": "2f637406e70bdc2d44e2622573b1a99b7b74c33666aaf22f846c4d2dea7e6823",
+                "size": 1225276,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_ae0d08473ff98638c8773856a7879c8b51eb1ad221384f2fa9762656ab596b4e",
+                "format": "zip",
+                "sha256": "9c417c9f8d8f56310c0c958fd18b7dbdf48316f39fa887d9e4085a6bbe2c929c",
+                "size": 15703706,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "format": "zip",
+                "sha256": "b780d0c82e638f147715dce69fc398161516a043581dc5561d7ecde9519d9df5",
+                "size": 150702179,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "materialized",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_bd045550ca089d38ebdd7665a675e23b5f35ca3676d921b0d704102f7c26c886",
+                "format": "zip",
+                "sha256": "923335cfcbeee7d1ff094c5d333792b512a7c31197a35b7c257bef2b1edfe2c4",
+                "size": 110802,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_c1d004c54ff87c7d4c332ed74f017777792e5ca9c28f0b5a40803d039c924ebc",
+                "format": "zip",
+                "sha256": "97174df34c55b6b30772676ebcc71548c6d53461b9cb491a938bc2144885e4d8",
+                "size": 815314,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_ca0e3f1b6fc4051f845298592116740f2f2ab2795459df0a7436d121c9394c24",
+                "format": "zip",
+                "sha256": "d0e5e8fbca24e72b3c238103ac574a27ff4d195ea5ed043764c59c88dd0fe969",
+                "size": 1102034,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_ca4aff95050b9888c9d06c8025c9dc314c82a2f25638812a6373aa611deac026",
+                "format": "zip",
+                "sha256": "9487f8a161a8aa5ae02880055db21c05b71ddad3211f63571cd4acf1a77a3ccd",
+                "size": 905426,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_d31f7e28ba57d803404bb14dec2998ba944a658b6c7df800e3b185deaea7d555",
+                "format": "zip",
+                "sha256": "a241e743fd0c5f9fa7192da517a9513b15acefcd87062c9c38d00284ef523501",
+                "size": 790738,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_d52ec2b822df57c142d5a78414766e89306deeabff3f0161fb1264ddf22ebe17",
+                "format": "zip",
+                "sha256": "27d38f653190092c910e2c95c4455e4f16a201530822fdc15aaa1b09e229e69a",
+                "size": 1233814,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_ec11c0f585bcaec9cbc8c12b70169859af64d2e79f532e8befc3ce6c0c136f84",
+                "format": "zip",
+                "sha256": "5d547cde388ff06c123d927ef3b8dd3dfd222ce2af86c1caa44afe21a549139e",
+                "size": 31126639,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_ed020033a029ee8684dba49118ad6d5e97ef76225c984ccb540e8ff43917c8af",
+                "format": "zip",
+                "sha256": "5ad336fecea284733eecd10af840823ca8d7ec549fcbb1653145777ed0898635",
+                "size": 43492439,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_f2bca2b02df33559e1cd76bd223d28153f2042ba5a0f8e2a6375b701f4cd513e",
+                "format": "zip",
+                "sha256": "efc584b147edab1ee3631575c4f7de7e0b6dd61c7a072985961d6ebb39cb9ece",
+                "size": 987346,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_fa0f3e70581d993b4542a400b3c08a337f0bfcd6ae1245d1b04e5268a8ce3358",
+                "format": "zip",
+                "sha256": "efa9ba8cfb05e9afc0c267ea352b13949a8dc4443cdcf6f232757e922da3bc4a",
+                "size": 803026,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              },
+              {
+                "artifact_id": "art_ffd60729f628a0b5f2207ca613abecf4300e783b64d90d445593db62a332172d",
+                "format": "zip",
+                "sha256": "ebfc5072674274b0e95a5fee31563175fa661a49b32ba42a05f4af123b91aaee",
+                "size": 12316171,
+                "media_type": null,
+                "architecture": null,
+                "content_state": "embedded",
+                "limitations": []
+              }
+            ],
+            "occurrences": [
+              {
+                "occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "parent_occurrence_id": null,
+                "logical_path": ".",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "zip",
+                "declared_size": 150702179,
+                "compressed_size": null,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_70ebb9fc83845a7b793e7c7686cb32a4f97f95f5c0a8f7ff5830bc6dc93b0b87",
+                "artifact_id": "art_6f97f2569404c30be42057679a3bd45eb12586c915ae4c1958b2c6898087969c",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "com.strava.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 99643094,
+                "compressed_size": 60312656,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_e5d5875a887265686c02721a2ac1229a1afcbf178897d67383059e2dd901f624",
+                "artifact_id": "art_ed020033a029ee8684dba49118ad6d5e97ef76225c984ccb540e8ff43917c8af",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.arm64_v8a.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 43492439,
+                "compressed_size": 17638539,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_d00238d02af06725a7acade62cd698a8b62fefeca11a685423fc9adaa7258ff3",
+                "artifact_id": "art_ec11c0f585bcaec9cbc8c12b70169859af64d2e79f532e8befc3ce6c0c136f84",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.armeabi_v7a.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 31126639,
+                "compressed_size": 15521309,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_c114bb49eab46bc45cb84efb3578aed6350584e733c16e2f2a1f4a0fdb6ca409",
+                "artifact_id": "art_74e5d130e07a17889154891c5287d2bfdf48003768a116f82a49fec1a6cc91b1",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.cs.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 831698,
+                "compressed_size": 253598,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_38ab38258b63d0a7087a9b8535a09955221755bcdf415d6eac4b2e920058e184",
+                "artifact_id": "art_97a3abbd2b76bc3cbea999e744177f3e7e1d6101b15c03f5d7fb51be7d4c3439",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.da.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 790738,
+                "compressed_size": 236582,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_eb1f3dc35f37bd0ae5e0b8be31c1380a617c35061a9eb47c9cd535c70e81c5c8",
+                "artifact_id": "art_12737c3094c0b949b0192e617c0ee0e0773fabaefc1ee73ff5f8fccb1af4838b",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.de.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 827602,
+                "compressed_size": 246900,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_a36f06c144c90d81d86ea9f53556f060596d5c31ca5ce7aab968c81895b1c276",
+                "artifact_id": "art_bd045550ca089d38ebdd7665a675e23b5f35ca3676d921b0d704102f7c26c886",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.en.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 110802,
+                "compressed_size": 26213,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_0c783ec7969f28f25fe2108e9adc9453dd968bca56076547edab29cf6a9c9589",
+                "artifact_id": "art_d52ec2b822df57c142d5a78414766e89306deeabff3f0161fb1264ddf22ebe17",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.es.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 1233814,
+                "compressed_size": 366416,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_cdddeaf33332d5bbecdf7d3bb3f742ea52452142c183c2837c90fe4bef93f67a",
+                "artifact_id": "art_ca4aff95050b9888c9d06c8025c9dc314c82a2f25638812a6373aa611deac026",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.fr.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 905426,
+                "compressed_size": 264121,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_440408b3144b058a3589925bdc32ee87ca5097488a938b726e50ca015711a035",
+                "artifact_id": "art_563c4007b80771ae35aa20fa03c327fc1c39df5ef4d290dd160ffab025f47749",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.hdpi.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 5974949,
+                "compressed_size": 5826859,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_3f4cedaeb43b31090a563777083004a28a675a3408abbc15a1e42568487fac11",
+                "artifact_id": "art_32d8886da7d77dea8896c49f08a9752f0820ddc9210678993eb95df01e03e07c",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.in.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 843986,
+                "compressed_size": 247287,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_3033c49ea486dd5c62f9849e7a8fe3c7b229d844ad3cee0c789d9ceac6e7f582",
+                "artifact_id": "art_3c7080777398bcab1af0075706ecce6cb79e8dcc5ecab971ed93d11ed151dc49",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.it.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 872658,
+                "compressed_size": 257339,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_525c80c8916f9a207a41a1c836a1e1c4222c0c16330b7d15da25e994b508a91b",
+                "artifact_id": "art_8f8fa37b8a37f051dd1cf2e7a0749c3069b43f7a235af5e423f84c56e60484ef",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.ja.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 938540,
+                "compressed_size": 259401,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_426866059b92b4f28c59102abf6716eadfe780344ae7aeb169040a7d3047df37",
+                "artifact_id": "art_058c3f5895bff389c961f10a0a3a3f124a0c0606c7e19274be2ec7ded68e6e4a",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.mdpi.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 4696986,
+                "compressed_size": 4549838,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_aee26ae69df5e027242af4a331652215eddad523a13ac91cd54dc589d49044c8",
+                "artifact_id": "art_9b07bfe71ea6a53e25198a259bea9996a50db32d5298dec20257c00966ee2f8a",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.ms.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 803026,
+                "compressed_size": 235113,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_0784d46a05bef94823f492ab8c2d14c04cc9f1b28216957b33fc00dc8cf0ce0e",
+                "artifact_id": "art_d31f7e28ba57d803404bb14dec2998ba944a658b6c7df800e3b185deaea7d555",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.nb.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 790738,
+                "compressed_size": 236403,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_74603cff836bff5fc9178ebd5e0b40b2e38824a9e5d014533518b22151809faa",
+                "artifact_id": "art_6ffbf9dc1d4260f342a779f3b442f3903b2df09b699038eb4af66bc6f52b35c1",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.nl.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 807122,
+                "compressed_size": 240363,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_bc3b542cc2403a0e1f6c7784718c5a65a11350f4b6af9e91617c50b23c6c133b",
+                "artifact_id": "art_a01379fb74d6365fcf5b99f468922318b3d456482df11be6fc030808a8b4853a",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.pl.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 827602,
+                "compressed_size": 249616,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_34b7992bfacc671d311404c93c0c2acbd522a675e3b045de8890bfa02f6cb72c",
+                "artifact_id": "art_ab5901e6b7cd0022701ecf2225c24486f7b26a6dbc3cb3d792e590df56fbf0a8",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.pt.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 1225276,
+                "compressed_size": 367905,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_d8b8670dda36d459c0f9840cb852061bc2040b62180549ce65d98b5cff484d84",
+                "artifact_id": "art_f2bca2b02df33559e1cd76bd223d28153f2042ba5a0f8e2a6375b701f4cd513e",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.ru.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 987346,
+                "compressed_size": 263238,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_93300d9c10fc4869837c30528ff1bdd8ddbb973267d54e47d90005203e25af8d",
+                "artifact_id": "art_fa0f3e70581d993b4542a400b3c08a337f0bfcd6ae1245d1b04e5268a8ce3358",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.sv.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 803026,
+                "compressed_size": 238212,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_f0c57faf2974980400d839f74563fa8548ba612bc67db3f08e7b5259a3ef05f6",
+                "artifact_id": "art_08e7f1481d98f64a9492c13c789665550e85d1a2f5e13ceb83c23822365c42e0",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.th.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 1130706,
+                "compressed_size": 254600,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_9abeacb08e09a19f903116870badf702a2ec30725478efb7f36df61da7cd0b42",
+                "artifact_id": "art_6db57a92117c53c03092018abd34abd8b7e1e2cdb2ee392c605705d3de971082",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.tl.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 815314,
+                "compressed_size": 238628,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_d95e59c98faf9abc98e7360b3fe56032dbf1d76347fa76219cb3d537a985def8",
+                "artifact_id": "art_c1d004c54ff87c7d4c332ed74f017777792e5ca9c28f0b5a40803d039c924ebc",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.tr.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 815314,
+                "compressed_size": 242673,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_d147900abb1da72533fd50cbef1ba05a36985e054c40702c47b3297c9a94199f",
+                "artifact_id": "art_719ef20d080a9b3783194197b28ec6117f568015b9093d675e426df0070e0545",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.tvdpi.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 7203328,
+                "compressed_size": 6995591,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_4a9b396271d6b73cc527b29acd2fed75ea890e2972dc574f9660848e35afc80c",
+                "artifact_id": "art_6ab311512a0fa35a36e2897e70837ca4c169aac064b81603d3b191528ced173e",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.vi.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 880850,
+                "compressed_size": 243568,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_88c5694f0dfe55a07a4ca6c50a10096da3c9a722a9bc489ace8cccd4723152fb",
+                "artifact_id": "art_8844713d3dc6c5c42e0cb7102ec0b024187dc7b2df729c3383cae3922ebd0446",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.xhdpi.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 7158917,
+                "compressed_size": 6996280,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_d347bea15bb319b6a371e658924855f65569374e51693cb5450651ddc03f1a07",
+                "artifact_id": "art_ffd60729f628a0b5f2207ca613abecf4300e783b64d90d445593db62a332172d",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.xxhdpi.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 12316171,
+                "compressed_size": 12103295,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_7ddd89ca888e9050ebf71fac5695a26db9f55554e0255dee4f6c1431ca62aa91",
+                "artifact_id": "art_ae0d08473ff98638c8773856a7879c8b51eb1ad221384f2fa9762656ab596b4e",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.xxxhdpi.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 15703706,
+                "compressed_size": 15437012,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              },
+              {
+                "occurrence_id": "occ_1dd2ce915a9607edd79ceb25a1d99638406e0fefef6ef9dd011909b75e36c98a",
+                "artifact_id": "art_ca0e3f1b6fc4051f845298592116740f2f2ab2795459df0a7436d121c9394c24",
+                "parent_occurrence_id": "occ_dbeac23a566a5deecf1c5928d49ea97c1df9a94fead8858fc777e14127eeff9c",
+                "logical_path": "config.zh.apk",
+                "entry_kind": "file",
+                "artifact_kind": "container",
+                "artifact_format": "apk",
+                "declared_size": 1102034,
+                "compressed_size": 349470,
+                "executable": false,
+                "encrypted": false,
+                "hash_status": "verified",
+                "source_location": null,
+                "limitations": []
+              }
+            ],
+            "edges": [
+              {
+                "edge_id": "edge_0191296841510d7a36788e65b592923f5bf478b7f1e6e2dc782cd82f62e83558",
+                "ordinal": 0,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_cdddeaf33332d5bbecdf7d3bb3f742ea52452142c183c2837c90fe4bef93f67a",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_02e95683bba050ed1226a72e777b6d5a2c11960b0407e16fb9d32ec9a3218b43",
+                "ordinal": 1,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_3f4cedaeb43b31090a563777083004a28a675a3408abbc15a1e42568487fac11",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_1db3f9fc83814ffdc601ff9b635ece2aa3026775c8aeb9729b451419a7dd5818",
+                "ordinal": 2,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_0c783ec7969f28f25fe2108e9adc9453dd968bca56076547edab29cf6a9c9589",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_275d1f97daf853e7be0ecdd47459f28936da703e7976a761e20dea12590b4c6a",
+                "ordinal": 3,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_38ab38258b63d0a7087a9b8535a09955221755bcdf415d6eac4b2e920058e184",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_312f7240ce2301d3a96e59314de1315bcb5082589195e3ed5f19e2927b235ce3",
+                "ordinal": 4,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_d8b8670dda36d459c0f9840cb852061bc2040b62180549ce65d98b5cff484d84",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_32980517fdd665ba9bc33257eabd4a1ac3264b9c22be96b299289d0295932b94",
+                "ordinal": 5,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_a36f06c144c90d81d86ea9f53556f060596d5c31ca5ce7aab968c81895b1c276",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_386584af71b3f1a98619d1bc289a8d586fe9afdeac25143e8df5915ae0c851b6",
+                "ordinal": 6,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_d147900abb1da72533fd50cbef1ba05a36985e054c40702c47b3297c9a94199f",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_49c7d33b6fdf4b6f4c1f4ab4f4f86f9402b4535eac0c4555ca70b477c181ee46",
+                "ordinal": 7,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_1dd2ce915a9607edd79ceb25a1d99638406e0fefef6ef9dd011909b75e36c98a",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_5ed52bd78f36e29c203ee4400713025c2f3a3f11d585fd3d1012a48015da5ab3",
+                "ordinal": 8,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_aee26ae69df5e027242af4a331652215eddad523a13ac91cd54dc589d49044c8",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_62cfb8541424c2d326d2384f765948a13bd2cba486d285e89734664f5d7c4b7f",
+                "ordinal": 9,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_c114bb49eab46bc45cb84efb3578aed6350584e733c16e2f2a1f4a0fdb6ca409",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_6b314d2f82b7f7cc47b80e18498fa9c446c4c3615b5238f4d51aad432efdbd15",
+                "ordinal": 10,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_4a9b396271d6b73cc527b29acd2fed75ea890e2972dc574f9660848e35afc80c",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_76343c85e77a6b97243e9ca524921e602de5231903e0d0f50ecc405d66049721",
+                "ordinal": 11,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_525c80c8916f9a207a41a1c836a1e1c4222c0c16330b7d15da25e994b508a91b",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_7a4e0f7c8a77bc69dcebe29b5d7cebdff5a01b19579e3bde970ddf09f8d97f47",
+                "ordinal": 12,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_426866059b92b4f28c59102abf6716eadfe780344ae7aeb169040a7d3047df37",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_7a5525b6b65dd52a5f47477e2222233037139f5d57b4bc95fd957f785e0ace4d",
+                "ordinal": 13,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_93300d9c10fc4869837c30528ff1bdd8ddbb973267d54e47d90005203e25af8d",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_8d5ecae63e7094c1d503ae11898b766b8f2d99d349443e56bf12120edaf359f2",
+                "ordinal": 14,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_440408b3144b058a3589925bdc32ee87ca5097488a938b726e50ca015711a035",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_94a4fbc00d424a658faa48eb31ca35d4feb7ec706627b84874ea751fa54906ae",
+                "ordinal": 15,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_70ebb9fc83845a7b793e7c7686cb32a4f97f95f5c0a8f7ff5830bc6dc93b0b87",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_aec02ca64ad49515f6ef3242f69d7b9404e36300321d86848cc1f8020eac54b1",
+                "ordinal": 16,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_d95e59c98faf9abc98e7360b3fe56032dbf1d76347fa76219cb3d537a985def8",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_c28a630751f61f07a2639f832482b758eb994013cca096d0cbf53b5465651e8a",
+                "ordinal": 17,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_e5d5875a887265686c02721a2ac1229a1afcbf178897d67383059e2dd901f624",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_c7b1bc8fe352a359697d09bb7bde290d3db41843d94c1c705599c5ec013fcd9e",
+                "ordinal": 18,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_74603cff836bff5fc9178ebd5e0b40b2e38824a9e5d014533518b22151809faa",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_c894e650c2d350fe868a2acc735e48f4d8b7ed2e49fb8ddd1c4d1978fc9e2b91",
+                "ordinal": 19,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_88c5694f0dfe55a07a4ca6c50a10096da3c9a722a9bc489ace8cccd4723152fb",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_cdc1540297682436fdcc09af50f98dda96cec5afecd90e27fc1692f17e4bf9e6",
+                "ordinal": 20,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_eb1f3dc35f37bd0ae5e0b8be31c1380a617c35061a9eb47c9cd535c70e81c5c8",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_d1bdafb101823eb1194ba6ba80b8402210c2ecfcc34b9a0f89db71f3aa15f37e",
+                "ordinal": 21,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_9abeacb08e09a19f903116870badf702a2ec30725478efb7f36df61da7cd0b42",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_d8c7dde4e577216478fe71d1019870a970f00ea611ea908f591338b956f76a36",
+                "ordinal": 22,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_f0c57faf2974980400d839f74563fa8548ba612bc67db3f08e7b5259a3ef05f6",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_da39eb8f36efa569eae1525cb97a04c84eb9cad368ced1ddf0262c90ae2e65d0",
+                "ordinal": 23,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_bc3b542cc2403a0e1f6c7784718c5a65a11350f4b6af9e91617c50b23c6c133b",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_deea2db43ec3427c0e2fdd3d456ee3193f4435adde9697201b90dfbaedd3409a",
+                "ordinal": 24,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_d00238d02af06725a7acade62cd698a8b62fefeca11a685423fc9adaa7258ff3",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_e2f9e76443047a5d38cbb3497c291da93a0a411166f138a267b6d44bce7e01bc",
+                "ordinal": 25,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_0784d46a05bef94823f492ab8c2d14c04cc9f1b28216957b33fc00dc8cf0ce0e",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_ebef0945ae14a9d7532df127cbef5d4eb4f0eeb7190b9f14f4eee5d0ab59bbe8",
+                "ordinal": 26,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_d347bea15bb319b6a371e658924855f65569374e51693cb5450651ddc03f1a07",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_ed5a9ebea73c6e30a498588f99b353ede3ed91d89a8fdc45eb2467b85652a8ea",
+                "ordinal": 27,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_3033c49ea486dd5c62f9849e7a8fe3c7b229d844ad3cee0c789d9ceac6e7f582",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_ef6853a469324a07ac5a5e27458677285206b2259d4a580f0e875a9352b1ede6",
+                "ordinal": 28,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_7ddd89ca888e9050ebf71fac5695a26db9f55554e0255dee4f6c1431ca62aa91",
+                "producer": null
+              },
+              {
+                "edge_id": "edge_fff38920804c0ff65b85c118af3183554900ef3a2833ebb83c85dbbc4a929126",
+                "ordinal": 29,
+                "parent_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+                "relation": "contains",
+                "occurrence_id": "occ_34b7992bfacc671d311404c93c0c2acbd522a675e3b045de8890bfa02f6cb72c",
+                "producer": null
+              }
+            ],
+            "provenance": [],
+            "integrity_contradictions": [],
+            "limitations": [
+              "ZIP inventory lists central-directory entries only. Bytes after the central directory, including an APK Signing Block or a ZIP comment, are not occurrences."
+            ]
+          },
+          "confidence": "observed",
+          "authority": "shipped-artifact",
+          "environment": null,
+          "limitations": [
+            "ZIP inventory lists central-directory entries only. Bytes after the central directory, including an APK Signing Block or a ZIP comment, are not occurrences."
+          ],
+          "locations": [],
+          "evidence_links": []
+        }
+      }
+    ],
+    "observations": [
+      {
+        "observation_id": "aio_610e71a0db3384addecb77f2667364f5d6f0b43f3e30d3628123bc76f371d93a",
+        "kind": "root-manifest",
+        "subject": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+        "value": {
+          "manifest_id": "agm_d14862faec6dc28eda2d1137c7cdf9a86201b81c2327544160a3c0d30ce1cab4",
+          "root_artifact_id": "art_b268719918444dbd6e1b5696fcf374fd21ae50e772c86489b7b9998764ad4424",
+          "root_sha256": "b780d0c82e638f147715dce69fc398161516a043581dc5561d7ecde9519d9df5",
+          "root_format": "zip",
+          "graph_sha256": "2d1a9771493e906aa7131847a0c81ccab4ef86fd94ec02f2be5d0b3006f2fcce",
+          "node_count": 31,
+          "occurrence_count": 31,
+          "edge_count": 30
+        },
+        "evidence_id": "ev_e8b153f6b05877eef4cef33bf0e5ef799b0b117d91e22f102f43343f62ca28df"
+      }
+    ],
+    "hypotheses": [],
+    "contradictions": [],
+    "unexplored_branches": [],
+    "next_probes": [],
+    "coverage": {
+      "status": "complete-within-substeps",
+      "substeps_completed": 1,
+      "observations_retained": 1,
+      "observations_omitted": 0,
+      "hypotheses_retained": 0,
+      "hypotheses_omitted": 0,
+      "unexplored_branches_retained": 0,
+      "unexplored_branches_omitted": 0,
+      "next_probes_retained": 0,
+      "next_probes_omitted": 0
+    },
+    "evidence_links": [
+      "ev_e8b153f6b05877eef4cef33bf0e5ef799b0b117d91e22f102f43343f62ca28df"
+    ],
+    "limitations": [
+      "Inspection derives bounded static hypotheses and next probes; it does not execute the artifact or claim format-specific semantics.",
+      "ZIP inventory lists central-directory entries only. Bytes after the central directory, including an APK Signing Block or a ZIP comment, are not occurrences."
+    ]
+  },
+  "confidence": "observed",
+  "authority": "shipped-artifact",
+  "environment": null,
+  "limitations": [
+    "Inspection derives bounded static hypotheses and next probes; it does not execute the artifact or claim format-specific semantics.",
+    "ZIP inventory lists central-directory entries only. Bytes after the central directory, including an APK Signing Block or a ZIP comment, are not occurrences."
+  ],
+  "locations": [],
+  "evidence_links": [
+    "ev_e8b153f6b05877eef4cef33bf0e5ef799b0b117d91e22f102f43343f62ca28df"
+  ]
+}

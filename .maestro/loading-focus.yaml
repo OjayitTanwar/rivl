@@ -1,0 +1,40 @@
+appId: app.rivl.training
+name: Continue survives navigation during a real pending location request
+---
+- openLink: rivl://maps
+- extendedWaitUntil:
+    visible: Try my location
+    timeout: 15000
+- tapOn:
+    text: Try my location
+    waitToSettleTimeoutMs: 0
+- extendedWaitUntil:
+    visible: Continue while it loads
+    timeout: 5000
+- waitForAnimationToEnd:
+    timeout: 500
+- takeScreenshot: full-loading
+- tapOn:
+    text: Continue while it loads
+    waitToSettleTimeoutMs: 0
+- openLink: rivl://progress
+- extendedWaitUntil:
+    visible: Overview
+    timeout: 5000
+- assertNotVisible: Continue while it loads
+- openLink: rivl://maps
+- extendedWaitUntil:
+    visible: Search for a destination
+    timeout: 5000
+- assertVisible: Finding your nearby area…
+- assertNotVisible: Continue while it loads
+- waitForAnimationToEnd:
+    timeout: 500
+- takeScreenshot: loading-refocused
+- extendedWaitUntil:
+    visible: Try my location
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 500
+- takeScreenshot: loading-finished
+- openLink: rivl://progress

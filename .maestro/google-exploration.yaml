@@ -1,0 +1,36 @@
+appId: app.rivl.training
+name: Google route preview and exploration
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Explore your world"
+    timeout: 20000
+- waitForAnimationToEnd
+- takeScreenshot: .impeccable/review/today-oct12
+- tapOn: "Open exploration map"
+- waitForAnimationToEnd
+- takeScreenshot: .impeccable/review/heatmap-oct12
+- openLink: "rivl://navigate"
+- tapOn:
+    text: "Open"
+    optional: true
+- extendedWaitUntil:
+    visible: "Where do you want to go?"
+    timeout: 15000
+- tapOn:
+    id: "navigation-destination"
+- inputText: "Kensington Gardens London"
+- extendedWaitUntil:
+    visible: "Kensington Gardens"
+    timeout: 15000
+- takeScreenshot: .impeccable/review/places-oct12
+- tapOn: "Kensington Gardens"
+- tapOn: "Walk"
+- tapOn: "Find routes"
+- extendedWaitUntil:
+    visible: "Main route.*"
+    timeout: 30000
+- scrollUntilVisible:
+    element: "Add a detour on the map"
+- waitForAnimationToEnd
+- takeScreenshot: .impeccable/review/navigation-oct12

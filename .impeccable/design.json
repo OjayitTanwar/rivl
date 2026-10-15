@@ -1,0 +1,547 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-14T17:27:06.683599+00:00",
+  "title": "Design System: RIVL Native",
+  "extensions": {
+    "colorMeta": {
+      "coral": {
+        "role": "primary",
+        "displayName": "Signal Coral",
+        "tonalRamp": [
+          "oklch(15.000% 0.21958 30.532)",
+          "oklch(26.429% 0.21958 30.532)",
+          "oklch(37.857% 0.21958 30.532)",
+          "oklch(49.286% 0.21958 30.532)",
+          "oklch(60.714% 0.21958 30.532)",
+          "oklch(72.143% 0.21958 30.532)",
+          "oklch(83.571% 0.21958 30.532)",
+          "oklch(95.000% 0.21958 30.532)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "tonalRamp": [
+          "oklch(15.000% 0.00637 271.042)",
+          "oklch(26.429% 0.00637 271.042)",
+          "oklch(37.857% 0.00637 271.042)",
+          "oklch(49.286% 0.00637 271.042)",
+          "oklch(60.714% 0.00637 271.042)",
+          "oklch(72.143% 0.00637 271.042)",
+          "oklch(83.571% 0.00637 271.042)",
+          "oklch(95.000% 0.00637 271.042)"
+        ]
+      },
+      "warm": {
+        "role": "neutral",
+        "displayName": "Warm Light",
+        "tonalRamp": [
+          "oklch(15.000% 0.00671 97.352)",
+          "oklch(26.429% 0.00671 97.352)",
+          "oklch(37.857% 0.00671 97.352)",
+          "oklch(49.286% 0.00671 97.352)",
+          "oklch(60.714% 0.00671 97.352)",
+          "oklch(72.143% 0.00671 97.352)",
+          "oklch(83.571% 0.00671 97.352)",
+          "oklch(95.000% 0.00671 97.352)"
+        ]
+      },
+      "green": {
+        "role": "secondary",
+        "displayName": "Recovery Green",
+        "tonalRamp": [
+          "oklch(15.000% 0.17614 154.564)",
+          "oklch(26.429% 0.17614 154.564)",
+          "oklch(37.857% 0.17614 154.564)",
+          "oklch(49.286% 0.17614 154.564)",
+          "oklch(60.714% 0.17614 154.564)",
+          "oklch(72.143% 0.17614 154.564)",
+          "oklch(83.571% 0.17614 154.564)",
+          "oklch(95.000% 0.17614 154.564)"
+        ]
+      },
+      "blue": {
+        "role": "secondary",
+        "displayName": "Performance Blue",
+        "tonalRamp": [
+          "oklch(15.000% 0.16088 247.495)",
+          "oklch(26.429% 0.16088 247.495)",
+          "oklch(37.857% 0.16088 247.495)",
+          "oklch(49.286% 0.16088 247.495)",
+          "oklch(60.714% 0.16088 247.495)",
+          "oklch(72.143% 0.16088 247.495)",
+          "oklch(83.571% 0.16088 247.495)",
+          "oklch(95.000% 0.16088 247.495)"
+        ]
+      },
+      "yellow": {
+        "role": "tertiary",
+        "displayName": "Achievement Yellow",
+        "tonalRamp": [
+          "oklch(15.000% 0.15716 90.768)",
+          "oklch(26.429% 0.15716 90.768)",
+          "oklch(37.857% 0.15716 90.768)",
+          "oklch(49.286% 0.15716 90.768)",
+          "oklch(60.714% 0.15716 90.768)",
+          "oklch(72.143% 0.15716 90.768)",
+          "oklch(83.571% 0.15716 90.768)",
+          "oklch(95.000% 0.15716 90.768)"
+        ]
+      },
+      "light-surface": {
+        "role": "neutral",
+        "displayName": "Light Content Surface",
+        "tonalRamp": [
+          "oklch(15.000% 0.00000 0.000)",
+          "oklch(26.429% 0.00000 0.000)",
+          "oklch(37.857% 0.00000 0.000)",
+          "oklch(49.286% 0.00000 0.000)",
+          "oklch(60.714% 0.00000 0.000)",
+          "oklch(72.143% 0.00000 0.000)",
+          "oklch(83.571% 0.00000 0.000)",
+          "oklch(95.000% 0.00000 0.000)"
+        ]
+      },
+      "light-muted": {
+        "role": "neutral",
+        "displayName": "Light Muted Text",
+        "tonalRamp": [
+          "oklch(15.000% 0.00482 157.076)",
+          "oklch(26.429% 0.00482 157.076)",
+          "oklch(37.857% 0.00482 157.076)",
+          "oklch(49.286% 0.00482 157.076)",
+          "oklch(60.714% 0.00482 157.076)",
+          "oklch(72.143% 0.00482 157.076)",
+          "oklch(83.571% 0.00482 157.076)",
+          "oklch(95.000% 0.00482 157.076)"
+        ]
+      },
+      "light-line": {
+        "role": "neutral",
+        "displayName": "Light Divider",
+        "tonalRamp": [
+          "oklch(15.000% 0.01205 106.636)",
+          "oklch(26.429% 0.01205 106.636)",
+          "oklch(37.857% 0.01205 106.636)",
+          "oklch(49.286% 0.01205 106.636)",
+          "oklch(60.714% 0.01205 106.636)",
+          "oklch(72.143% 0.01205 106.636)",
+          "oklch(83.571% 0.01205 106.636)",
+          "oklch(95.000% 0.01205 106.636)"
+        ]
+      },
+      "light-soft": {
+        "role": "neutral",
+        "displayName": "Light Soft Surface",
+        "tonalRamp": [
+          "oklch(15.000% 0.00671 97.352)",
+          "oklch(26.429% 0.00671 97.352)",
+          "oklch(37.857% 0.00671 97.352)",
+          "oklch(49.286% 0.00671 97.352)",
+          "oklch(60.714% 0.00671 97.352)",
+          "oklch(72.143% 0.00671 97.352)",
+          "oklch(83.571% 0.00671 97.352)",
+          "oklch(95.000% 0.00671 97.352)"
+        ],
+        "canonical": "#F5F4EF"
+      },
+      "light-accent": {
+        "role": "primary",
+        "displayName": "Light Readable Coral",
+        "tonalRamp": [
+          "oklch(15.000% 0.18196 30.399)",
+          "oklch(26.429% 0.18196 30.399)",
+          "oklch(37.857% 0.18196 30.399)",
+          "oklch(49.286% 0.18196 30.399)",
+          "oklch(60.714% 0.18196 30.399)",
+          "oklch(72.143% 0.18196 30.399)",
+          "oklch(83.571% 0.18196 30.399)",
+          "oklch(95.000% 0.18196 30.399)"
+        ]
+      },
+      "light-good": {
+        "role": "secondary",
+        "displayName": "Light Recovery Foreground",
+        "tonalRamp": [
+          "oklch(15.000% 0.11122 155.015)",
+          "oklch(26.429% 0.11122 155.015)",
+          "oklch(37.857% 0.11122 155.015)",
+          "oklch(49.286% 0.11122 155.015)",
+          "oklch(60.714% 0.11122 155.015)",
+          "oklch(72.143% 0.11122 155.015)",
+          "oklch(83.571% 0.11122 155.015)",
+          "oklch(95.000% 0.11122 155.015)"
+        ]
+      },
+      "light-blue": {
+        "role": "secondary",
+        "displayName": "Light Performance Foreground",
+        "tonalRamp": [
+          "oklch(15.000% 0.12131 246.267)",
+          "oklch(26.429% 0.12131 246.267)",
+          "oklch(37.857% 0.12131 246.267)",
+          "oklch(49.286% 0.12131 246.267)",
+          "oklch(60.714% 0.12131 246.267)",
+          "oklch(72.143% 0.12131 246.267)",
+          "oklch(83.571% 0.12131 246.267)",
+          "oklch(95.000% 0.12131 246.267)"
+        ]
+      },
+      "dark-surface": {
+        "role": "neutral",
+        "displayName": "Dark Content Surface",
+        "tonalRamp": [
+          "oklch(15.000% 0.00647 258.363)",
+          "oklch(26.429% 0.00647 258.363)",
+          "oklch(37.857% 0.00647 258.363)",
+          "oklch(49.286% 0.00647 258.363)",
+          "oklch(60.714% 0.00647 258.363)",
+          "oklch(72.143% 0.00647 258.363)",
+          "oklch(83.571% 0.00647 258.363)",
+          "oklch(95.000% 0.00647 258.363)"
+        ]
+      },
+      "dark-muted": {
+        "role": "neutral",
+        "displayName": "Dark Muted Text",
+        "tonalRamp": [
+          "oklch(15.000% 0.00708 160.011)",
+          "oklch(26.429% 0.00708 160.011)",
+          "oklch(37.857% 0.00708 160.011)",
+          "oklch(49.286% 0.00708 160.011)",
+          "oklch(60.714% 0.00708 160.011)",
+          "oklch(72.143% 0.00708 160.011)",
+          "oklch(83.571% 0.00708 160.011)",
+          "oklch(95.000% 0.00708 160.011)"
+        ]
+      },
+      "dark-line": {
+        "role": "neutral",
+        "displayName": "Dark Divider",
+        "tonalRamp": [
+          "oklch(15.000% 0.00593 258.351)",
+          "oklch(26.429% 0.00593 258.351)",
+          "oklch(37.857% 0.00593 258.351)",
+          "oklch(49.286% 0.00593 258.351)",
+          "oklch(60.714% 0.00593 258.351)",
+          "oklch(72.143% 0.00593 258.351)",
+          "oklch(83.571% 0.00593 258.351)",
+          "oklch(95.000% 0.00593 258.351)"
+        ]
+      },
+      "dark-soft": {
+        "role": "neutral",
+        "displayName": "Dark Soft Surface",
+        "tonalRamp": [
+          "oklch(15.000% 0.00466 219.634)",
+          "oklch(26.429% 0.00466 219.634)",
+          "oklch(37.857% 0.00466 219.634)",
+          "oklch(49.286% 0.00466 219.634)",
+          "oklch(60.714% 0.00466 219.634)",
+          "oklch(72.143% 0.00466 219.634)",
+          "oklch(83.571% 0.00466 219.634)",
+          "oklch(95.000% 0.00466 219.634)"
+        ]
+      },
+      "dark-accent": {
+        "role": "primary",
+        "displayName": "Dark Readable Coral",
+        "tonalRamp": [
+          "oklch(15.000% 0.17871 30.469)",
+          "oklch(26.429% 0.17871 30.469)",
+          "oklch(37.857% 0.17871 30.469)",
+          "oklch(49.286% 0.17871 30.469)",
+          "oklch(60.714% 0.17871 30.469)",
+          "oklch(72.143% 0.17871 30.469)",
+          "oklch(83.571% 0.17871 30.469)",
+          "oklch(95.000% 0.17871 30.469)"
+        ]
+      },
+      "dark-nav": {
+        "role": "neutral",
+        "displayName": "Dark Navigation",
+        "tonalRamp": [
+          "oklch(15.000% 0.00611 271.116)",
+          "oklch(26.429% 0.00611 271.116)",
+          "oklch(37.857% 0.00611 271.116)",
+          "oklch(49.286% 0.00611 271.116)",
+          "oklch(60.714% 0.00611 271.116)",
+          "oklch(72.143% 0.00611 271.116)",
+          "oklch(83.571% 0.00611 271.116)",
+          "oklch(95.000% 0.00611 271.116)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Prominent training values."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Screen titles and primary measurements."
+      },
+      "heading": {
+        "displayName": "Heading",
+        "purpose": "Section headings and small measurements."
+      },
+      "subheading": {
+        "displayName": "Subheading",
+        "purpose": "Compact card headings."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Descriptions and action labels."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Units, labels, and summaries."
+      },
+      "micro": {
+        "displayName": "Micro",
+        "purpose": "Compact statuses and metadata, not invented kickers."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "button-press",
+        "value": "spring: damping 20, stiffness 260, mass 0.6; scale 0.96",
+        "purpose": "Shared Button inner content press; Reduce Motion keeps scale 1."
+      },
+      {
+        "name": "record-press",
+        "value": "spring: damping 20, stiffness 260; scale 0.95",
+        "purpose": "Circular Record action press; Reduce Motion keeps scale 1."
+      },
+      {
+        "name": "loading-journey",
+        "value": "2200ms each way; Easing.inOut(Easing.sin); cycling, footsteps and stepped route-marker transforms",
+        "purpose": "Real waits only. Cycling adds pedal rotation; footsteps alternate bounce and tilt; route marker pauses and rises. Reduce Motion fixes progress at 0.5. Replacement cold-wait captures show changing stepping poses on Ink after 500ms of native transition settling before the Google map loaded. Cycling, route-marker movement, exact timing, other transitions and live Mapbox remain unverified by separate captures."
+      },
+      {
+        "name": "icon-selector-press",
+        "value": "spring: damping 20, stiffness 280; icon scale 0.92, selector scale 0.95",
+        "purpose": "Inner content only; stable 48-unit touch frames. Reduce Motion keeps scale 1."
+      },
+      {
+        "name": "list-row-press",
+        "value": "spring: damping 22, stiffness 280; translateX 3",
+        "purpose": "Actionable row content press; Reduce Motion keeps offset 0."
+      },
+      {
+        "name": "selection-pill",
+        "value": "spring: damping 26, stiffness 280, mass 0.7; measured left and width; useNativeDriver false",
+        "purpose": "Coral pill retains 24-unit round ends across unequal labels. Interrupted animations stop before the next target; scroll only reveals off-viewport selected options. Reduce Motion sets final geometry directly and scrolls without animation."
+      },
+      {
+        "name": "selection-content",
+        "value": "spring: damping 24, stiffness 280, mass 0.7; translateY 4 to 0",
+        "purpose": "Shared Screen scope/segment changes acknowledge the changed body. Reduce Motion suppresses translation; native stack transitions stay platform-owned."
+      },
+      {
+        "name": "full-screen-loading",
+        "value": "native Modal fade; none under Reduce Motion",
+        "purpose": "Opaque active-theme ground covers navigation during eligible real waits. Continue dismisses visible jobs only; request identity and dismissal survive blur/refocus, background jobs can show on later focus, and end clears request state. Last label persists through exit."
+      },
+      {
+        "name": "choice-sheet",
+        "value": "native Modal fade; none under Reduce Motion",
+        "purpose": "Compact labeled trigger opens a bounded flat radio sheet. Cancel, backdrop and back/Escape dismiss; selected row visibility and focus restoration are implemented."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "screen-gutter",
+        "value": "760px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Browser translation of the native primary variant in the light theme; focus/hover CSS is panel-only.",
+      "html": "<button class=\"ds-btn-primary\">Record</button>",
+      "css": ".ds-btn-primary{min-height:50px;padding:13px 18px;border:0;border-radius:18px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:17px;line-height:1.3;font-weight:700;font-family:system-ui,sans-serif;background:#FF4B35;color:#101114;} .ds-btn-primary:hover:not(:disabled),.ds-btn-primary:active:not(:disabled){opacity:.85;} .ds-btn-primary:focus-visible{outline:2px solid currentColor;outline-offset:2px;} .ds-btn-primary:disabled{opacity:.4;}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Browser translation of the native secondary variant in the light theme; focus/hover CSS is panel-only.",
+      "html": "<button class=\"ds-btn-secondary\">Plan route</button>",
+      "css": ".ds-btn-secondary{min-height:50px;padding:13px 18px;border:1px solid #E3E3DA;border-radius:24px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:17px;line-height:1.3;font-weight:700;font-family:system-ui,sans-serif;background:transparent;color:#101114;} .ds-btn-secondary:hover:not(:disabled),.ds-btn-secondary:active:not(:disabled){opacity:.85;} .ds-btn-secondary:focus-visible{outline:2px solid currentColor;outline-offset:2px;} .ds-btn-secondary:disabled{opacity:.4;}"
+    },
+    {
+      "name": "Quiet Button",
+      "kind": "button",
+      "refersTo": "button-quiet",
+      "description": "Browser translation of the native quiet variant in the light theme; focus/hover CSS is panel-only.",
+      "html": "<button class=\"ds-btn-quiet\">Remove area</button>",
+      "css": ".ds-btn-quiet{min-height:50px;padding:13px 18px;border:0;border-radius:18px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:17px;line-height:1.3;font-weight:700;font-family:system-ui,sans-serif;background:transparent;color:#101114;} .ds-btn-quiet:hover:not(:disabled),.ds-btn-quiet:active:not(:disabled){opacity:.85;} .ds-btn-quiet:focus-visible{outline:2px solid currentColor;outline-offset:2px;} .ds-btn-quiet:disabled{opacity:.4;}"
+    },
+    {
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Browser translation of the native danger variant in the light theme; focus/hover CSS is panel-only.",
+      "html": "<button class=\"ds-btn-danger\">Delete activity</button>",
+      "css": ".ds-btn-danger{min-height:50px;padding:13px 18px;border:0;border-radius:18px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:17px;line-height:1.3;font-weight:700;font-family:system-ui,sans-serif;background:transparent;color:#BC2D1D;} .ds-btn-danger:hover:not(:disabled),.ds-btn-danger:active:not(:disabled){opacity:.85;} .ds-btn-danger:focus-visible{outline:2px solid currentColor;outline-offset:2px;} .ds-btn-danger:disabled{opacity:.4;}"
+    },
+    {
+      "name": "Labeled Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Light-theme browser translation of an editable shared Field: persistent label, surface fill, 14-unit corners and accent label/border/caret on focus. Native keyboard and accessibility behavior are not emulated.",
+      "html": "<label class=\"ds-field-label\">Target distance \u00b7 km<input class=\"ds-field\" placeholder=\"10\" inputmode=\"decimal\" /></label>",
+      "css": ".ds-field-label{display:flex;flex-direction:column;gap:8px;font:600 13px/1.3 system-ui,sans-serif;color:#101114;} .ds-field{min-height:56px;padding:14px;border:1.5px solid #E3E3DA;border-radius:14px;background:#FFFFFF;color:#101114;font:400 17px/1.3 system-ui,sans-serif;caret-color:#BC2D1D;} .ds-field::placeholder{color:#676A68;} .ds-field-label:focus-within{color:#BC2D1D;} .ds-field:focus-visible{border-color:#BC2D1D;outline:none;} .ds-field:read-only,.ds-field:disabled{background:#F5F4EF;color:#676A68;} .ds-field::selection{background:#BC2D1D;}"
+    },
+    {
+      "name": "Status Pill",
+      "kind": "chip",
+      "refersTo": "pill",
+      "description": "Compact disclosure or status; this example intentionally labels demo content.",
+      "html": "<span class=\"ds-pill\">DEMO ATHLETE</span>",
+      "css": ".ds-pill{display:inline-block;padding:5px 10px;border-radius:14px;background:#F5F4EF;color:#BC2D1D;font-size:11px;line-height:1.3;font-weight:700;font-family:system-ui,sans-serif;}"
+    },
+    {
+      "name": "Content Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Solid, flat light-theme card with native internal grouping.",
+      "html": "<div class=\"ds-card\"><strong class=\"ds-card-title\">Connected</strong><p class=\"ds-card-body\">Waiting for a reading\u2026</p></div>",
+      "css": ".ds-card{display:flex;flex-direction:column;gap:16px;padding:16px;border-radius:14px;border:1px solid #E3E3DA;background:#FFFFFF;color:#101114;font-family:system-ui,sans-serif;} .ds-card-title{font-size:18px;line-height:1.3;font-weight:700;} .ds-card-body{margin:0;font-size:17px;line-height:1.3;color:#676A68;}"
+    },
+    {
+      "name": "Segmented Control",
+      "kind": "custom",
+      "refersTo": "segmented",
+      "description": "State preview of outlined 48-unit options. Native selection animates measured left/width, preserving 24-unit corners; interrupted targets and selected-option visibility are handled in source.",
+      "html": "<div class=\"ds-segments\" role=\"tablist\" aria-label=\"Period\"><button class=\"ds-segment\" role=\"tab\" aria-selected=\"true\">All time</button><button class=\"ds-segment\" role=\"tab\" aria-selected=\"false\">7 days</button><button class=\"ds-segment\" role=\"tab\" aria-selected=\"false\">30 days</button></div>",
+      "css": ".ds-segments{display:flex;gap:8px;background:transparent;overflow-x:auto;} .ds-segment{flex-shrink:0;min-height:48px;padding:12px 18px;border:1px solid #E3E3DA;border-radius:24px;background:transparent;color:#676A68;font:600 13px/1.3 system-ui,sans-serif;} .ds-segment[aria-selected=\"true\"]{background:#FF4B35;border-color:#FF4B35;color:#101114;} .ds-segment:hover,.ds-segment:active{opacity:.85;} .ds-segment:focus-visible{outline:2px solid currentColor;outline-offset:2px;}"
+    },
+    {
+      "name": "Native Tab Structure",
+      "kind": "nav",
+      "refersTo": "native-navigation",
+      "description": "Schematic main-app bar: Home, Maps, Record and Groups. Root-sibling Health, Nutrition and Training replace it with one contextual bar; the labeled RIVL action returns to the main app. Native platform material and icons are not emulated. Entry does not change recording state.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"RIVL tabs\"><button class=\"ds-nav-tab\" aria-current=\"page\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 10 9-7 9 7v11h-6v-7H9v7H3z\"/></svg><span>Home</span></button><button class=\"ds-nav-tab\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15m6-12v15\"/></svg><span>Maps</span></button><button class=\"ds-nav-tab\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"4\" fill=\"currentColor\"/></svg><span>Record</span></button><button class=\"ds-nav-tab\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2m20 0v-2a4 4 0 0 0-3-3.87\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"/></svg><span>Groups</span></button></nav>",
+      "css": ".ds-nav{display:flex;justify-content:space-around;background:#FFFFFF;} .ds-nav-tab{display:flex;flex-direction:column;align-items:center;gap:4px;background:transparent;color:#676A68;border:0;font-size:11px;font-family:system-ui,sans-serif;} .ds-nav-tab[aria-current=\"page\"]{color:#BC2D1D;} .ds-nav-tab:hover,.ds-nav-tab:active{opacity:.7;} .ds-nav-tab:focus-visible{outline:2px solid currentColor;outline-offset:2px;}"
+    },
+    {
+      "name": "Record Action",
+      "kind": "custom",
+      "description": "Browser translation of the primary circular Start control; browser focus is preview-only.",
+      "html": "<button class=\"ds-record\" aria-label=\"Start recording\"><svg width=\"28\" height=\"28\" viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M8 5v14l11-7z\"/></svg></button><span class=\"ds-record-label\">Start</span>",
+      "css": ".ds-record{display:flex;align-items:center;justify-content:center;width:92px;height:92px;border:0;border-radius:50%;background:#FF4B35;color:#101114;} .ds-record:active{transform:scale(.95);} .ds-record:hover{opacity:.85;} .ds-record:focus-visible{outline:2px solid currentColor;outline-offset:2px;} .ds-record:disabled{opacity:.4;} .ds-record-label{display:block;width:92px;text-align:center;margin-top:8px;font:600 13px/1.3 system-ui,sans-serif;color:#101114;} @media(prefers-reduced-motion:reduce){.ds-record:active{transform:none;}}"
+    },
+    {
+      "name": "Gear",
+      "kind": "custom",
+      "description": "Private mileage uses a flat, divider-separated list with drawn shoes/bike icons, names, distance, activity counts and explicit Default, Retired or Selected status. The empty state offers one Add gear action and discloses local-device storage. Add/edit stays within the same scrolling screen: compact heading, shared labeled fields, two type buttons, a native default switch, primary Save and quiet Cancel. Retirement preserves historical context; no new colors, typography or assets are introduced.",
+      "html": "<section class=\"ds-gear\"><p>Gear is private and saved on this device.</p><p>Add your first pair of shoes or bike to begin tracking mileage.</p><button>Add gear</button></section>",
+      "css": ".ds-gear{display:flex;flex-direction:column;gap:16px;font:400 17px/1.3 system-ui,sans-serif;color:#676A68;background:#FFFFFF;} .ds-gear p{margin:0;} .ds-gear button{min-height:50px;border:0;border-radius:18px;padding:13px 18px;background:#FF4B35;color:#101114;font:700 17px/1.3 system-ui,sans-serif;} .ds-gear button:hover,.ds-gear button:active{opacity:.85;} .ds-gear button:focus-visible{outline:2px solid currentColor;outline-offset:2px;}"
+    },
+    {
+      "name": "Automatic Start",
+      "kind": "custom",
+      "description": "Settings places a short foreground-only explanation before the native switch and labeled Sport segmented control. Consent requirements, review-before-saving and battery limitations follow in ordinary text, with platform-specific notices where needed. The switch owns enable/disable; there is no duplicate disable action. Shared theme foregrounds, outlined choices and compact screen headings remain consistent. This records the implemented settings UI, not validated outdoor detection.\n\nThe earlier light capture scope covers empty Gear, add form and Automatic-start settings; the October dark batch adds their entry states only. Populated lists, enlarged text, Android and outdoor detection remain unverified.",
+      "html": "<section class=\"ds-auto\"><p>Start automatically after 90 seconds of movement while RIVL is open.</p><label><strong>Automatic start</strong><input type=\"checkbox\" role=\"switch\" /></label><strong>Sport</strong><p>Review your activity before saving. Nothing is published automatically.</p></section>",
+      "css": ".ds-auto{display:flex;flex-direction:column;gap:20px;font:400 17px/1.3 system-ui,sans-serif;color:#101114;background:#FFFFFF;} .ds-auto p{margin:0;} .ds-auto strong{font-weight:600;} .ds-auto label{display:flex;align-items:center;justify-content:space-between;gap:12px;} .ds-auto input{accent-color:#BC2D1D;min-width:44px;min-height:44px;} .ds-auto input:hover{opacity:.85;} .ds-auto input:focus-visible{outline:2px solid currentColor;outline-offset:2px;}"
+    },
+    {
+      "name": "Compact Scope Choice",
+      "kind": "custom",
+      "refersTo": "scope-choice",
+      "description": "Browser preview of the compact trigger and open flat radio list. Native sheet is bounded to 72% of window height with width cap 560; keyboard, focus restoration and hardware behavior are source-only claims.",
+      "html": "<button class=\"ds-choice\" aria-expanded=\"true\"><span><small>Units</small><strong>Kilometres</strong></span><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"m6 9 6 6 6-6\"/></svg></button><section class=\"ds-choice-sheet\"><header>Units<button>Cancel</button></header><button role=\"radio\" aria-checked=\"true\">Kilometres<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"m20 6-11 11-5-5\"/></svg></button><button role=\"radio\" aria-checked=\"false\">Miles</button></section>",
+      "css": ".ds-choice{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;padding:6px 12px;border:1px solid #BC2D1D;border-radius:14px;background:#F5F4EF;color:#101114;font:400 17px/1.3 system-ui,sans-serif;} .ds-choice span{display:flex;flex-direction:column;gap:1px;text-align:left;} .ds-choice small{font:400 13px/1.3 system-ui,sans-serif;color:#676A68;} .ds-choice strong{font-weight:400;} .ds-choice-sheet{max-width:560px;max-height:72vh;overflow:auto;border-radius:14px 14px 0 0;background:#FFFFFF;color:#101114;font:400 17px/1.3 system-ui,sans-serif;} .ds-choice-sheet header{display:flex;align-items:center;justify-content:space-between;min-height:60px;padding:0 20px;font:600 18px/1.3 system-ui,sans-serif;} .ds-choice-sheet button{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:14px 0;width:100%;border:0;border-top:1px solid #E3E3DA;background:#FFFFFF;color:#101114;font:400 17px/1.3 system-ui,sans-serif;} .ds-choice-sheet header button{width:auto;min-height:48px;padding:0 8px;border:0;color:#BC2D1D;} .ds-choice-sheet>button{width:calc(100% - 40px);margin:0 20px;} .ds-choice-sheet svg{color:#BC2D1D;} .ds-choice:hover,.ds-choice:active{opacity:.8;} .ds-choice-sheet button:hover,.ds-choice-sheet button:active{background:#F5F4EF;} .ds-choice:focus-visible,.ds-choice-sheet button:focus-visible{outline:2px solid #BC2D1D;outline-offset:2px;}"
+    },
+    {
+      "name": "Workspace Tab Structure",
+      "kind": "nav",
+      "refersTo": "native-navigation",
+      "description": "Schematic Health bar. Nutrition uses Diary/Plan/Recipes/Insights and Training uses Plans/Session/Creators/History with the same theme. One contextual bar replaces the main app bar; a RIVL header action returns to the main app.",
+      "html": "<header class=\"ds-workspace-header\"><strong>Health</strong><button>RIVL</button></header><nav class=\"ds-workspace-nav\" aria-label=\"Health\"><button aria-current=\"page\">Overview</button><button>Sleep</button><button>Log</button><button>Connect</button></nav>",
+      "css": ".ds-workspace-header{display:flex;align-items:center;justify-content:space-between;color:#101114;font:700 23px/1.3 system-ui,sans-serif;} .ds-workspace-header button{min-height:50px;padding:13px 18px;border:0;border-radius:18px;background:transparent;color:#101114;font:700 17px/1.3 system-ui,sans-serif;} .ds-workspace-nav{display:flex;justify-content:space-around;background:#FFFFFF;} .ds-workspace-nav button{min-height:48px;border:0;background:transparent;color:#676A68;font:400 11px/1.3 system-ui,sans-serif;} .ds-workspace-nav button[aria-current=\"page\"]{color:#BC2D1D;} .ds-workspace-header button:hover,.ds-workspace-nav button:hover,.ds-workspace-header button:active,.ds-workspace-nav button:active{opacity:.85;} .ds-workspace-header button:focus-visible,.ds-workspace-nav button:focus-visible{outline:2px solid currentColor;outline-offset:2px;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Native Operate",
+    "overview": "RIVL's native interface makes training data and actions easy to scan. System typography, solid content surfaces, and an Ink / Signal Coral / Warm Light identity carry the interface. The same components adapt to the selected light, dark, or system theme; route-derived Trace provides the recurring graphic signature.\n\nThis is a merge into the incumbent Native Operate system, with Record as the pinned visual authority. The current source extends its solid overlays, outlined secondary controls, bold measurements and purpose-specific rounded corners through the first batch of task screens. Identity, palette and Trail Ribbon concept 01 remain unchanged. The direction contract is `.impeccable/surfaces/record-system.md`; evidence includes `src/ui/theme.tsx`, `src/ui/primitives.tsx`, `SettingsSection`, `LoadingJourney`, the primary tabs and the associated task screens. This is an incumbent extension, not a new visual world.\n\nThe 14 native dark iPhone entry captures in `.impeccable/review/unified-oct14/` cover Home, You, Maps, Groups, planner, saved routes, Automatic start, Progress, heatmap, offline guidance, Gear, Settings, Devices and Watch. All 14 entry checks passed; this establishes those entry states only. The correction flow passed and `groups.png` and `planner.png` were recaptured at the same paths. `loading-real-wait-a.png` and `loading-real-wait-b.png` were replaced with cold actual-wait captures after (500ms) of native transition settling: different stepping poses sit on Ink, with no white field in the captured wait; the map subsequently loaded. No artificial delay was used. Cycling and route-marker variants remain implemented in source without separate capture verification. The correction reviewer disposition is ship at the listed-fix scope: Groups recovery, loading ground and documentation were scored resolved, and the cold loading flow passed. The settled wait pair and planner capture are valid evidence for that correction scope. This is not whole-surface or whole-app approval. Earlier light Gear/form/Automatic-start captures remain limited to `.impeccable/review/fitness-expansion/`. Populated content, the whole light revision, enlarged text, Android, hardware behavior, live Mapbox and the complete motion family are not fully verified. The new Segments history screen, its populated states and native forms are outside this review record.\n\nThe shared-control and full-screen loading phase is now recorded from `primitives.tsx`, `FullScreenLoading.tsx`, `loading-state.tsx` and `domain/loading-jobs.ts`. Native dark iPhone captures in `.impeccable/review/controls-oct14/` cover Overview, Analysis, sport choices, loaded planner, the full-screen wait, Continue dismissal and completion. The visual reviewer accepted the controls appearance. The correction reviewer returned ship only for the corrected foreground/request-lifetime scope: focus eligibility is independent of request lifetime, Continue survives blur/refocus, request end cleans up, and all four map renderers follow the same policy; five loading tests passed. The native same-request refocus assertion remained inconclusive after a 12-second timeout; it is not certified here. These findings establish the reviewed controls/loading scope only. They do not certify the whole app, newly added Segments or heart-rate functionality, Android, enlarged text, physical devices or every motion variant.\n\nThe subsequent field/choice/settings and health-log phase is merged from current source. Corrected dark/light shared-input and choice captures are retained in `.impeccable/review/resume-oct14/`; the health-screen capture batch under `/private/tmp/rivl-health-review-output3/` was still under review when this record was written. Supplied implementation checks report typecheck, 296 tests across 47 files and security checks passing; earlier SQL verification covered ten migrations and ten local tests only. Those checks do not establish visual, production SQL or hardware approval. Keyboard avoidance, enlarged text, physical health-service reads and natural voice quality remain unverified. The health patterns below describe implemented presentation and source behavior, without extending the prior controls/loading review disposition.\n\nThe earlier 14 October workspace phase merged the user-authorized information architecture into the same Record-led system. Source evidence is `app/(tabs)/(home)/`, `Navigation.tsx`, `Navigation.web.tsx` and `LabelValueRow.tsx`. That earlier revision kept Home, Maps, Record and Groups visible while Home owned the workspace pages; the latest contextual navigation direction below supersedes that persistence rule. Existing destination URLs remain valid through the nested Home stack. The capture matrix in `.impeccable/review/workspaces-oct14/` includes dark/light entry and empty-form states and iOS accessibility-medium enlarged screens; normal text was restored afterwards. A native Nutrition draft survived Groups \u2192 Home and scrolling. The enlarged goals capture exposed overlapping macro labels/values; the current source fixes this with the shared responsive LabelValueRow, also used for diary, report and grocery rows. The corrected enlarged goals capture, `nutrition-goals-large.png`, was recorded at 21:03. The workspace fix reviewer returned ship for its two scored fixes: documentation/navigation accuracy and enlarged nutrition label/value separation. This is narrow correction approval, not whole-workspace or whole-app approval. Final whole-project checks passed at 21:09: TypeScript, 388 tests across 60 suites and development security preflight. The imported movement and measured cycling-power slices are source complete. The reviewer returned ship for the power deadline/cancellation source fix only, separate from the two scored workspace corrections; neither verdict establishes broad surface or hardware approval. Eleven SQL migrations and eleven local SQL checks passed, without hosted deployment. Community GPS contribution is a source pilot, not validated dedicated track geometry. Keyboard avoidance, populated flows, hardware, Android, voice and full HIG certification remain outside this capture scope.\n\nThe latest user-authorized revision makes Health, Nutrition and Guided training complete root-sibling workspaces. Each uses one contextual bottom bar: Health Overview/Sleep/Log/Connect, Nutrition Diary/Plan/Recipes/Insights, and Training Plans/Session/Creators/History. A labeled RIVL header action returns to the main app. The main Home/Maps/Record/Groups bar is replaced while a workspace is open; identity, authentication, storage and the recording engine are shared. Source authority is `app/(health)/`, `app/(nutrition)/`, `app/(training)/`, `WorkspaceAuth.tsx` and `WorkspaceExit.tsx`. All 12 workspace pages were reached with separate contextual bars in `.impeccable/review/workspace-apps-oct14/`. Final corrected settled Sleep and Studio captures passed. Studio uses compact Library/My programs segmented choices with distinct loading, retry/error and confirmed-empty states. An unsaved blank Studio form survived Creators \u2192 History \u2192 Creators, and the RIVL exit passed. Three enlarged frames\u2014Health Overview, Nutrition Insights Goals and Studio form\u2014passed, then normal text was restored. No populated-flow, keyboard-avoidance, hardware, Android or full HIG claim follows from these entry/form captures. Final reviewer scoring remains pending. Final whole-project TypeScript, 407 tests across 62 suites and development security preflight passed; all 12 migrations and 12 SQL suites passed locally. Hosted deployment is not established. The user explicitly authorized physical installation, superseding the earlier restriction. The latest Release build was installed in place on the connected iPhone 15 (`00008120-000E05E00C81A01E`), bundle `app.rivl.training`, and launched successfully as process 1237; a subsequent process check confirmed it remained running. The current workspace apps and Creator Studio are in this installed build. Its JavaScript bundle is embedded and requires no Metro server. Free provisioning expires 15 October 2026 at 17:27:25 IST (11:57:25 UTC). Installation and launch do not validate physical sensors, Watch, HealthKit imports, locked-screen operation or hosted services.",
+    "keyCharacteristics": [
+      "Solid theme-aware content surfaces and functional accent color.",
+      "Native scalable text with tabular measurements.",
+      "Scrollable task screens with flat grouping, labeled destinations and shared Record-derived corners.",
+      "Native navigation and labeled scope selection.",
+      "Route geometry, honest availability, explicit recovery actions and real-wait loading feedback."
+    ],
+    "rules": [
+      {
+        "name": "The Fill and Foreground Rule",
+        "body": "Use brand Coral for primary fill and theme accent for ordinary accent text; choose semantic good/blue text from the active theme.",
+        "section": "colors"
+      },
+      {
+        "name": "The Accessible Theme Rule",
+        "body": "High contrast replaces muted text with the foreground and dividers with the original muted value. Theme selection follows the athlete's setting or the system scheme.",
+        "section": "colors"
+      },
+      {
+        "name": "The Measured Numerals Rule",
+        "body": "Measurements use tabular numerals. Metric values may shrink to their implemented minimum scale (0.75) to fit, while units can wrap at the baseline and labels retain their own line.",
+        "section": "typography"
+      },
+      {
+        "name": "The Native Scaling Rule",
+        "body": "Shared text allows font scaling. Keep flexible metric rows and text shrink behavior when adapting content; do not freeze the system to simulator pixel dimensions.",
+        "section": "typography"
+      },
+      {
+        "name": "The Separate Label and Value Rule",
+        "body": "Repeated nutrition label/value rows use the shared LabelValueRow. At fontScale of at least (1.3), or window width below (320), label and tabular value stack with a (4)-unit gap. Otherwise the label flexes and the right-aligned value may shrink within half the row width. Diary totals, report macros, recipe macros and grocery quantities reuse this behavior; large text must not overlap its label.",
+        "section": "layout"
+      },
+      {
+        "name": "The Solid Content Rule",
+        "body": "Keep content cards and fields solid. Let supported native chrome own its material instead of drawing a glass treatment onto data surfaces.",
+        "section": "elevation"
+      },
+      {
+        "name": "The One Bar Rule",
+        "body": "Each workspace owns one contextual bottom bar. Replace the main app bar while Health, Nutrition or Training is open; keep the labeled RIVL return action visible and reuse the shared theme and identity.",
+        "section": "components"
+      },
+      {
+        "name": "The Request Lifetime Rule",
+        "body": "Request registration follows active work until completion or unmount; focus only determines foreground eligibility. Continue dismisses currently visible requests without cancelling them. That dismissal survives blur/refocus for the same active request. Background jobs are excluded from Continue and can become visible on later focus. End removes the job, dismissal and background state; subsequent real work can show its own loader. All four Google/Mapbox native/web renderers use this policy.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do use theme-aware foreground and semantic accent tokens on the active solid surface.",
+      "Do preserve one contextual bar per workspace, the labeled RIVL return action, main app destinations, scope selection, accessibility labels and selected states.",
+      "Do keep measurement units and labels readable with flexible wrapping, tabular numerals and stacked nutrition label/value rows at enlarged text sizes.",
+      "Do derive Trace from the displayed route and preserve continuous offline path geometry.",
+      "Do explain unmet prerequisites next to disabled watch actions and preserve the received-workout import exception.",
+      "Do disclose demo data, unavailable readings, and partial map coverage in the content itself.",
+      "Do reuse the shared Record-derived corners and flat titled groups for related task screens.",
+      "Do keep destinations labeled, recovery actions usable, and loading feedback tied to actual waits.",
+      "Do preserve stable touch frames, measured selection positions and Reduce Motion behavior.",
+      "Do keep request lifetime separate from foreground eligibility; Continue hides only visible work without cancelling it.",
+      "Do preserve approved Trail Ribbon concept 01 geometry and provider attribution."
+    ],
+    "donts": [
+      "Don't promote an unapproved concept-board mark or font into shipped identity tokens; approved Trail Ribbon concept 01 remains the identity authority.",
+      "Don't use bright brand fills as ordinary text accents when the theme provides a semantic foreground value.",
+      "Don't introduce 3D Flyover; the confirmed map direction uses Google basemaps and direct 2D athlete overlays.",
+      "Don't add decorative glass to content surfaces or fake unsupported native materials.",
+      "Don't replace drawn or native icons with text glyphs or emoji.",
+      "Don't add kickers or eyebrows above headings; existing uses are recorded defects, not a reusable pattern.",
+      "Don't treat the synthetic fallback Trace curve as a recorded athlete route.",
+      "Don't claim entry-state simulator screenshots validate populated flows, other themes, enlarged text, Android, physical devices, live fallback maps or watch/sensor operation."
+    ]
+  }
+}

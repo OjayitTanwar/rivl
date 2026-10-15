@@ -1,0 +1,10 @@
+{
+  "path": "/private/tmp/rivl-derived-current/Build/Products/Release-iphonesimulator/RIVL.app",
+  "uncompressedBytes": 108940153,
+  "frameworks": {
+    "React.framework": 24512863,
+    "ReactNativeDependencies.framework": 2508026,
+    "hermesvm.framework": 9680348
+  },
+  "note": "Built filesystem size, not App Store download size. Compare the same platform, architecture and configuration."
+}

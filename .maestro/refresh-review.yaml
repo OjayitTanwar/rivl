@@ -1,0 +1,17 @@
+appId: app.rivl.training
+---
+- openLink: rivl://maps
+- extendedWaitUntil:
+    visible: "Recenter map"
+    timeout: 25000
+- takeScreenshot: .impeccable/review/google-refresh/maps-current
+- openLink: rivl://
+- extendedWaitUntil:
+    visible: "This week"
+    timeout: 15000
+- takeScreenshot: .impeccable/review/google-refresh/home-current
+- openLink: rivl://you
+- extendedWaitUntil:
+    visible: "Activities"
+    timeout: 15000
+- takeScreenshot: .impeccable/review/google-refresh/you-current

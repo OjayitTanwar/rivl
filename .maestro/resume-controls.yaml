@@ -1,0 +1,57 @@
+appId: app.rivl.training
+name: Resumed Groups and form controls
+---
+- openLink: rivl://community
+- extendedWaitUntil:
+    visible: Groups
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: .impeccable/review/resume-oct14/groups
+- tapOn: Challenges
+- waitForAnimationToEnd:
+    timeout: 1500
+- assertVisible: Clubs
+- assertVisible: People
+- assertVisible: Activity
+- takeScreenshot: .impeccable/review/resume-oct14/challenges
+- tapOn: People
+- extendedWaitUntil:
+    visible: Search people
+    timeout: 10000
+- tapOn: Athlete name
+- takeScreenshot: .impeccable/review/resume-oct14/input-focus
+- hideKeyboard
+- openLink: rivl://settings
+- extendedWaitUntil:
+    visible: Athlete profile
+    timeout: 15000
+- takeScreenshot: .impeccable/review/resume-oct14/settings
+- scrollUntilVisible:
+    element: Heart-rate zones
+    direction: DOWN
+- tapOn: Heart-rate zones
+- scrollUntilVisible:
+    element: Zone 2 starts at · bpm
+    direction: DOWN
+- takeScreenshot: .impeccable/review/resume-oct14/zones
+- scrollUntilVisible:
+    element: Segment participation
+    direction: DOWN
+- tapOn: Segment participation
+- scrollUntilVisible:
+    element: Share gender category in rankings
+    direction: DOWN
+- takeScreenshot: .impeccable/review/resume-oct14/gender
+- openLink: rivl://progress
+- extendedWaitUntil:
+    visible: Overview
+    timeout: 15000
+- tapOn: "Sport: All sports"
+- extendedWaitUntil:
+    visible: Cancel Sport
+    timeout: 5000
+- takeScreenshot: .impeccable/review/resume-oct14/choice-open
+- tapOn: Cancel Sport
+- assertNotVisible: Cancel Sport
+- takeScreenshot: .impeccable/review/resume-oct14/choice-closed

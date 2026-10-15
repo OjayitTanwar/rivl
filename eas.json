@@ -1,0 +1,30 @@
+{
+  "cli": {
+    "version": ">=16.0.0",
+    "appVersionSource": "local"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      },
+      "env": {
+        "EXPO_PUBLIC_ENABLE_DEMO": "true"
+      }
+    },
+    "device": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_ENABLE_DEMO": "true"
+      }
+    },
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_ENABLE_DEMO": "false"
+      }
+    }
+  }
+}

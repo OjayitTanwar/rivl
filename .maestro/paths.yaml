@@ -1,0 +1,32 @@
+appId: app.rivl.training
+name: Free nearby walking paths
+---
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "This week"
+    timeout: 15000
+- tapOn: "Today"
+- scrollUntilVisible:
+    element: "Plan route"
+- tapOn: "Plan route"
+- tapOn:
+    id: "planner-search"
+- eraseText
+- inputText: "51.507,-0.128"
+- pressKey: Enter
+- extendedWaitUntil:
+    visible: "Add stop at 51.5070, -0.1280"
+    timeout: 10000
+- scrollUntilVisible:
+    element:
+      id: "show-path-network"
+- tapOn:
+    id: "show-path-network"
+- extendedWaitUntil:
+    visible: "Hide nearby paths"
+    timeout: 25000
+- assertVisible: "Blue dashes:.*"
+- takeScreenshot: artifacts/nearby-walking-paths
+- tapOn: "Hide nearby paths"
+- assertVisible: "Show walking paths nearby"

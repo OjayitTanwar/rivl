@@ -1,0 +1,89 @@
+appId: app.rivl.training
+name: Create, persist, edit, and delete a planned route
+---
+- launchApp
+- tapOn: "Today"
+- scrollUntilVisible:
+    element: "Plan route"
+- tapOn: "Plan route"
+- extendedWaitUntil:
+    visible: "Find a place"
+    timeout: 10000
+- tapOn:
+    id: "planner-search"
+- inputText: "51.507,-0.128"
+- hideKeyboard
+- tapOn: "Search"
+- tapOn: "Add stop at 51.5070, -0.1280"
+- tapOn:
+    id: "planner-search"
+- eraseText
+- inputText: "51.510,-0.125"
+- hideKeyboard
+- tapOn: "Search"
+- tapOn: "Add stop at 51.5100, -0.1250"
+- swipe:
+    start: "2%,85%"
+    end: "2%,20%"
+    duration: 600
+- scrollUntilVisible:
+    element: "Route name"
+- tapOn:
+    id: "planner-name"
+- inputText: "River test route"
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      id: "save-planned-route"
+- tapOn:
+    id: "save-planned-route"
+- assertVisible: "River test route"
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "This week"
+    timeout: 15000
+- tapOn: "Record"
+- tapOn: "Routes"
+- assertVisible: "River test route"
+- tapOn: "Edit route"
+# Swipe the page margin so the native map does not consume the gesture.
+- swipe:
+    start: "2%,85%"
+    end: "2%,20%"
+    duration: 600
+- swipe:
+    start: "2%,85%"
+    end: "2%,20%"
+    duration: 600
+- scrollUntilVisible:
+    element: "Route name"
+- tapOn:
+    id: "planner-name"
+- eraseText
+- inputText: "River route edited"
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      id: "save-planned-route"
+- tapOn:
+    id: "save-planned-route"
+- assertVisible: "River route edited"
+- tapOn: "Edit route"
+# Swipe the page margin so the native map does not consume the gesture.
+- swipe:
+    start: "2%,85%"
+    end: "2%,20%"
+    duration: 600
+- scrollUntilVisible:
+    element: "Delete route"
+- tapOn: "Delete route"
+- extendedWaitUntil:
+    visible: "Delete this route?"
+    timeout: 5000
+- tapOn:
+    text: "Delete route"
+    index: 1
+- extendedWaitUntil:
+    notVisible: "River route edited"
+    timeout: 10000

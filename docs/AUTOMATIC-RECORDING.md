@@ -1,0 +1,17 @@
+# Automatic starts and build weight
+
+Implemented in source on 2026-10-13; not yet installed or verified outdoors.
+
+Settings → Automatic recording enables an owner-scoped preference. Defaults are off. Select a sport, allow Precise Location and (on iPhone) Motion & Fitness. Detection runs only while the app is active. Once a workout starts it uses the existing durable background recorder; finishing, reviewing and saving remain explicit. No automatic social publication.
+
+A bounded in-memory GPS window requires at least 90 seconds of sustained movement, 10 readings, 60 metres of net displacement and accuracy within 20 metres. Stale/future/invalid GPS, gaps over 20 seconds, pauses and speeds outside the selected sport's gate reset detection. Mocked locations are rejected by the integration. Detection samples are not saved; the initial 90 seconds are not part of the workout. Waiting uses 10-second / 8-metre location settings. Watchers stop in the background, during an active workout, when preferences are disabled and on account changes. A two-minute cooldown avoids immediate restarts after finishing. Existing recordings are never overwritten.
+
+The local RivlMotion iOS module uses Core Motion with explicit consent, emits only activity flags and confidence, and keeps no motion history. iPhone starts additionally require matching walking/running/cycling signals at medium or high confidence; automotive, unknown and stationary signals block starts. Existing installed builds without the module cannot enable this iPhone feature. Outdoor battery, transport discrimination, permission changes and screen-lock scenarios remain unverified. Android currently has only a selected-sport GPS gate; slow traffic can pass it. Automatic motion detection while the app is closed is not implemented.
+
+Removed unused MapLibre native/web dependencies (33 packages), the unused TerrainFlyover component, terrain generation scripts and generated renderer assets. Retired files are recoverable under /private/tmp/rivl-retired-terrain for this session. Google maps remain the live renderer. The old installed device build contains a MapLibre.framework directory of approximately 7.9 MB; do not equate that with confirmed download-size savings. Rebuild and measure before reporting an app-size reduction.
+
+Source checks: TypeScript passes; all 157 tests pass, including classifier/motion, frequent iPhone fixes and owner-only preference deletion tests. iOS JavaScript export succeeds. Native dependency refresh succeeds with RivlMotion present and MapLibre removed from Podfile.lock. Release iPhone simulator build succeeds. Maestro checks gear empty state, add form, invalid-name validation, cancel, and automatic-start settings. Outdoor and physical tests remain separate acceptance gates.
+
+Measured the same Release simulator app before/after removing direct Swift Package linkage: 125,440,082 → 108,940,153 uncompressed bytes, a reduction of 16,499,929 bytes (~16.5 MB). MapLibre.framework is absent in the resulting app. Measurements are in artifacts/build-size; phone/App Store savings still need their own build measurements.
+
+UI finish: the reviewer scored all five requested fixes resolved on recaptured iPhone light screenshots; this is a fix-list verdict, not whole-app or cross-platform approval. Gear form remains unpopulated test data; populated gear, dark appearance and enlarged text need further validation. The Maestro flow waits for account initialization before opening the feature routes; cold-start deep-link preservation was not verified.

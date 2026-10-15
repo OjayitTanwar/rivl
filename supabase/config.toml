@@ -1,0 +1,13 @@
+project_id = "rivl"
+[auth]
+# The app is native: sign-up confirmation, OAuth and password recovery all
+# return through custom-scheme deep links rather than a web origin.
+additional_redirect_urls = ["rivl://auth-callback", "rivl://password-reset"]
+[functions.delete-account]
+verify_jwt = false
+[functions.process-deletions]
+verify_jwt = false
+[functions.process-segments]
+verify_jwt = false
+[functions.route-intent]
+verify_jwt = false

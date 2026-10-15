@@ -1,0 +1,15 @@
+appId: app.rivl.training
+name: Immersive Record controls
+---
+- openLink: rivl://record
+- extendedWaitUntil:
+    visible: "Recenter map"
+    timeout: 25000
+- assertVisible: "Add route"
+- tapOn: "Expand workout stats"
+- assertVisible: "Workout stats"
+- tapOn: "Done"
+- tapOn: "Recording settings"
+- assertVisible: "Sensors & watch"
+- tapOn: "Done"
+- assertVisible: "Add route"

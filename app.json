@@ -1,0 +1,100 @@
+{
+  "expo": {
+    "name": "RIVL",
+    "slug": "rivl",
+    "version": "1.0.0",
+    "scheme": "rivl",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "app.rivl.training",
+      "appleTeamId": "985F675WG3",
+      "infoPlist": {
+        "NSHealthShareUsageDescription": "RIVL reads your chosen heart rate, HRV, sleep, steps, water and weight data for your health dashboard.",
+        "NSHealthUpdateUsageDescription": "RIVL can save completed workouts to Apple Health.",
+        "NSMotionUsageDescription": "RIVL uses motion signals, when you enable automatic start, to distinguish exercise from vehicle travel."
+      },
+      "buildNumber": "1"
+    },
+    "android": {
+      "package": "app.rivl.training",
+      "permissions": [
+        "android.permission.health.READ_HEART_RATE",
+        "android.permission.health.READ_RESTING_HEART_RATE",
+        "android.permission.health.READ_HEART_RATE_VARIABILITY",
+        "android.permission.health.READ_SLEEP",
+        "android.permission.health.READ_STEPS",
+        "android.permission.health.READ_FLOORS_CLIMBED",
+        "android.permission.health.READ_ACTIVE_CALORIES_BURNED",
+        "android.permission.health.READ_WEIGHT",
+        "android.permission.health.READ_HYDRATION"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": false
+        }
+      ],
+      [
+        "expo-sqlite",
+        {
+          "useSQLCipher": true
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "RIVL records your route during workouts, including while the screen is locked.",
+          "locationWhenInUsePermission": "RIVL uses GPS to measure your workout.",
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true
+        }
+      ],
+      "@kingstinct/react-native-healthkit",
+      "react-native-health-connect",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "16.0"
+          }
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Choose photos to attach to your workouts.",
+          "cameraPermission": false,
+          "microphonePermission": false
+        }
+      ],
+      "expo-notifications",
+      "expo-system-ui",
+      "./plugins/with-native-security",
+      "./plugins/with-scene-lifecycle",
+      [
+        "react-native-ble-plx",
+        {
+          "modes": ["central"],
+          "isBackgroundEnabled": true,
+          "bluetoothAlwaysPermission": "RIVL connects to your heart-rate strap and power meter to record measured workout data."
+        }
+      ],
+      "expo-asset",
+      "@bacons/apple-targets",
+      "expo-sharing",
+      "./plugins/with-local-reminders",
+      "expo-web-browser"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "platforms": ["ios", "android"],
+    "icon": "./assets/icon.png"
+  }
+}

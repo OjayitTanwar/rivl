@@ -1,0 +1,23 @@
+appId: app.rivl.training
+name: Full-screen location loading and continue recovery
+---
+- openLink: rivl://maps
+- extendedWaitUntil:
+    visible: Try my location
+    timeout: 15000
+- tapOn:
+    text: Try my location
+    waitToSettleTimeoutMs: 0
+- extendedWaitUntil:
+    visible: Continue while it loads
+    timeout: 5000
+- takeScreenshot: full-loading
+- tapOn: Continue while it loads
+- extendedWaitUntil:
+    visible: Search for a destination
+    timeout: 5000
+- takeScreenshot: loading-dismissed
+- extendedWaitUntil:
+    visible: Try my location
+    timeout: 20000
+- takeScreenshot: loading-finished

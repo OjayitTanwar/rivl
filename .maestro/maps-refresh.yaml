@@ -1,0 +1,19 @@
+appId: app.rivl.training
+name: Maps refresh
+---
+- openLink: rivl://maps
+- tapOn:
+    text: "Allow While Using App"
+    optional: true
+- extendedWaitUntil:
+    visible: "Recenter map"
+    timeout: 25000
+- extendedWaitUntil:
+    visible: "Find a new loop"
+    timeout: 15000
+- assertVisible: "Quests"
+- tapOn: "Heatmap"
+- assertVisible: "Heatmap filters"
+- tapOn: "Routes"
+- assertVisible: "Plan a route"
+- tapOn: "Explore"
