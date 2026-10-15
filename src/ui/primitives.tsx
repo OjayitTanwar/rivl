@@ -40,6 +40,7 @@ import {
   X,
 } from "lucide-react-native";
 import { router } from "expo-router";
+import { useIsFocused } from "@react-navigation/native";
 import { brand, type, useTheme } from "./theme";
 const SelectionMotionContext = React.createContext(() => {});
 
@@ -428,13 +429,21 @@ export function Field({
   const editable = props.editable !== false && !props.readOnly;
   const active = focused && editable;
   const password = props.secureTextEntry === true;
-  const reserveClearAction = clearable && !password && !props.multiline &&
-    Boolean(props.onChangeText) && !trailing && editable;
+  const reserveClearAction =
+    clearable &&
+    !password &&
+    !props.multiline &&
+    Boolean(props.onChangeText) &&
+    !trailing &&
+    editable;
   const canClear = reserveClearAction && active && Boolean(props.value?.length);
   return (
     <Stack gap={6} style={containerStyle}>
       {!hideLabel && (
-        <Pressable accessible={false} onPress={() => editable && input.current?.focus()}>
+        <Pressable
+          accessible={false}
+          onPress={() => editable && input.current?.focus()}
+        >
           <Txt size="caption" weight="600" color={error ? c.accent : c.muted}>
             {label}
           </Txt>
@@ -450,7 +459,8 @@ export function Field({
           borderRadius: 12,
           backgroundColor: c.soft,
           borderWidth: 1,
-          borderColor: error || active ? c.accent : contrast ? c.muted : "transparent",
+          borderColor:
+            error || active ? c.accent : contrast ? c.muted : "transparent",
           opacity: editable ? 1 : 0.65,
         }}
       >
@@ -495,29 +505,62 @@ export function Field({
         {!trailing && password && editable ? (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={passwordVisible ? "Hide password" : "Show password"}
+            accessibilityLabel={
+              passwordVisible ? "Hide password" : "Show password"
+            }
             accessibilityState={{ checked: passwordVisible }}
             onPress={() => setPasswordVisible((visible) => !visible)}
             hitSlop={4}
-            style={{ minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center", marginRight: -10 }}
+            style={{
+              minWidth: 44,
+              minHeight: 44,
+              alignItems: "center",
+              justifyContent: "center",
+              marginRight: -10,
+            }}
           >
-            {passwordVisible ? <EyeOff size={20} color={c.muted} /> : <Eye size={20} color={c.muted} />}
+            {passwordVisible ? (
+              <EyeOff size={20} color={c.muted} />
+            ) : (
+              <Eye size={20} color={c.muted} />
+            )}
           </Pressable>
         ) : canClear ? (
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={`Clear ${label.toLowerCase()}`}
-            onPress={() => { props.onChangeText?.(""); input.current?.focus(); }}
+            onPress={() => {
+              props.onChangeText?.("");
+              input.current?.focus();
+            }}
             hitSlop={4}
-            style={{ minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center", marginRight: -10 }}
+            style={{
+              minWidth: 44,
+              minHeight: 44,
+              alignItems: "center",
+              justifyContent: "center",
+              marginRight: -10,
+            }}
           >
             <X size={18} color={c.muted} />
           </Pressable>
         ) : reserveClearAction ? (
-          <View pointerEvents="none" accessible={false} style={{ width: 44, height: 44, marginRight: -10 }} />
+          <View
+            pointerEvents="none"
+            accessible={false}
+            style={{ width: 44, height: 44, marginRight: -10 }}
+          />
         ) : null}
       </View>
-      {error ? <Txt size="caption" color={c.accent} accessibilityRole="alert">{error}</Txt> : helper ? <Txt size="caption" color={c.muted}>{helper}</Txt> : null}
+      {error ? (
+        <Txt size="caption" color={c.accent} accessibilityRole="alert">
+          {error}
+        </Txt>
+      ) : helper ? (
+        <Txt size="caption" color={c.muted}>
+          {helper}
+        </Txt>
+      ) : null}
     </Stack>
   );
 }
@@ -727,6 +770,14 @@ export function Choice<T extends string>({
 }) {
   const switchMotion = React.useContext(SelectionMotionContext);
   const [open, setOpen] = useState(false);
+  const focused = useIsFocused();
+  const pending = useRef<T | null>(null);
+  const presented = useRef(false);
+  const closing = useRef(false);
+  const focusedRef = useRef(focused);
+  focusedRef.current = focused;
+  const changeRef = useRef(onChange);
+  changeRef.current = onChange;
   const trigger = useRef<View>(null);
   const cancel = useRef<View>(null);
   const list = useRef<ScrollView>(null);
@@ -735,8 +786,45 @@ export function Choice<T extends string>({
   const selected = options.find((option) => option.value === value)?.label;
   const disabled = options.length === 0;
   const dismiss = React.useCallback(() => {
+    if (presented.current) closing.current = true;
     setOpen(false);
   }, []);
+  const finishDismiss = React.useCallback(() => {
+    presented.current = false;
+    closing.current = false;
+    const next = pending.current;
+    pending.current = null;
+    if (!focusedRef.current) return;
+    if (next !== null) {
+      changeRef.current(next);
+      switchMotion();
+    } else if (Platform.OS === "web") trigger.current?.focus();
+    else {
+      const handle = findNodeHandle(trigger.current);
+      if (handle) AccessibilityInfo.setAccessibilityFocus(handle);
+    }
+  }, [switchMotion]);
+  React.useEffect(() => {
+    focusedRef.current = true;
+    return () => {
+      focusedRef.current = false;
+      pending.current = null;
+    };
+  }, []);
+  React.useEffect(() => {
+    focusedRef.current = focused;
+    if (!focused) {
+      pending.current = null;
+      dismiss();
+    }
+  }, [focused, dismiss]);
+  React.useEffect(() => {
+    // Android does not emit onDismiss. With no exit animation, commit the
+    // selection on the next frame after React removes the dialog.
+    if (Platform.OS === "ios" || open || !closing.current) return;
+    const frame = requestAnimationFrame(finishDismiss);
+    return () => cancelAnimationFrame(frame);
+  }, [open, finishDismiss]);
   React.useEffect(() => {
     if (!open || Platform.OS !== "web") return;
     const escape = (event: KeyboardEvent) => {
@@ -752,7 +840,10 @@ export function Choice<T extends string>({
     };
   }, [open, dismiss]);
   React.useEffect(() => {
-    if (disabled) dismiss();
+    if (disabled) {
+      pending.current = null;
+      dismiss();
+    }
   }, [disabled, dismiss]);
   return (
     <>
@@ -764,7 +855,10 @@ export function Choice<T extends string>({
         accessibilityState={{ expanded: open, disabled }}
         disabled={disabled}
         onPress={() => {
+          if (closing.current || presented.current || !focusedRef.current)
+            return;
           Keyboard.dismiss();
+          presented.current = true;
           setOpen(true);
         }}
         style={({ pressed }) => ({
@@ -799,7 +893,7 @@ export function Choice<T extends string>({
         visible={open}
         transparent
         statusBarTranslucent
-        animationType={reduceMotion ? "none" : "fade"}
+        animationType={Platform.OS !== "ios" || reduceMotion ? "none" : "fade"}
         onRequestClose={dismiss}
         onShow={() => {
           if (Platform.OS === "web") cancel.current?.focus();
@@ -808,13 +902,7 @@ export function Choice<T extends string>({
             if (handle) AccessibilityInfo.setAccessibilityFocus(handle);
           }
         }}
-        onDismiss={() => {
-          if (Platform.OS === "web") trigger.current?.focus();
-          else {
-            const handle = findNodeHandle(trigger.current);
-            if (handle) AccessibilityInfo.setAccessibilityFocus(handle);
-          }
-        }}
+        onDismiss={finishDismiss}
       >
         <View
           accessibilityViewIsModal
@@ -891,10 +979,8 @@ export function Choice<T extends string>({
                         });
                     }}
                     onPress={() => {
-                      if (!active) {
-                        onChange(option.value);
-                        switchMotion();
-                      }
+                      if (closing.current) return;
+                      pending.current = active ? null : option.value;
                       dismiss();
                     }}
                     style={({ pressed }) => ({

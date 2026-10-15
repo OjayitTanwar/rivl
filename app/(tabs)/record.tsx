@@ -110,6 +110,43 @@ export default function Record() {
   const [simulate, setSimulate] = useState(false);
   const [options, setOptions] = useState(false);
   const [details, setDetails] = useState(false);
+  const pendingDevices = useRef(false);
+  const panelClosing = useRef(false);
+  const focusedRef = useRef(focused);
+  focusedRef.current = focused;
+  const finishPanelDismiss = useCallback(() => {
+    panelClosing.current = false;
+    const navigate = pendingDevices.current;
+    pendingDevices.current = false;
+    if (navigate && focusedRef.current) router.push("/devices");
+  }, []);
+  const closePanel = useCallback(() => {
+    pendingDevices.current = false;
+    panelClosing.current = true;
+    setOptions(false);
+    setDetails(false);
+  }, []);
+  useEffect(() => {
+    focusedRef.current = true;
+    return () => {
+      focusedRef.current = false;
+      pendingDevices.current = false;
+    };
+  }, []);
+  useEffect(() => {
+    focusedRef.current = focused;
+    if (!focused) {
+      pendingDevices.current = false;
+      setOptions(false);
+      setDetails(false);
+    }
+  }, [focused]);
+  useEffect(() => {
+    if (Platform.OS === "ios" || options || details || !panelClosing.current)
+      return;
+    const frame = requestAnimationFrame(finishPanelDismiss);
+    return () => cancelAnimationFrame(frame);
+  }, [options, details, finishPanelDismiss]);
   const [title, setTitle] = useState("");
   const [note, setNote] = useState("");
   const [rpe, setRpe] = useState("5");
@@ -400,7 +437,7 @@ export default function Record() {
         ? Mountain
         : Footprints;
   const chooseSport = () => {
-    if (recording) return;
+    if (recording || panelClosing.current) return;
     if (Platform.OS === "ios")
       ActionSheetIOS.showActionSheetWithOptions(
         {
@@ -470,7 +507,9 @@ export default function Record() {
           </IconButton>
           <IconButton
             label="Recording settings"
-            onPress={() => setOptions(true)}
+            onPress={() => {
+              if (!panelClosing.current) setOptions(true);
+            }}
           >
             <Settings2 size={22} color={c.text} />
           </IconButton>
@@ -479,7 +518,9 @@ export default function Record() {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Expand workout stats"
-            onPress={() => setDetails(true)}
+            onPress={() => {
+              if (!panelClosing.current) setDetails(true);
+            }}
             style={{
               position: "absolute",
               bottom: sheetHeight + 48,
@@ -760,20 +801,15 @@ export default function Record() {
         </View>
         <Modal
           transparent
-          visible={options || details}
-          animationType="slide"
-          onRequestClose={() => {
-            setOptions(false);
-            setDetails(false);
-          }}
+          visible={focused && (options || details)}
+          animationType={Platform.OS === "ios" ? "slide" : "none"}
+          onDismiss={finishPanelDismiss}
+          onRequestClose={closePanel}
         >
           <View style={{ flex: 1, justifyContent: "flex-end" }}>
             <Pressable
               accessibilityLabel="Close panel"
-              onPress={() => {
-                setOptions(false);
-                setDetails(false);
-              }}
+              onPress={closePanel}
               style={{
                 position: "absolute",
                 top: 0,
@@ -799,14 +835,7 @@ export default function Record() {
                 <Txt size="heading" weight="700">
                   {details ? "Workout stats" : "Recording settings"}
                 </Txt>
-                <Button
-                  title="Done"
-                  variant="quiet"
-                  onPress={() => {
-                    setOptions(false);
-                    setDetails(false);
-                  }}
-                />
+                <Button title="Done" variant="quiet" onPress={closePanel} />
               </Row>
               <ScrollView contentContainerStyle={{ gap: 18 }}>
                 {details ? (
@@ -868,8 +897,11 @@ export default function Record() {
                       title="Sensors & watch"
                       variant="secondary"
                       onPress={() => {
+                        if (panelClosing.current) return;
+                        pendingDevices.current = true;
+                        panelClosing.current = true;
                         setOptions(false);
-                        router.push("/devices");
+                        setDetails(false);
                       }}
                     />
                     <Txt size="caption" color={c.muted}>

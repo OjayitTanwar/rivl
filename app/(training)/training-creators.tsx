@@ -901,6 +901,9 @@ export default function TrainingCreators() {
                   </Txt>
                   <Field
                     label="Program JSON"
+                    autoCorrect={false}
+                    spellCheck={false}
+                    autoCapitalize="none"
                     value={draftOwner.current === owner ? json : ""}
                     onChangeText={(value) => {
                       setJson(value);
