@@ -26,6 +26,7 @@ import {
 import { routeProvider } from "../src/services/route-planning";
 import {
   offlineAreaAt,
+  routingFeatures,
   savedOfflineGuide,
   type OfflineArea,
 } from "../src/services/offline-maps";
@@ -368,11 +369,10 @@ export default function Navigate() {
         if (!activeRef.current || rerouteRun !== navigationRun.current) return;
         try {
           const area = profile && (await offlineAreaAt(profile.id, here));
-          const lines =
-            sport === "ride" ? area?.cyclingLines : area?.walkingLines;
+          const features = area ? routingFeatures(area) : [];
           const fallback =
-            lines && destination.current
-              ? offlineReroute(lines, here, destination.current)
+            features.length && destination.current
+              ? offlineReroute(features, here, destination.current, sport)
               : null;
           if (!activeRef.current || rerouteRun !== navigationRun.current)
             return;
@@ -384,7 +384,9 @@ export default function Navigate() {
             setRoute(fallback);
             pathNetwork.current = {
               center: area!.center,
-              lines: lines!,
+              lines:
+                (sport === "ride" ? area!.cyclingLines : area!.walkingLines) ??
+                [],
               limited: area!.limited,
             };
             infrastructureBucket.current = -1;

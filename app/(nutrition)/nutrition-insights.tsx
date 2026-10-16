@@ -1,3 +1,8 @@
+import {
+  micronutrientDefinitions,
+  micronutrientKeys,
+  micronutrientTotals,
+} from "../../src/domain/micronutrients";
 import { importRecipeUrl } from "../../src/services/recipe-import";
 import { WorkspaceExit } from "../../src/ui/WorkspaceExit";
 import React, { useCallback, useMemo, useRef, useState } from "react";
@@ -199,6 +204,14 @@ export default function NutritionInsights({
         ? nutritionWeekReport(snapshot.entries, weekEnd)
         : [],
     [snapshot, days, weekEnd],
+  );
+  const weekEntries = useMemo(
+    () => snapshot?.entries.filter((entry) => days.includes(entry.day)) ?? [],
+    [snapshot, days],
+  );
+  const weekMicronutrients = useMemo(
+    () => micronutrientTotals(weekEntries),
+    [weekEntries],
   );
   const planned = useMemo(
     () => snapshot?.planned.filter((p) => days.includes(p.day)) ?? [],
@@ -488,6 +501,28 @@ export default function NutritionInsights({
                       )}
                     </SettingsSection>
                   ))}
+                {!!weekEntries.length && (
+                  <SettingsSection title="More nutrients this week" collapsible>
+                    {micronutrientKeys.map((key) => {
+                      const value = weekMicronutrients[key],
+                        definition = micronutrientDefinitions[key];
+                      return (
+                        <LabelValueRow
+                          key={key}
+                          label={definition.label}
+                          value={
+                            value.missing === weekEntries.length
+                              ? "Unavailable"
+                              : `${number(value.known)} ${definition.unit}${value.missing ? " + unknown" : ""}`
+                          }
+                        />
+                      );
+                    })}
+                    <Txt size="caption" color={c.muted}>
+                      Recorded foods only. Missing values are not zero.
+                    </Txt>
+                  </SettingsSection>
+                )}
                 <Button
                   title="Export this week"
                   variant="secondary"
@@ -505,6 +540,7 @@ export default function NutritionInsights({
                               Intl.DateTimeFormat().resolvedOptions().timeZone,
                             days,
                             report,
+                            additionalNutrients: weekMicronutrients,
                             goals: snapshot.goals,
                             actualEntries: snapshot.entries.filter((e) =>
                               days.includes(e.day),

@@ -5,6 +5,18 @@ Project: `/Users/ojayitsinghtanwar/Desktop/rivl`
 
 ## 1. Read this first
 
+### Completion batch and phone build — 16 October 2026
+
+Dedicated hosted project now has 23 migrations through 202610160009. Seven new transactional hosted suites passed with rolled-back fixtures: unmapped corridors, shared routes, training targets, live sharing, retention, club events and moderation. Full local database regression: 23 suites passed. Final app regression: 605 tests / 88 suites, TypeScript, development security and Deno worker checks passed. Backup manifest tests: two passed. GPS integration covers real-source preparation, neighbor privacy, stale completion and split-way ambiguity.
+
+Community GPS now includes bounded private unmapped centerline proposals from five independent owners and three days, continuous common-source support, privacy revalidation, versioned reviewer decisions, immediate disputed suppression and live revocation-aware reads. Split/adjacent mapped OSM ambiguity cannot become a new-path proposal. Worker redeployed. Public results are discovery evidence, never routing or safety certification; genuine multi-athlete field validation and appointed reviewers remain required.
+
+Other additions: shared route publish/browse/save/report with trimmed endpoints and CC BY attribution; clubs with roles/events/capacity-safe RSVP; explicit foreground friend live sharing; app moderation console with server-provisioned staff roles; training targets/recovery feedback/original CC0 starters; health HRV/BP/cycle/medication logs; micronutrients, camera barcode scanning and reviewed photo/voice food drafts. Offline rerouting uses fresh versioned node topology and mode/access/direction restrictions; full licensed offline basemaps remain absent.
+
+Existing approved cron now invokes bounded once-daily retention before queue dispatch, updated with cron.alter_job through the Management API. Migration007 deliberately does not modify cron.job: hosted migration roles lack that privilege. Fresh deployments still require operator scheduler activation. No new Vault credentials or paid provider were enabled.
+
+Encrypted hosted-runner backup tooling is dormant until an operator configures a recipient/destination and performs a disposable restore. SMTP/OAuth, named moderation/support, genuine GPS/health/Watch/BLE testing, load capacity and store distribution remain launch gates. Do not claim everything complete. Phone build/install outcome must be recorded separately.
+
 ### Current priority, UI delivery and Community GPS — 16 October 2026
 
 Latest user direction: Community GPS tracks takes first priority, ahead of further UI polish. User also asked to download more reference apps and use REA. OpenTracks, Organic Maps and OsmAnd packages were acquired, hashed, inspected including focused decompiled methods, then temporary packages removed; evidence/report docs/COMMUNITY-MAPPING-REA.md. Original implementations/assets only.

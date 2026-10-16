@@ -1,5 +1,33 @@
 import { AppFailure } from "../security/errors";
 export const wellnessMetrics = {
+  hrv: {
+    label: "Heart-rate variability",
+    unit: "ms",
+    min: 1,
+    max: 1000,
+    whole: false,
+  },
+  bloodPressure: {
+    label: "Blood pressure",
+    unit: "mmHg",
+    min: 40,
+    max: 300,
+    whole: true,
+  },
+  cycle: {
+    label: "Menstrual flow",
+    unit: "level",
+    min: 1,
+    max: 4,
+    whole: true,
+  },
+  medication: {
+    label: "Medication taken",
+    unit: "dose",
+    min: 0.001,
+    max: 100000,
+    whole: false,
+  },
   sleep: { label: "Sleep", unit: "hours", min: 0.1, max: 24, whole: false },
   restingHR: {
     label: "Resting heart rate",
@@ -49,6 +77,10 @@ export interface WellnessEntry {
   at: number;
   note: string;
   startedAt?: number;
+  diastolic?: number;
+  medicationName?: string;
+  doseUnit?: string;
+  hrvMethod?: "SDNN" | "RMSSD";
   source?: {
     provider: "HealthKit" | "Health Connect";
     recordId: string;
@@ -76,6 +108,33 @@ export function validateWellnessEntry(entry: WellnessEntry, now = Date.now()) {
     !isWellnessKind(entry.kind)
   )
     throw new AppFailure("validation", "Choose a valid health record.");
+  if (
+    entry.kind === "bloodPressure" &&
+    (!Number.isInteger(entry.diastolic) ||
+      entry.diastolic! < 20 ||
+      entry.diastolic! > 200 ||
+      entry.diastolic! >= entry.value)
+  )
+    throw new AppFailure(
+      "validation",
+      "Enter a diastolic pressure of 20–200 mmHg below the systolic pressure.",
+    );
+  if (
+    entry.kind === "medication" &&
+    (!entry.medicationName?.trim() ||
+      entry.medicationName.length > 100 ||
+      !entry.doseUnit?.trim() ||
+      entry.doseUnit.length > 30)
+  )
+    throw new AppFailure(
+      "validation",
+      "Enter a medication name and dose unit, such as mg or tablet.",
+    );
+  if (
+    entry.kind === "hrv" &&
+    !["SDNN", "RMSSD"].includes(entry.hrvMethod ?? "")
+  )
+    throw new AppFailure("validation", "Choose the HRV measurement method.");
   const metric = wellnessMetrics[entry.kind];
   if (
     !Number.isFinite(entry.value) ||

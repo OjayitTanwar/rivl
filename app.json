@@ -68,9 +68,9 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Choose photos to attach to your workouts.",
-          "cameraPermission": false,
-          "microphonePermission": false
+          "photosPermission": "Choose workout photos or a temporary food reference.",
+          "cameraPermission": "RIVL uses the camera to scan food barcodes.",
+          "microphonePermission": "RIVL uses the microphone when you choose to describe a food."
         }
       ],
       "expo-notifications",
@@ -80,7 +80,9 @@
       [
         "react-native-ble-plx",
         {
-          "modes": ["central"],
+          "modes": [
+            "central"
+          ],
           "isBackgroundEnabled": true,
           "bluetoothAlwaysPermission": "RIVL connects to your heart-rate strap and power meter to record measured workout data."
         }
@@ -89,12 +91,31 @@
       "@bacons/apple-targets",
       "expo-sharing",
       "./plugins/with-local-reminders",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "RIVL uses the camera to scan food barcodes.",
+          "microphonePermission": "RIVL uses the microphone when you choose to describe a food.",
+          "recordAudioAndroid": false,
+          "barcodeScannerEnabled": true
+        }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "RIVL uses the microphone when you choose to describe a food.",
+          "speechRecognitionPermission": "RIVL transcribes the food you describe so you can review it before logging."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
     },
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "icon": "./assets/icon.png"
   }
 }

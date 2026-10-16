@@ -100,6 +100,35 @@ export async function refreshAutomaticWellness(
     String(snapshot.weightMeasuredAt),
     snapshot.weightMeasuredAt ?? NaN,
   );
+  for (const reading of (snapshot.hrvReadings ?? []).slice(0, 1000)) {
+    if (
+      !reading ||
+      !["SDNN", "RMSSD"].includes(reading.method) ||
+      !reading.id ||
+      reading.id.length > 300
+    )
+      continue;
+    const record: WellnessEntry = {
+      id: `health-${provider}-hrv-${encodeURIComponent(reading.id)}`,
+      ownerId,
+      kind: "hrv",
+      value: reading.value,
+      at: reading.at,
+      note: "",
+      hrvMethod: reading.method,
+      source: {
+        provider: snapshot.source,
+        recordId: reading.id,
+        readAt: snapshot.readAt,
+      },
+    };
+    try {
+      validateWellnessEntry(record, now);
+      records.push(record);
+    } catch {
+      /* Reject invalid provider samples. */
+    }
+  }
   const waterFrom = snapshot.stepsStartedAt ?? snapshot.readAt - 86400000;
   let waterComplete =
     !!snapshot.waterComplete &&

@@ -1,0 +1,54 @@
+name: Encrypted backend backup
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 2 * * *"
+permissions:
+  contents: read
+concurrency:
+  group: backend-backup
+  cancel-in-progress: false
+jobs:
+  backup:
+    # Deliberately dormant until the operator completes BACKUP-RESTORE.md setup.
+    if: vars.BACKUPS_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    environment: backend-backup
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.27.0"
+          cache: false
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.75.0
+      - name: Install pinned encryption and PostgreSQL client
+        run: |
+          go install filippo.io/age/cmd/age@v1.3.2
+          sudo apt-get update -qq
+          sudo apt-get install -y postgresql-client
+      - name: Prepare encrypted backup
+        run: node scripts/backup-backend.mjs
+        env:
+          BACKUP_DATABASE_URL: ${{ secrets.BACKUP_DATABASE_URL }}
+          BACKUP_SUPABASE_URL: ${{ secrets.BACKUP_SUPABASE_URL }}
+          BACKUP_SERVICE_ROLE_KEY: ${{ secrets.BACKUP_SERVICE_ROLE_KEY }}
+          BACKUP_AGE_RECIPIENT: ${{ vars.BACKUP_AGE_RECIPIENT }}
+          BACKUP_OUTPUT_DIR: ${{ runner.temp }}/rivl-encrypted-backup
+      - uses: actions/upload-artifact@v4
+        with:
+          name: encrypted-backend-${{ github.run_id }}
+          path: ${{ runner.temp }}/rivl-encrypted-backup/*.tar.age
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+      - name: Remove encrypted local artifact
+        if: always()
+        run: rm -rf -- "$RUNNER_TEMP/rivl-encrypted-backup"

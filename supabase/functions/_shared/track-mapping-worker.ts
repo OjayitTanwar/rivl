@@ -9,6 +9,12 @@ import {
   reconstructCommunityTracks,
   TRACK_RECONSTRUCTION_POLICY,
 } from "./track-reconstruction.ts";
+import {
+  buildUnmappedProposals,
+  type CorridorProposal,
+  type CorridorReference,
+} from "./unmapped-track-worker.ts";
+import type { ReconstructionObservation } from "./track-reconstruction.ts";
 
 export interface TrackMappingJob {
   activity_id: string;
@@ -35,12 +41,24 @@ export interface TrackMappingPort {
   claim(): Promise<TrackMappingJob | null>;
   input(job: TrackMappingJob): Promise<TrackMappingInput | null>;
   ways(center: Coordinate): Promise<MappedTrack[]>;
+  neighbors?(
+    job: TrackMappingJob,
+  ): Promise<
+    {
+      activity_id: string;
+      owner_id: string;
+      revision: number;
+      preference_revision: number;
+      input: TrackMappingInput;
+    }[]
+  >;
   complete(
     job: TrackMappingJob,
     ways: MappedTrack[],
     support: TrackSupport[],
     algorithm: string,
     fingerprint: string | null,
+    corridors?: CorridorProposal[],
   ): Promise<boolean>;
   retry(job: TrackMappingJob): Promise<void>;
 }
@@ -271,6 +289,7 @@ export async function processTrackMapping(
     const evidence = prepareMappingInput(job, input);
     let ways: MappedTrack[] = [],
       support: TrackSupport[] = [];
+    let corridors: CorridorProposal[] = [];
     if (evidence) {
       const first = evidence.lines[0]!;
       ways = await deadline(port.ways(first[Math.floor(first.length / 2)]!));
@@ -316,6 +335,50 @@ export async function processTrackMapping(
           : [];
       });
       if (support.length > 128) throw new Error("mapping_support_limit");
+      if (port.neighbors) {
+        const neighbors = await deadline(port.neighbors(job));
+        if (!Array.isArray(neighbors) || neighbors.length > 12)
+          throw new Error("mapping_cohort_limit");
+        const observations: ReconstructionObservation[] = [];
+        const references: CorridorReference[] = [];
+        for (const source of [
+          {
+            activity_id: job.activity_id,
+            owner_id: job.owner_id,
+            revision: job.revision,
+            preference_revision: job.preference_revision,
+            input,
+          },
+          ...neighbors,
+        ]) {
+          // Each retained source is independently re-prepared with its original
+          // endpoints and current zones before regional comparison.
+          const prepared = prepareMappingInput(
+            { ...source, lease: job.lease },
+            source.input,
+          );
+          if (!prepared) continue;
+          observations.push({
+            ownerId: source.owner_id,
+            observedDay: new Date(source.input.startedAt)
+              .toISOString()
+              .slice(0, 10),
+            evidence: prepared,
+          });
+          references.push({
+            activityId: source.activity_id,
+            revision: source.revision,
+            preferenceRevision: source.preference_revision,
+            fingerprint: await mappingFingerprint(prepared.lines),
+          });
+        }
+        corridors = buildUnmappedProposals(
+          observations,
+          references,
+          ways,
+          first[Math.floor(first.length / 2)]!,
+        );
+      }
     }
     const supportedIds = new Set(
       support.map((span) => `${span.wayId}:${span.version}`),
@@ -334,6 +397,7 @@ export async function processTrackMapping(
         support,
         TRACK_RECONSTRUCTION_POLICY.version,
         fingerprint,
+        corridors,
       ),
     ))
       ? "processed"

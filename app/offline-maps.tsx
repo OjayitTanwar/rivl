@@ -17,6 +17,7 @@ import {
 import RouteMap from "../src/ui/RouteMap";
 import {
   offlineAreas,
+  routingFeatures,
   saveOfflineArea,
   removeOfflineArea,
   saveOfflineGuide,
@@ -162,6 +163,12 @@ export default function OfflineMaps() {
                 {area.lines.length} road/path lines
                 {area.limited ? " · partial coverage" : ""}
               </Txt>
+              {!routingFeatures(area).length && (
+                <Txt size="caption" color={c.muted}>
+                  Display only · remove and download again for current routing
+                  data.
+                </Txt>
+              )}
               <Row style={{ flexWrap: "wrap" }}>
                 <Button
                   title={preview === area.id ? "Hide paths" : "Preview paths"}

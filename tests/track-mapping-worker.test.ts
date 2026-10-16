@@ -249,3 +249,172 @@ describe("leased track mapping processor", () => {
     expect(mappingFractionAtMeters(points, first + second + 100)).toBe(1);
   });
 });
+
+const cohortMeter = 111195;
+function cohortInput(index: number): TrackMappingInput {
+  const startedAt = Date.parse("2026-10-10T00:00:00Z") + (index % 3) * 86400000;
+  return {
+    sport: "run",
+    startedAt,
+    endedAt: startedAt + 200000,
+    origin: "device-gps",
+    privacy: [],
+    raw: Array.from({ length: 101 }, (_, i) => ({
+      lat: (index * 0.4) / cohortMeter,
+      lng: (i * 10) / cohortMeter,
+      t: startedAt + i * 2000,
+      accuracy: 5,
+      segment: 0,
+    })),
+  };
+}
+function cohortNeighbors(count = 4) {
+  return Array.from({ length: count }, (_, i) => ({
+    activity_id: `neighbor-${i + 1}`,
+    owner_id: `owner-${i + 1}`,
+    revision: 1,
+    preference_revision: 1,
+    input: cohortInput(i + 1),
+  }));
+}
+function completedCorridors(p: TrackMappingPort) {
+  return (p.complete as ReturnType<typeof vi.fn>).mock.calls[0]?.[5] as {
+    geometry: { lat: number; lng: number }[];
+    support: { activityId: string; fingerprint: string }[];
+  }[];
+}
+describe("unmapped corridor worker integration", () => {
+  it("prepares each independent original trace and forwards exact support references as proposals only", async () => {
+    const p = port({
+      input: vi.fn(async () => cohortInput(0)),
+      ways: vi.fn(async () => []),
+      neighbors: vi.fn(async () => cohortNeighbors()),
+    });
+    expect(await processTrackMapping(p)).toBe("processed");
+    const proposals = completedCorridors(p);
+    expect(proposals.length).toBeGreaterThan(0);
+    expect(proposals[0]!.support).toHaveLength(5);
+    expect(new Set(proposals[0]!.support.map((s) => s.fingerprint)).size).toBe(
+      5,
+    );
+    expect(proposals[0]!.support.map((s) => s.activityId)).toContain(
+      job.activity_id,
+    );
+    for (const candidate of proposals)
+      expect(
+        candidate.geometry.every(
+          (point) =>
+            trackMeters(point, (cohortInput(0).raw as Sample[])[0]!) > 200 &&
+            trackMeters(point, (cohortInput(0).raw as Sample[])[100]!) > 200,
+        ),
+      ).toBe(true);
+    expect((p.complete as ReturnType<typeof vi.fn>).mock.calls[0]![2]).toEqual(
+      [],
+    );
+  });
+  it("never reconstructs ambiguous fixes beside split OSM ways as a new path", async () => {
+    const adjacent = [
+      { from: 200, to: 500, id: 901 },
+      { from: 500, to: 800, id: 902 },
+    ].map(({ from, to, id }) =>
+      mappedTrack(
+        { id, version: 1, tags: { highway: "path", foot: "yes" } },
+        Array.from({ length: (to - from) / 10 + 1 }, (_, i) => ({
+          lat: 30 / cohortMeter,
+          lng: (from + i * 10) / cohortMeter,
+        })),
+      ),
+    );
+    const p = port({
+      input: vi.fn(async () => cohortInput(0)),
+      ways: vi.fn(async () => adjacent),
+      neighbors: vi.fn(async () => cohortNeighbors()),
+    });
+    expect(await processTrackMapping(p)).toBe("processed");
+    expect(completedCorridors(p)).toEqual([]);
+    expect((p.complete as ReturnType<typeof vi.fn>).mock.calls[0]![2]).toEqual(
+      [],
+    );
+  });
+  it("does not join a relay of different supporters across the entire proposed centerline", async () => {
+    const neighbors = cohortNeighbors(7);
+    for (let index = 0; index < neighbors.length; index++) {
+      if (index >= 3)
+        neighbors[index]!.input.privacy = [
+          { lat: 0, lng: (index < 5 ? 650 : 350) / cohortMeter, radius: 150 },
+        ];
+    }
+    const p = port({
+      input: vi.fn(async () => cohortInput(0)),
+      ways: vi.fn(async () => []),
+      neighbors: vi.fn(async () => neighbors),
+    });
+    expect(await processTrackMapping(p)).toBe("processed");
+    const proposals = completedCorridors(p);
+    expect(proposals.length).toBeGreaterThan(0);
+    for (const candidate of proposals) {
+      const longitudes = candidate.geometry.map((v) => v.lng * cohortMeter);
+      expect(
+        Math.min(...longitudes) < 450 && Math.max(...longitudes) > 550,
+      ).toBe(false);
+      expect(candidate.support.length).toBeGreaterThanOrEqual(5);
+    }
+  });
+  it("cannot replace a revoked fifth source with repeated owners or copied geometry", async () => {
+    for (const neighbors of [
+      cohortNeighbors(3),
+      cohortNeighbors().map((n) => ({ ...n, owner_id: "same-owner" })),
+      cohortNeighbors().map((n) => ({ ...n, input: cohortInput(0) })),
+    ]) {
+      const p = port({
+        input: vi.fn(async () => cohortInput(0)),
+        ways: vi.fn(async () => []),
+        neighbors: vi.fn(async () => neighbors),
+      });
+      expect(await processTrackMapping(p)).toBe("processed");
+      expect(completedCorridors(p)).toEqual([]);
+    }
+  });
+  it("re-prepares neighbor privacy zones and fails closed on malformed source privacy", async () => {
+    const protectedNeighbors = cohortNeighbors();
+    protectedNeighbors[0]!.input.privacy = [
+      { lat: 0, lng: 500 / cohortMeter, radius: 500 },
+    ];
+    const p = port({
+      input: vi.fn(async () => cohortInput(0)),
+      ways: vi.fn(async () => []),
+      neighbors: vi.fn(async () => protectedNeighbors),
+    });
+    expect(await processTrackMapping(p)).toBe("processed");
+    expect(completedCorridors(p)).toEqual([]);
+    const invalid = cohortNeighbors();
+    invalid[0]!.input.privacy = [{ lat: 0, lng: 0, radius: NaN }];
+    const rejected = port({
+      input: vi.fn(async () => cohortInput(0)),
+      ways: vi.fn(async () => []),
+      neighbors: vi.fn(async () => invalid),
+    });
+    expect(await processTrackMapping(rejected)).toBe("retry");
+    expect(rejected.complete).not.toHaveBeenCalled();
+  });
+  it("rejects excessive neighbor cohorts without committing partial mapped support", async () => {
+    const p = port({
+      input: vi.fn(async () => cohortInput(0)),
+      ways: vi.fn(async () => []),
+      neighbors: vi.fn(async () => cohortNeighbors(13)),
+    });
+    expect(await processTrackMapping(p)).toBe("retry");
+    expect(p.complete).not.toHaveBeenCalled();
+  });
+  it("lets transactional completion reject source revocation after reconstruction", async () => {
+    const p = port({
+      input: vi.fn(async () => cohortInput(0)),
+      ways: vi.fn(async () => []),
+      neighbors: vi.fn(async () => cohortNeighbors()),
+      complete: vi.fn(async () => false),
+    });
+    expect(await processTrackMapping(p)).toBe("stale");
+    expect(completedCorridors(p).length).toBeGreaterThan(0);
+    expect(p.retry).not.toHaveBeenCalled();
+  });
+});

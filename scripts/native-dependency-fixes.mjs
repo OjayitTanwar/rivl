@@ -23,6 +23,17 @@ if (code.includes("fs.rmSync(finalLocation, {force: true, recursive: true});"))
       "fs.rmSync(finalLocation, {force: true, recursive: true, maxRetries: 10, retryDelay: 200});",
     ),
   );
+// A restored CocoaPods cache can contain a Release RNCore with no build marker.
+// RN's upstream first-Debug shortcut then keeps that binary while Debug headers
+// enable incompatible vtables. Restore the requested artifact when the marker
+// is absent instead of assuming its configuration.
+const rnCore = await readFile(rn, "utf8");
+const missingMarkerShortcut = /if \(!fileExists && configuration === 'Debug'\) \{[\s\S]*?return false;\n  \}/;
+if (missingMarkerShortcut.test(rnCore))
+  await writeFile(rn, rnCore.replace(missingMarkerShortcut, `if (!fileExists) {
+    console.log('Configuration marker missing; restoring the requested React-Core-prebuilt artifact');
+    return true;
+  }`));
 // apple-targets 5 removes the target reference before using its configuration list again.
 const target =
   require.resolve("@bacons/apple-targets/build/with-xcode-changes.js");

@@ -1,7 +1,8 @@
+import { moderationRoles } from "../src/services/moderation-console";
 import { userMessage } from "../src/security/errors";
 import React, { useState, useEffect, useRef } from "react";
 import { Pressable, Switch, View } from "react-native";
-import { router } from "expo-router";
+import { router, type Href } from "expo-router";
 import * as Location from "expo-location";
 import * as Crypto from "expo-crypto";
 import * as Linking from "expo-linking";
@@ -66,6 +67,28 @@ export default function Settings() {
     [reminder, setReminder] = useState<string | null>(null),
     [trainingDetails, setTrainingDetails] = useState(false);
   const actionInProgress = useRef(false);
+  const [reviewAccess, setReviewAccess] = useState<{
+    owner: string;
+    allowed: boolean;
+  } | null>(null);
+  useEffect(() => {
+    let active = true;
+    setReviewAccess(null);
+    if (profile && !session?.local)
+      void moderationRoles(profile.id)
+        .then((value) => {
+          if (active)
+            setReviewAccess({
+              owner: profile.id,
+              allowed: value.moderator || value.trackReviewer,
+            });
+        })
+        .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [profile?.id, session?.local]);
+
   useEffect(() => {
     setMaxHR(String(profile?.maxHR ?? 190));
   }, [profile?.maxHR]);
@@ -125,7 +148,10 @@ export default function Settings() {
       {!!message && <Notice text={message} />}
       <Stack gap={8} style={{ paddingBottom: 12 }}>
         <SectionHeading title={profile.name || "Your athlete"} />
-        <Txt color={c.muted}>{profile.weeklyGoal / 1000} km weekly goal · {profile.speedUnit === "mph" ? "mph" : "km/h"} speed display</Txt>
+        <Txt color={c.muted}>
+          {profile.weeklyGoal / 1000} km weekly goal ·{" "}
+          {profile.speedUnit === "mph" ? "mph" : "km/h"} speed display
+        </Txt>
       </Stack>
       <SettingsSection title="Display & accessibility" collapsible>
         <Txt size="caption" weight="600">
@@ -140,7 +166,9 @@ export default function Settings() {
           value={profile.theme}
           onChange={(theme) => void act(() => updateProfile({ theme }))}
         />
-        <Txt size="caption" weight="600">Accent colour</Txt>
+        <Txt size="caption" weight="600">
+          Accent colour
+        </Txt>
         <Row style={{ flexWrap: "wrap", gap: 10 }}>
           {(Object.keys(accentColors) as AccentColor[]).map((key) => {
             const option = accentColors[key];
@@ -152,13 +180,32 @@ export default function Settings() {
                 accessibilityLabel={`${option.label} accent`}
                 accessibilityState={{ checked: selected, disabled: busy }}
                 disabled={busy}
-                onPress={() => void act(() => updateProfile({ accentColor: key }))}
-                style={{ minHeight: 48, minWidth: 88, padding: 10, borderRadius: 12,
-                  borderWidth: selected ? 2 : 1, borderColor: selected ? c.accent : c.line,
-                  flexDirection: "row", alignItems: "center", gap: 8 }}
+                onPress={() =>
+                  void act(() => updateProfile({ accentColor: key }))
+                }
+                style={{
+                  minHeight: 48,
+                  minWidth: 88,
+                  padding: 10,
+                  borderRadius: 12,
+                  borderWidth: selected ? 2 : 1,
+                  borderColor: selected ? c.accent : c.line,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 8,
+                }}
               >
-                <View style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: option.fill }} />
-                <Txt size="caption" weight={selected ? "700" : "400"}>{option.label}</Txt>
+                <View
+                  style={{
+                    width: 18,
+                    height: 18,
+                    borderRadius: 9,
+                    backgroundColor: option.fill,
+                  }}
+                />
+                <Txt size="caption" weight={selected ? "700" : "400"}>
+                  {option.label}
+                </Txt>
               </Pressable>
             );
           })}
@@ -635,6 +682,14 @@ export default function Settings() {
       </SettingsSection>
       <Stack gap={8}>
         <SectionHeading title="Account & safety" />
+        {reviewAccess?.owner === profile?.id && reviewAccess?.allowed && (
+          <ListRow
+            title="Community review"
+            detail="Review reports and proposed paths"
+            onPress={() => router.push("/moderation" as Href)}
+          />
+        )}
+
         <ListRow
           title="Blocked athletes"
           detail="Manage who can interact with you"

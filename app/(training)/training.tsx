@@ -1,3 +1,10 @@
+import {
+  formatTrainingTarget,
+  trainingTargetInput,
+  parseTrainingTargetInput,
+  type TrainingTarget,
+} from "../../src/domain/training-targets";
+import { suggestTrainingAdjustment } from "../../src/domain/training-adaptation";
 import { WorkspaceExit } from "../../src/ui/WorkspaceExit";
 import React, {
   useCallback,
@@ -166,6 +173,9 @@ function IntervalClock({
       >
         {formatTrainingDuration(position.remainingSec)}
       </Txt>
+      {position.stage?.kind === "work" && !!session.plan.target && (
+        <Txt color={c.accent}>{formatTrainingTarget(session.plan.target)}</Txt>
+      )}
       <Row between>
         <Txt color={c.muted}>
           {session.state === "paused" ? "Paused" : "Interval timer"}
@@ -207,6 +217,14 @@ export default function GuidedTraining({
       original: TrainingPlan | null;
     } | null>(null),
     [name, setName] = useState(""),
+    [targetKind, setTargetKind] = useState<"none" | TrainingTarget["kind"]>(
+      "none",
+    ),
+    [targetMin, setTargetMin] = useState(""),
+    [targetMax, setTargetMax] = useState(""),
+    [feedbackSession, setFeedbackSession] = useState<string | null>(null),
+    [effort, setEffort] = useState("5"),
+    [recovery, setRecovery] = useState<"ready" | "tired" | "sore">("ready"),
     [sport, setSport] = useState<TrainingSport>("run"),
     [values, setValues] = useState<Record<string, string>>({
       warmupSec: "",
@@ -328,6 +346,17 @@ export default function GuidedTraining({
     setEditor({ id: plan?.id ?? randomUUID(), original: plan ?? null });
     setName(plan?.title ?? "");
     setSport(plan?.sport ?? "run");
+    setTargetKind(plan?.target?.kind ?? "none");
+    setTargetMin(
+      plan?.target
+        ? trainingTargetInput(plan.target.kind, plan.target.min)
+        : "",
+    );
+    setTargetMax(
+      plan?.target
+        ? trainingTargetInput(plan.target.kind, plan.target.max)
+        : "",
+    );
     setValues(
       Object.fromEntries(
         durationKeys.map((key) => [
@@ -356,6 +385,15 @@ export default function GuidedTraining({
       await repository.save(
         {
           ...numbers,
+          ...(targetKind === "none"
+            ? {}
+            : {
+                target: {
+                  kind: targetKind,
+                  min: parseTrainingTargetInput(targetKind, targetMin),
+                  max: parseTrainingTargetInput(targetKind, targetMax),
+                } as TrainingTarget,
+              }),
           id: editor.id,
           ownerId: id,
           title: name.trim(),
@@ -391,7 +429,11 @@ export default function GuidedTraining({
       contentStyle={{ paddingBottom: 120 }}
     >
       <Stack gap={20}>
-        {loading && !!owner && <Txt size="caption" color={c.muted}>Loading training…</Txt>}
+        {loading && !!owner && (
+          <Txt size="caption" color={c.muted}>
+            Loading training…
+          </Txt>
+        )}
         {!owner ? (
           <Notice text="Sign in to keep training plans and interval sessions." />
         ) : (
@@ -406,11 +448,29 @@ export default function GuidedTraining({
             {ready && view !== "session" && (
               <Stack gap={16} style={{ paddingBottom: 4 }}>
                 <Row style={{ gap: 16, flexWrap: "wrap" }}>
-                  <Metric small value={String(plans.length)} label="Saved plans" />
-                  <Metric small value={String(snapshot.history.filter((item) => item.completed).length)} label="Sessions finished" />
-                  <Metric small value={formatTrainingDuration(snapshot.history.reduce((total, item) => total + item.elapsedMs, 0) / 1000)} label="Timer time" />
+                  <Metric
+                    small
+                    value={String(plans.length)}
+                    label="Saved plans"
+                  />
+                  <Metric
+                    small
+                    value={String(
+                      snapshot.history.filter((item) => item.completed).length,
+                    )}
+                    label="Sessions finished"
+                  />
+                  <Metric
+                    small
+                    value={formatTrainingDuration(
+                      snapshot.history.reduce(
+                        (total, item) => total + item.elapsedMs,
+                        0,
+                      ) / 1000,
+                    )}
+                    label="Timer time"
+                  />
                 </Row>
-
               </Stack>
             )}
             {!!error && (
@@ -466,7 +526,10 @@ export default function GuidedTraining({
             {ready && view === "session" && !session && (
               <Stack gap={16}>
                 <Txt color={c.muted}>No session running.</Txt>
-                <Button title="Choose a training plan" onPress={() => router.push("/training")} />
+                <Button
+                  title="Choose a training plan"
+                  onPress={() => router.push("/training")}
+                />
               </Stack>
             )}
             {ready && view === "session" && session && (
@@ -661,6 +724,72 @@ export default function GuidedTraining({
                       if (!pending) setSport(v);
                     }}
                   />
+                  <SettingsSection title="Work target" collapsible keepMounted>
+                    <Choice
+                      label="Target"
+                      value={targetKind}
+                      options={[
+                        { value: "none" as const, label: "None" },
+                        { value: "pace" as const, label: "Pace" },
+                        { value: "heartRate" as const, label: "Heart rate" },
+                        { value: "power" as const, label: "Power" },
+                        { value: "strength" as const, label: "Repetitions" },
+                      ]}
+                      onChange={(kind) => {
+                        if (!pending) {
+                          setTargetKind(kind);
+                          setTargetMin("");
+                          setTargetMax("");
+                        }
+                      }}
+                    />
+                    {targetKind !== "none" && (
+                      <>
+                        <Txt size="caption" color={c.muted}>
+                          {targetKind === "pace"
+                            ? "2:00–30:00 min/km; faster pace first"
+                            : targetKind === "heartRate"
+                              ? "30–250 bpm"
+                              : targetKind === "power"
+                                ? "1–2500 watts"
+                                : "1–100 repetitions per work interval"}
+                          . Guidance only.
+                        </Txt>
+                        <Field
+                          label={
+                            targetKind === "pace"
+                              ? "Faster pace (min:sec/km)"
+                              : "Minimum"
+                          }
+                          value={targetMin}
+                          onChangeText={setTargetMin}
+                          keyboardType={
+                            targetKind === "pace"
+                              ? "numbers-and-punctuation"
+                              : "number-pad"
+                          }
+                          maxLength={targetKind === "pace" ? 5 : 4}
+                          editable={!pending}
+                        />
+                        <Field
+                          label={
+                            targetKind === "pace"
+                              ? "Slower pace (min:sec/km)"
+                              : "Maximum"
+                          }
+                          value={targetMax}
+                          onChangeText={setTargetMax}
+                          keyboardType={
+                            targetKind === "pace"
+                              ? "numbers-and-punctuation"
+                              : "number-pad"
+                          }
+                          maxLength={targetKind === "pace" ? 5 : 4}
+                          editable={!pending}
+                        />
+                      </>
+                    )}
+                  </SettingsSection>
                   {durationKeys.map((key) => (
                     <Field
                       key={key}
@@ -735,6 +864,43 @@ export default function GuidedTraining({
                         detail={`${sportLabels[plan.sport]} · ${formatTrainingDuration(trainingDuration(trainingStages(plan)))} · ${plan.repeats} repetition${plan.repeats === 1 ? "" : "s"}`}
                         onPress={() => open(plan)}
                       />
+                      {!!plan.target && (
+                        <Txt size="caption" color={c.muted}>
+                          {formatTrainingTarget(plan.target)}
+                        </Txt>
+                      )}
+                      <SettingsSection
+                        title="Progression suggestion"
+                        collapsible
+                      >
+                        {(() => {
+                          const suggestion = suggestTrainingAdjustment(
+                            plan,
+                            snapshot.history,
+                          );
+                          return (
+                            <>
+                              <Txt size="caption" color={c.muted}>
+                                {suggestion.message}
+                              </Txt>
+                              {suggestion.workSec !== plan.workSec && (
+                                <Button
+                                  title={`Review ${suggestion.workSec}s work`}
+                                  variant="quiet"
+                                  disabled={!!pending}
+                                  onPress={() => {
+                                    open(plan);
+                                    setValues((previous) => ({
+                                      ...previous,
+                                      workSec: String(suggestion.workSec),
+                                    }));
+                                  }}
+                                />
+                              )}
+                            </>
+                          );
+                        })()}
+                      </SettingsSection>
                       <Button
                         title={`Build program from ${plan.title}`}
                         variant="quiet"
@@ -767,16 +933,72 @@ export default function GuidedTraining({
               <SettingsSection title="Recent interval sessions">
                 {!snapshot.history.length && (
                   <Stack gap={12}>
-                    <Txt color={c.muted}>Your completed sessions will appear here.</Txt>
-                    <Button title="Find a training plan" variant="secondary" onPress={() => router.push("/training")} />
+                    <Txt color={c.muted}>
+                      Your completed sessions will appear here.
+                    </Txt>
+                    <Button
+                      title="Find a training plan"
+                      variant="secondary"
+                      onPress={() => router.push("/training")}
+                    />
                   </Stack>
                 )}
                 {snapshot.history.slice(0, 20).map((item) => (
-                  <ListRow
-                    key={item.session.id}
-                    title={item.session.plan.title}
-                    detail={`${new Date(item.endedAt).toLocaleString()} · ${formatTrainingDuration(item.elapsedMs / 1000)} ${item.session.skipped ? "timer progress" : "on the timer"} · ${item.completed ? "Timer finished" : "Ended early"}${item.session.skipped ? ` · ${item.session.skipped} skipped` : ""}`}
-                  />
+                  <View key={item.session.id}>
+                    <ListRow
+                      title={item.session.plan.title}
+                      detail={`${new Date(item.endedAt).toLocaleString()} · ${formatTrainingDuration(item.elapsedMs / 1000)} ${item.session.skipped ? "timer progress" : "on the timer"} · ${item.completed ? "Timer finished" : "Ended early"}${item.session.skipped ? ` · ${item.session.skipped} skipped` : ""}`}
+                      onPress={() => {
+                        setFeedbackSession(item.session.id);
+                        setEffort(String(item.feedback?.effort ?? 5));
+                        setRecovery(item.feedback?.recovery ?? "ready");
+                      }}
+                    />
+                    {feedbackSession === item.session.id && (
+                      <Stack gap={12}>
+                        <Field
+                          label="Effort (1–10)"
+                          value={effort}
+                          onChangeText={setEffort}
+                          keyboardType="number-pad"
+                          maxLength={2}
+                          editable={!pending}
+                        />
+                        <Choice
+                          label="Recovery"
+                          value={recovery}
+                          options={[
+                            { value: "ready" as const, label: "Ready" },
+                            { value: "tired" as const, label: "Tired" },
+                            { value: "sore" as const, label: "Sore" },
+                          ]}
+                          onChange={setRecovery}
+                        />
+                        <Button
+                          title="Save feedback"
+                          disabled={!!pending}
+                          onPress={() =>
+                            void perform("Saving feedback", async (id) => {
+                              await repository.feedback(id, item.session.id, {
+                                effort: /^\d+$/.test(effort)
+                                  ? Number(effort)
+                                  : NaN,
+                                recovery,
+                              });
+                              if (ownerRef.current === id)
+                                setFeedbackSession(null);
+                            })
+                          }
+                        />
+                        <Button
+                          title="Cancel"
+                          variant="quiet"
+                          disabled={!!pending}
+                          onPress={() => setFeedbackSession(null)}
+                        />
+                      </Stack>
+                    )}
+                  </View>
                 ))}
               </SettingsSection>
             )}

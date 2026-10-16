@@ -178,6 +178,7 @@ export function nutritionFoodKey(food: Food) {
     food.name,
     food.brand,
     food.per100g,
+    food.micronutrients ?? null,
   ]);
 }
 export function nutritionGroceryList(planned: PlannedMeal[], days: string[]) {

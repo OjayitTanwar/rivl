@@ -1,3 +1,4 @@
+import { validMicronutrients, type Micronutrients } from "./micronutrients";
 import { AppFailure } from "../security/errors";
 export const meals = ["breakfast", "lunch", "dinner", "snack"] as const;
 export type Meal = (typeof meals)[number];
@@ -7,6 +8,7 @@ export type Food = {
   name: string;
   brand: string;
   per100g: Nutrients;
+  micronutrients?: Micronutrients;
   source: "manual" | "open-food-facts";
   barcode?: string;
   retrievedAt?: number;
@@ -60,6 +62,13 @@ export function validateFood(food: Food): Food {
         "Enter valid nutrients per 100 g, or leave unavailable values blank.",
       );
   }
+  if (
+    food.micronutrients !== undefined &&
+    !validMicronutrients(food.micronutrients)
+  )
+    fail(
+      "Choose valid additional nutrients, or leave unavailable values blank.",
+    );
   if (
     food.source === "open-food-facts" &&
     (!/^\d{8,14}$/.test(food.barcode ?? "") ||

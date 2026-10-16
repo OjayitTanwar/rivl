@@ -45,9 +45,26 @@ import { SettingsSection } from "../../src/ui/SettingsSection";
 import { useTheme } from "../../src/ui/theme";
 import { userMessage } from "../../src/security/errors";
 
+import { healthTrend, healthRecordValue } from "../../src/domain/health-trends";
+
 const repository = new WellnessRepository(database);
-const manualKinds = ["water", "weight", "sleep", "steps"] as const;
-const kinds = [...manualKinds, "floorsClimbed", "activeEnergy"] as const;
+const manualKinds = [
+  "water",
+  "weight",
+  "sleep",
+  "steps",
+  "bloodPressure",
+  "cycle",
+  "medication",
+] as const;
+const kinds = [
+  "water",
+  "weight",
+  "sleep",
+  "steps",
+  "floorsClimbed",
+  "activeEnergy",
+] as const;
 const options = manualKinds.map((value) => ({
   value,
   label: wellnessMetrics[value].label,
@@ -105,6 +122,9 @@ export default function HealthLog({
     original: WellnessEntry | null;
   } | null>(null);
   const [value, setValue] = useState("");
+  const [diastolic, setDiastolic] = useState("");
+  const [medicationName, setMedicationName] = useState("");
+  const [doseUnit, setDoseUnit] = useState("");
   const [time, setTime] = useState("");
   const [note, setNote] = useState("");
   const [historyPage, setHistoryPage] = useState(0);
@@ -164,6 +184,7 @@ export default function HealthLog({
   const snapshot = data && data.owner === owner ? data : null;
   const entries = snapshot?.entries ?? [];
   const fast = snapshot?.fast ?? null;
+  const trend = healthTrend(entries);
   const availableKinds = kinds.filter(
     (kind) =>
       wellnessValue(entries, kind) !== null &&
@@ -240,6 +261,9 @@ export default function HealthLog({
     };
     setEditing({ entry: next, original: entry ?? null });
     setValue(entry ? String(entry.value) : "");
+    setDiastolic(entry?.diastolic ? String(entry.diastolic) : "");
+    setMedicationName(entry?.medicationName ?? "");
+    setDoseUnit(entry?.doseUnit ?? "");
     setTime(formatWellnessLocalTime(next.at));
     setNote(next.note);
     setError("");
@@ -286,6 +310,16 @@ export default function HealthLog({
         ...editing.entry,
         at,
         value: amount,
+        diastolic:
+          editing.entry.kind === "bloodPressure"
+            ? Number(diastolic)
+            : undefined,
+        medicationName:
+          editing.entry.kind === "medication"
+            ? medicationName.trim()
+            : undefined,
+        doseUnit:
+          editing.entry.kind === "medication" ? doseUnit.trim() : undefined,
         note: note.trim(),
         startedAt:
           editing.entry.kind === "fasting" ? at - amount * 3600000 : undefined,
@@ -426,6 +460,32 @@ export default function HealthLog({
               </Row>
             </Stack>
           )}
+          {view === "overview" && ready && (
+            <SettingsSection title="Recovery readings">
+              <ListRow
+                title={
+                  trend.latest
+                    ? `${Math.round(trend.latest.value)} ms · ${trend.latest.hrvMethod}`
+                    : "Heart-rate variability"
+                }
+                detail={trend.text}
+              />
+              {trend.latest && (
+                <Txt size="caption" color={c.muted}>
+                  {new Date(trend.latest.at).toLocaleString()} ·{" "}
+                  {trend.latest.source?.provider ?? "User-entered"}
+                </Txt>
+              )}
+              <SettingsSection title="About the baseline" collapsible>
+                <Txt size="caption" color={c.muted}>
+                  Daily averages use the same HRV method over 28 days. Seven
+                  previous days and a reading within 36 hours are needed. This
+                  is a trend, not a medical readiness score; consider sleep,
+                  training and how you feel.
+                </Txt>
+              </SettingsSection>
+            </SettingsSection>
+          )}
           {view === "overview" && (
             <ListRow
               title="Heart-rate settings"
@@ -484,17 +544,63 @@ export default function HealthLog({
                     }}
                   />
                 )}
-                <Field
-                  label={`${wellnessMetrics[editing.entry.kind].label} (${wellnessMetrics[editing.entry.kind].unit})`}
-                  value={value}
-                  onChangeText={setValue}
-                  keyboardType={
-                    wellnessMetrics[editing.entry.kind].whole
-                      ? "number-pad"
-                      : "decimal-pad"
-                  }
-                  editable={!pending}
-                />
+                {editing.entry.kind === "medication" && (
+                  <>
+                    <Field
+                      label="Medication name"
+                      value={medicationName}
+                      onChangeText={setMedicationName}
+                      maxLength={100}
+                      editable={!pending}
+                    />
+                    <Field
+                      label="Dose unit (mg, ml, tablet…)"
+                      value={doseUnit}
+                      onChangeText={setDoseUnit}
+                      maxLength={30}
+                      editable={!pending}
+                    />
+                  </>
+                )}
+                {editing.entry.kind === "cycle" && (
+                  <Choice
+                    label="Flow"
+                    value={value}
+                    options={[
+                      { value: "1", label: "Spotting" },
+                      { value: "2", label: "Light" },
+                      { value: "3", label: "Medium" },
+                      { value: "4", label: "Heavy" },
+                    ]}
+                    onChange={setValue}
+                  />
+                )}
+                {editing.entry.kind === "bloodPressure" && (
+                  <Field
+                    label="Diastolic (mmHg)"
+                    value={diastolic}
+                    onChangeText={setDiastolic}
+                    keyboardType="number-pad"
+                    editable={!pending}
+                  />
+                )}
+                {editing.entry.kind !== "cycle" && (
+                  <Field
+                    label={
+                      editing.entry.kind === "bloodPressure"
+                        ? "Systolic (mmHg)"
+                        : `${wellnessMetrics[editing.entry.kind].label} (${editing.entry.kind === "medication" ? doseUnit || "dose" : wellnessMetrics[editing.entry.kind].unit})`
+                    }
+                    value={value}
+                    onChangeText={setValue}
+                    keyboardType={
+                      wellnessMetrics[editing.entry.kind].whole
+                        ? "number-pad"
+                        : "decimal-pad"
+                    }
+                    editable={!pending}
+                  />
+                )}
                 <Field
                   label={
                     editing.entry.kind === "fasting"
@@ -694,7 +800,7 @@ export default function HealthLog({
                       {!entries.length && (
                         <Empty
                           title="Your health log starts here"
-                          body="Add water, weight, sleep or steps."
+                          body="Add readings, medication or cycle records."
                         />
                       )}
                       {entries
@@ -708,7 +814,7 @@ export default function HealthLog({
                             }}
                           >
                             <ListRow
-                              title={`${wellnessMetrics[entry.kind].label} · ${displayValue(entry.value)} ${wellnessUnit(entry)}`}
+                              title={`${wellnessMetrics[entry.kind].label} · ${healthRecordValue(entry) ?? `${displayValue(entry.value)} ${wellnessUnit(entry)}`}`}
                               detail={`${new Date(entry.at).toLocaleString()} · ${entry.source?.provider ?? "User-entered"}${entry.source && entry.kind === "sleep" ? " · Last 24 hours" : ""}${entry.note ? `\n${entry.note}` : ""}`}
                               onPress={
                                 entry.source ? undefined : () => open(entry)

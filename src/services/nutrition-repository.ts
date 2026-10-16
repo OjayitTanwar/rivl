@@ -47,12 +47,24 @@ export class NutritionRepository {
   async save(entry: NutritionEntry, expected: NutritionEntry | null) {
     const next = {
         ...entry,
-        food: { ...entry.food, per100g: { ...entry.food.per100g } },
+        food: {
+          ...entry.food,
+          per100g: { ...entry.food.per100g },
+          ...(entry.food.micronutrients
+            ? { micronutrients: { ...entry.food.micronutrients } }
+            : {}),
+        },
       },
       previous = expected
         ? {
             ...expected,
-            food: { ...expected.food, per100g: { ...expected.food.per100g } },
+            food: {
+              ...expected.food,
+              per100g: { ...expected.food.per100g },
+              ...(expected.food.micronutrients
+                ? { micronutrients: { ...expected.food.micronutrients } }
+                : {}),
+            },
           }
         : null;
     return this.mutate(next.ownerId, async () => {
@@ -70,7 +82,13 @@ export class NutritionRepository {
   async remove(entry: NutritionEntry) {
     const previous = {
       ...entry,
-      food: { ...entry.food, per100g: { ...entry.food.per100g } },
+      food: {
+        ...entry.food,
+        per100g: { ...entry.food.per100g },
+        ...(entry.food.micronutrients
+          ? { micronutrients: { ...entry.food.micronutrients } }
+          : {}),
+      },
     };
     return this.mutate(previous.ownerId, async () => {
       validateNutritionEntry(previous);

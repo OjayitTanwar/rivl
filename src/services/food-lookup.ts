@@ -1,3 +1,7 @@
+import {
+  micronutrientDefinitions,
+  micronutrientKeys,
+} from "../domain/micronutrients";
 import { apiJson } from "../security/transport";
 import { AppFailure } from "../security/errors";
 import { validateFood, type Food } from "../domain/nutrition";
@@ -32,6 +36,16 @@ export function decodeFood(value: unknown, now = Date.now()): Food | null {
     barcode: p.code,
     source: "open-food-facts",
     retrievedAt: now,
+    micronutrients: Object.fromEntries(
+      micronutrientKeys.map((key) => {
+        const definition = micronutrientDefinitions[key];
+        const value = nutrient(
+          `${definition.provider}_100g`,
+          definition.max / definition.scale,
+        );
+        return [key, value === null ? null : value * definition.scale];
+      }),
+    ),
     per100g: {
       kcal: nutrient("energy-kcal_100g", 1000),
       protein: nutrient("proteins_100g", 100),

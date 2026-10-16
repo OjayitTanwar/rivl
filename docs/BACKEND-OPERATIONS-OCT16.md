@@ -1,0 +1,26 @@
+# Minimal backend operating plan
+
+Reviewed 16 October 2026. This is an operating checklist, not proof that external services have been configured. No hosted settings changed during this review.
+
+## Before opening registration
+
+1. **Email delivery:** inspect hosted Auth SMTP configuration. If custom SMTP is absent, registration confirmation, recovery and deletion OTP are not ready for public use. Supabase's default mailer restricts delivery to organization-team addresses and currently allows two messages per hour. Configure a sender domain/provider, verify its DNS, disable link rewriting, then test confirmation, recovery, expired/reused links and deletion OTP from two ordinary external mailboxes. Keep Apple/Google sign-in disabled until each registered provider passes its native callback flow. Do not bypass confirmation to hide a mail problem.
+2. **Recovery:** use the documented Supabase CLI role/schema/data exports into an access-controlled encrypted destination. Export Storage objects separately; database rows do not back up file contents. Preserve migration history and document how Vault/encryption keys are restored. The dormant hosted workflow currently retains seven daily artifacts, capped at 40 MiB each; weekly retention needs a separate storage budget. Restore one into a disposable project and check row counts, authentication, RLS and private Storage access before calling backups operational. Never commit dumps, credentials or raw recovery artifacts to this public repository. Scheduling/storage credentials require an operator-selected destination; no always-on personal computer is needed if a hosted runner is selected.
+3. **Moderation:** name an operator and provide an actual support address before public launch. Review private activity/comment reports, shared-route reports, creator reports and GPS reports daily. Use service-only moderation RPCs from trusted server tooling; never ship service keys in the app. Test quarantine/unpublish, blocked visibility and appeal/review reversal with two real accounts. A SQL reporting table alone is not an operated response service.
+4. **Workers:** confirm the approved private scheduler's latest successful run, failed/retried jobs, oldest pending job and deletion completion. Validate the new GPS processor independently of existing deletion/segment workers. Preserve reserved processing for deletion/revocation when optional map reconstruction reaches its budget.
+
+## Capacity and free-plan operation
+
+Supabase currently includes 50,000 authentication MAU, 500 MB database, 1 GB Storage, 5 GB uncached egress, 500,000 Edge invocations, two million Realtime messages and 200 peak Realtime connections on Free. These are quotas, not a supported-athlete count. Free projects may pause after inactivity; this plan does not promise free uninterrupted hosting forever.
+
+Check database, Storage, egress, functions and queue growth daily during a pilot and weekly once stable. Record actual compressed track/index bytes per athlete, uploaded media per athlete, bytes per feed view and concurrent-session response times. Calculate each limiting quota independently; keep at least 30% headroom. At 70% of a quota, stop increasing the pilot and reduce optional uploads/retention. At 85%, pause optional reconstruction/public uploads while preserving reads, export, deletion and revocation. Test the workload before publishing a supported-user figure; 50,000 login MAU is not 50,000 GPS-heavy athletes.
+
+Live sharing uses bounded foreground polling, not Realtime or push. Each open viewer refreshes about every 15 seconds; GPS publishers add a latest-point write. One hour can therefore cause hundreds of database requests. Start with a small explicitly selected pilot; measure polling cost alongside feed/route load. A stopped share clears its point and recipient grants; expired sessions are unreadable server-side. A failed offline stop is displayed as unconfirmed rather than claimed delivered.
+
+## Verification evidence and remaining gates
+
+Migrations through `202610160009_moderation_console.sql` are deployed. All seven new transactional feature suites passed hosted, rolling back fixtures; all 23 database suites passed locally. Tests exercise nonfriend/stranger denial, recipient write denial, blocking and permanent grant revocation, late writes after stop/expiry, frozen-account denial and account-deletion cascade. This does not verify physical GPS, background execution or push. The page intentionally samples only while focused and foreground; it is not an emergency-alert service.
+
+Existing source documentation contains older deployment snapshots. `HANDOFF.md` and the final migration/function inventory should be reconciled with the dedicated hosted project before using a migration count as deployment evidence. The ordinary read-only reachability script proves HTTP reachability only, not email, backups, moderation, capacity or RLS behavior.
+
+Sources checked 16 October 2026: [Supabase billing quotas](https://supabase.com/docs/guides/platform/billing-on-supabase), [SMTP requirements](https://supabase.com/docs/guides/auth/auth-smtp), [production checklist](https://supabase.com/docs/guides/deployment/going-into-prod), [CLI backup/restore](https://supabase.com/docs/guides/platform/migrating-within-supabase/backup-restore).

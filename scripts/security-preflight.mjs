@@ -22,9 +22,7 @@ if (!ignores.includes(".env.*") || !ignores.includes("!.env.example"))
     "Ignore all real environment files and retain only .env.example.",
   );
 // Environment values and local compose overrides must never be committable.
-const ignoreLines = new Set(
-  ignores.split("\n").map((line) => line.trim()),
-);
+const ignoreLines = new Set(ignores.split("\n").map((line) => line.trim()));
 for (const required of [
   ".env",
   ".env.local",
@@ -81,7 +79,12 @@ if (production) {
     failures.push(
       "Production must disable development accounts and simulations.",
     );
-  for (const key of ["EXPO_PUBLIC_SUPABASE_URL", "EXPO_PUBLIC_MAP_STYLE_URL"]) {
+  // Native maps use provider defaults. Only validate an explicit custom style
+  // for the configured Mapbox fallback; Google-only builds need no style URL.
+  const serviceURLs = ["EXPO_PUBLIC_SUPABASE_URL"];
+  if (mapboxToken && process.env.EXPO_PUBLIC_MAP_STYLE_URL?.trim())
+    serviceURLs.push("EXPO_PUBLIC_MAP_STYLE_URL");
+  for (const key of serviceURLs) {
     try {
       const u = new URL(process.env[key]);
       if (u.protocol !== "https:" || u.username || u.password)

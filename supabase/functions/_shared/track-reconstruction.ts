@@ -49,6 +49,8 @@ export interface ReconstructedFragment {
   };
   /** Internal coarse cells; never an ordered public trace. */
   corridorCells?: string[];
+  /** Private worker input only; never serialize individual fragments publicly. */
+  unmappedGeometry?: Coordinate[];
 }
 export interface ReconstructionSupport {
   key: string;
@@ -160,6 +162,7 @@ function alongWay(point: Coordinate, line: Coordinate[]) {
 export function reconstructCommunityTracks(
   observations: ReconstructionObservation[],
   ways: MappedTrack[],
+  options: { includePrivateGeometry?: boolean } = {},
 ): TrackReconstruction {
   const out: TrackReconstruction = {
     algorithmVersion: p.version,
@@ -419,7 +422,7 @@ export function reconstructCommunityTracks(
             version: best.way.version,
             license: "ODbL-1.0",
           };
-        } else if (matches.length) {
+        } else if (assignment !== "unmapped" || matches.length) {
           out.fragments.push({
             observation: oi,
             fragment: fi,
@@ -434,6 +437,10 @@ export function reconstructCommunityTracks(
             observation: oi,
             fragment: fi,
             outcome: "unmapped",
+            unmappedGeometry:
+              options.includePrivateGeometry && lineValid(line)
+                ? line.map((point) => ({ ...point }))
+                : undefined,
             wayIds: [],
             corridorCells: cells,
           });

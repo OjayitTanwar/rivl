@@ -1,3 +1,10 @@
+import { NutritionIntakeAssist } from "../../src/ui/NutritionIntakeAssist";
+import { NutritionBarcodeScanner } from "../../src/ui/NutritionBarcodeScanner";
+import {
+  micronutrientDefinitions,
+  micronutrientKeys,
+  micronutrientTotals,
+} from "../../src/domain/micronutrients";
 import { WorkspaceExit } from "../../src/ui/WorkspaceExit";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Alert, Linking, Platform, View } from "react-native";
@@ -78,6 +85,7 @@ export default function Nutrition() {
     carbs: "",
     fat: "",
   });
+  const [scanning, setScanning] = useState(false);
   const [mode, setMode] = useState<"search" | "barcode">("search"),
     [query, setQuery] = useState(""),
     [results, setResults] = useState<Food[]>([]),
@@ -119,6 +127,7 @@ export default function Nutrition() {
           if (active) setLoading(false);
         });
       return () => {
+        setScanning(false);
         active = false;
         generation.current++;
         request.current?.abort();
@@ -134,8 +143,10 @@ export default function Nutrition() {
     [data, owner, day],
   );
   const totals = useMemo(() => nutritionTotals(entries), [entries]);
+  const additional = useMemo(() => micronutrientTotals(entries), [entries]);
   const open = (entry?: NutritionEntry) => {
     if (!ready || lock.current) return;
+    setScanning(false);
     setEditor({
       original: entry ?? null,
       id: entry?.id ?? randomUUID(),
@@ -325,6 +336,51 @@ export default function Nutrition() {
                     initiallyOpen={!editor.original}
                     key={editor.id}
                   >
+                    {scanning ? (
+                      <NutritionBarcodeScanner
+                        onClose={() => setScanning(false)}
+                        onScan={(code) => {
+                          setQuery(code);
+                          setMode("barcode");
+                          setScanning(false);
+                          setResults([]);
+                          setSearched(false);
+                        }}
+                      />
+                    ) : (
+                      <Button
+                        title="Scan barcode"
+                        variant="secondary"
+                        disabled={!!pending}
+                        onPress={() => setScanning(true)}
+                      />
+                    )}
+                    {!scanning && (
+                      <SettingsSection title="Photo or voice" collapsible>
+                        <NutritionIntakeAssist
+                          key={`${owner}:${editor.id}`}
+                          disabled={!!pending}
+                          onDraft={(draft) => {
+                            if (pending) return;
+                            setMode("search");
+                            setEditor({ ...editor, food: null });
+                            setName(draft.query);
+                            setValues(
+                              Object.fromEntries(
+                                nutrientKeys.map((key) => [key, ""]),
+                              ),
+                            );
+                            setError("");
+                            setQuery(draft.query);
+                            setResults([]);
+                            setSearched(false);
+                            setGrams(
+                              draft.grams === null ? "" : String(draft.grams),
+                            );
+                          }}
+                        />
+                      </SettingsSection>
+                    )}
                     <Choice
                       label="Lookup"
                       value={mode}
@@ -519,7 +575,11 @@ export default function Nutrition() {
                             <LabelValueRow
                               key={key}
                               label={titles[key]}
-                              value={`${display(totals[key].known)}${totals[key].missing ? " + unavailable" : ""}`}
+                              value={
+                                totals[key].missing === entries.length
+                                  ? "Unavailable"
+                                  : `${display(totals[key].known)}${totals[key].missing ? " + unavailable" : ""}`
+                              }
                             />
                           ))}
                         {nutrientKeys.some((k) => totals[k].missing > 0) && (
@@ -535,6 +595,28 @@ export default function Nutrition() {
                       disabled={!!pending || !validNutritionDay(day)}
                     />
                   </SettingsSection>
+                  {!!entries.length && (
+                    <SettingsSection title="More nutrients" collapsible>
+                      {micronutrientKeys.map((key) => {
+                        const value = additional[key],
+                          definition = micronutrientDefinitions[key];
+                        return (
+                          <LabelValueRow
+                            key={key}
+                            label={definition.label}
+                            value={
+                              value.missing === entries.length
+                                ? "Unavailable"
+                                : `${display(value.known)} ${definition.unit}${value.missing ? " + unknown" : ""}`
+                            }
+                          />
+                        );
+                      })}
+                      <Txt size="caption" color={c.muted}>
+                        Package data only. Missing values are not zero.
+                      </Txt>
+                    </SettingsSection>
+                  )}
                   {meals
                     .filter((group) =>
                       entries.some((entry) => entry.meal === group),

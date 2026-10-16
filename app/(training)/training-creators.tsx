@@ -1,3 +1,5 @@
+import { reportCreatorProgram } from "../../src/services/moderation-console";
+import { TRAINING_STARTERS } from "../../src/domain/training-starters";
 import React, { useCallback, useRef, useState } from "react";
 import { Alert, Linking, Platform, Share, View } from "react-native";
 import { router, useFocusEffect } from "expo-router";
@@ -345,12 +347,16 @@ export default function TrainingCreators() {
         day: whole(sessionEditor.day, "day"),
         title: sessionEditor.title,
         notes: sessionEditor.notes,
-        workout: Object.fromEntries(
-          intervals.map((key) => [
-            key,
-            whole(sessionEditor.values[key], intervalLabels[key]),
-          ]),
-        ) as CreatorSession["workout"],
+        workout: {
+          ...editor.program.sessions.find((s) => s.id === sessionEditor.id)
+            ?.workout,
+          ...Object.fromEntries(
+            intervals.map((key) => [
+              key,
+              whole(sessionEditor.values[key], intervalLabels[key]),
+            ]),
+          ),
+        } as CreatorSession["workout"],
       };
       const sessions = [
         ...editor.program.sessions.filter((s) => s.id !== next.id),
@@ -399,7 +405,11 @@ export default function TrainingCreators() {
       contentStyle={{ paddingBottom: 120 }}
     >
       <Stack gap={20}>
-        {loading && !!owner && <Txt size="caption" color={c.muted}>Loading your programs…</Txt>}
+        {loading && !!owner && (
+          <Txt size="caption" color={c.muted}>
+            Loading your programs…
+          </Txt>
+        )}
         {!owner ? (
           <Notice text="Sign in to save and create training programs." />
         ) : (
@@ -656,55 +666,102 @@ export default function TrainingCreators() {
             ) : (
               <>
                 {tab === "library" ? (
-                  <SettingsSection title="Published programs">
-                    {!creatorTrainingCloudConfigured ? (
-                      <Txt color={c.muted}>
-                        Library unavailable. Your drafts and imports still work.
+                  <>
+                    <SettingsSection title="RIVL starters" collapsible>
+                      <Txt size="caption" color={c.muted}>
+                        Original schedules · CC0 · review before starting
                       </Txt>
-                    ) : (
-                      <>
-                        {libraryLoading && (
-                          <View accessibilityLiveRegion="polite">
-                            <Txt color={c.muted}>
-                              Loading published programs…
+                      {TRAINING_STARTERS.map((program) => (
+                        <ListRow
+                          key={program.sport}
+                          title={program.title}
+                          detail="2 weeks · 4 sessions"
+                          onPress={() => {
+                            draftOwner.current = owner;
+                            setPreview(program);
+                          }}
+                        />
+                      ))}
+                    </SettingsSection>
+                    <SettingsSection title="Published programs">
+                      {!creatorTrainingCloudConfigured ? (
+                        <Txt color={c.muted}>
+                          Library unavailable. Your drafts and imports still
+                          work.
+                        </Txt>
+                      ) : (
+                        <>
+                          {libraryLoading && (
+                            <View accessibilityLiveRegion="polite">
+                              <Txt color={c.muted}>
+                                Loading published programs…
+                              </Txt>
+                            </View>
+                          )}
+                          {!!libraryError && (
+                            <Notice
+                              text={libraryError}
+                              retry={() => setRevision((n) => n + 1)}
+                            />
+                          )}
+                          {librarySettled && !library.length && (
+                            <Empty
+                              title="No programs yet"
+                              body="Create a program or import one below."
+                              action={
+                                <Button
+                                  title="Create a program"
+                                  variant="secondary"
+                                  onPress={() => {
+                                    setTab("mine");
+                                    open();
+                                  }}
+                                  disabled={!ready || !!pending}
+                                />
+                              }
+                            />
+                          )}
+                          {library.slice(0, 20).map((program) => (
+                            <ListRow
+                              key={program.id}
+                              title={program.title}
+                              detail={`${program.creatorName} · ${sportLabels[program.sport]} · ${program.weeks} weeks`}
+                              onPress={() => {
+                                setPreview(program);
+                                setImportOpen(false);
+                              }}
+                            />
+                          ))}
+                          {librarySettled && (
+                            <Txt size="caption" color={c.muted}>
+                              Showing up to 20 newest published programs.
                             </Txt>
-                          </View>
-                        )}
-                        {!!libraryError && (
-                          <Notice
-                            text={libraryError}
-                            retry={() => setRevision((n) => n + 1)}
-                          />
-                        )}
-                        {librarySettled && !library.length && (
-                          <Empty title="No programs yet" body="Create a program or import one below." action={<Button title="Create a program" variant="secondary" onPress={() => { setTab("mine"); open(); }} disabled={!ready || !!pending} />} />
-                        )}
-                        {library.slice(0, 20).map((program) => (
-                          <ListRow
-                            key={program.id}
-                            title={program.title}
-                            detail={`${program.creatorName} · ${sportLabels[program.sport]} · ${program.weeks} weeks`}
-                            onPress={() => {
-                              setPreview(program);
-                              setImportOpen(false);
-                            }}
-                          />
-                        ))}
-                        {librarySettled && (
-                          <Txt size="caption" color={c.muted}>
-                            Showing up to 20 newest published programs.
-                          </Txt>
-                        )}
-                      </>
-                    )}
-                  </SettingsSection>
+                          )}
+                        </>
+                      )}
+                    </SettingsSection>
+                  </>
                 ) : (
                   <SettingsSection title="My programs">
                     {loadedOwner === owner && ready && programs.length > 0 && (
                       <Stack gap={12}>
                         <Row style={{ gap: 16, flexWrap: "wrap" }}>
-                          <Metric small value={String(programs.length)} label="Programs" />
-                          <Metric small value={String(programs.reduce((total, program) => total + program.sessions.length, 0))} label="Scheduled sessions" />
+                          <Metric
+                            small
+                            value={String(programs.length)}
+                            label="Programs"
+                          />
+                          <Metric
+                            small
+                            value={String(
+                              programs.reduce(
+                                (total, program) =>
+                                  total + program.sessions.length,
+                                0,
+                              ),
+                            )}
+                            label="Scheduled sessions"
+                          />
                         </Row>
                       </Stack>
                     )}
@@ -714,7 +771,9 @@ export default function TrainingCreators() {
                       disabled={!ready || !!pending}
                     />
                     {loadedOwner === owner && !programs.length && ready && (
-                      <Txt color={c.muted}>Your saved and imported programs appear here.</Txt>
+                      <Txt color={c.muted}>
+                        Your saved and imported programs appear here.
+                      </Txt>
                     )}
                     {(loadedOwner === owner ? programs : [])
                       .slice(0, 100)
@@ -757,6 +816,30 @@ export default function TrainingCreators() {
                           {credit.license}
                         </Txt>
                       ))}
+                    {"ownerId" in preview && preview.ownerId !== owner && (
+                      <Button
+                        title="Report program"
+                        variant="quiet"
+                        disabled={!!pending}
+                        onPress={() =>
+                          confirm(
+                            "Report this program?",
+                            "Send this program for a safety review.",
+                            () =>
+                              void perform(
+                                "Sending report",
+                                (id) =>
+                                  reportCreatorProgram(
+                                    id,
+                                    preview.id,
+                                    "unsafe",
+                                  ),
+                                () => setNotice("Report sent for review."),
+                              ),
+                          )
+                        }
+                      />
+                    )}
                     {preview.sessions.slice(0, 100).map((session) => (
                       <Stack key={session.id} gap={8}>
                         <Txt weight="600">
@@ -931,9 +1014,7 @@ export default function TrainingCreators() {
           </>
         )}
         <SettingsSection title="Open training resources" collapsible>
-          <Txt color={c.muted}>
-            External tools and workout libraries.
-          </Txt>
+          <Txt color={c.muted}>External tools and workout libraries.</Txt>
           <ListRow
             title="OpenHIIT"
             detail="Open source interval timer and workout builder"

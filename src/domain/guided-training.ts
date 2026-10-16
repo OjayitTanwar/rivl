@@ -1,3 +1,7 @@
+import {
+  validateTrainingTarget,
+  type TrainingTarget,
+} from "./training-targets";
 import { AppFailure } from "../security/errors";
 export const trainingSports = ["run", "ride", "walk", "hike"] as const;
 export type TrainingSport = (typeof trainingSports)[number];
@@ -12,6 +16,7 @@ export type TrainingPlan = {
   repeats: number;
   cooldownSec: number;
   updatedAt: number;
+  target?: TrainingTarget;
 };
 export type TrainingStage = {
   label: string;
@@ -34,6 +39,7 @@ export type TrainingHistory = {
   endedAt: number;
   elapsedMs: number;
   completed: boolean;
+  feedback?: { effort: number; recovery: "ready" | "tired" | "sore" };
 };
 const invalid = (message: string): never => {
   throw new AppFailure("validation", message);
@@ -86,6 +92,7 @@ export function validateTrainingPlan(plan: TrainingPlan): TrainingPlan {
     invalid("Keep an interval session within 24 hours.");
   if (!Number.isFinite(plan.updatedAt) || plan.updatedAt <= 0)
     invalid("Choose a valid session date.");
+  if (plan.target !== undefined) validateTrainingTarget(plan.target);
   return plan;
 }
 export function trainingStages(plan: TrainingPlan): TrainingStage[] {

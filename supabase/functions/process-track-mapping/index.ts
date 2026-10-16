@@ -129,22 +129,34 @@ Deno.serve(async (request) => {
         return data;
       },
       ways: fetchWays,
-      async complete(job, ways, support, algorithm, fingerprint) {
-        const { data, error } = await admin.rpc("complete_track_mapping_job", {
-          p_activity: job.activity_id,
-          p_lease: job.lease,
-          p_revision: job.revision,
-          p_algorithm: algorithm,
-          p_fingerprint: fingerprint,
-          p_ways: ways.map((w) => ({
-            wayId: w.wayId,
-            version: w.version,
-            points: w.points,
-            tags: w.tags,
-            nodeIds: w.nodeIds,
-          })),
-          p_support: support,
-        });
+      async neighbors(job) {
+        const { data, error } = await admin.rpc(
+          "track_mapping_neighbor_input",
+          { p_activity: job.activity_id, p_lease: job.lease },
+        );
+        if (error) throw error;
+        return data ?? [];
+      },
+      async complete(job, ways, support, algorithm, fingerprint, corridors) {
+        const { data, error } = await admin.rpc(
+          "complete_track_mapping_result",
+          {
+            p_activity: job.activity_id,
+            p_lease: job.lease,
+            p_revision: job.revision,
+            p_algorithm: algorithm,
+            p_fingerprint: fingerprint,
+            p_corridors: corridors ?? [],
+            p_ways: ways.map((w) => ({
+              wayId: w.wayId,
+              version: w.version,
+              points: w.points,
+              tags: w.tags,
+              nodeIds: w.nodeIds,
+            })),
+            p_support: support,
+          },
+        );
         if (error) throw error;
         return data === true;
       },

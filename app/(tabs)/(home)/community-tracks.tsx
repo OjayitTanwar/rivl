@@ -1,4 +1,10 @@
 import {
+  nearbyCommunityCorridors,
+  isTrackReviewer,
+  reportCorridor,
+  type CommunityCorridor,
+} from "../../../src/services/community-corridors";
+import {
   nearbyReconstructedTracks,
   type ReconstructedTrack,
 } from "../../../src/services/reconstructed-tracks";
@@ -9,7 +15,7 @@ import {
 import { loadPathNetwork } from "../../../src/services/path-network";
 import React, { useCallback, useRef, useState } from "react";
 import { Alert, Platform, Switch } from "react-native";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect, type Href } from "expo-router";
 import { useStore } from "../../../src/state/store";
 import { database } from "../../../src/storage/database";
 import {
@@ -56,6 +62,8 @@ export default function CommunityTracks() {
   const [limitedMap, setLimitedMap] = useState(false);
   const [paths, setPaths] = useState<ReconstructedTrack[]>([]);
   const [pathError, setPathError] = useState("");
+  const [corridors, setCorridors] = useState<CommunityCorridor[]>([]);
+  const [reviewer, setReviewer] = useState(false);
   const [area, setArea] = useState<Coordinate>(),
     [cells, setCells] = useState<ObservedTrackCell[]>([]),
     [loaded, setLoaded] = useState(false);
@@ -66,6 +74,15 @@ export default function CommunityTracks() {
       setSnapshot(null);
       setCells([]);
       setPaths([]);
+      setCorridors([]);
+      setReviewer(false);
+      if (owner && !session?.local)
+        void isTrackReviewer(owner)
+          .then((value) => {
+            if (version === generation.current && ownerRef.current === owner)
+              setReviewer(value);
+          })
+          .catch(() => {});
       setPathError("");
       setCandidates(null);
       setLoaded(false);
@@ -82,7 +99,7 @@ export default function CommunityTracks() {
       return () => {
         generation.current++;
       };
-    }, [owner]),
+    }, [owner, session?.local]),
   );
   const data = snapshot?.owner === owner ? snapshot : null;
   async function act(work: (id: string) => Promise<void>) {
@@ -115,6 +132,7 @@ export default function CommunityTracks() {
         await sync(true);
         setCells([]);
         setPaths([]);
+        setCorridors([]);
         setPathError("");
         setLoaded(false);
       });
@@ -245,12 +263,20 @@ export default function CommunityTracks() {
                   error: userMessage(error),
                 }),
               );
+              const reviewed = await nearbyCommunityCorridors(id, center).then(
+                (value) => ({ value, error: "" }),
+                (error) => ({
+                  value: [] as CommunityCorridor[],
+                  error: userMessage(error),
+                }),
+              );
               if (ownerRef.current === id && generation.current === version) {
+                setCorridors(reviewed.value);
                 setCandidates(null);
                 setArea(center);
                 setCells(result);
                 setPaths(reconstructed.value);
-                setPathError(reconstructed.error);
+                setPathError(reconstructed.error || reviewed.error);
                 setLoaded(true);
               }
             })
@@ -269,6 +295,18 @@ export default function CommunityTracks() {
                   segment: index,
                 })),
               )}
+            highlights={corridors
+              .filter((path) => Date.parse(path.expiresAt!) > Date.now())
+              .map((path, index) => ({
+                title: "Reviewed community path",
+                color: c.good,
+                points: path.points.map((point) => ({
+                  ...point,
+                  t: 0,
+                  accuracy: 0,
+                  segment: index,
+                })),
+              }))}
             center={area}
             localFocus
             allowMapboxFallback
@@ -290,6 +328,37 @@ export default function CommunityTracks() {
               differ.
             </Txt>
           </Stack>
+        )}
+        {corridors.length > 0 && (
+          <SettingsSection title="Reviewed community paths" collapsible>
+            <Txt size="caption" color={c.muted}>
+              Reconstructed from independent journeys. Access, protection and
+              connectivity remain unknown.
+            </Txt>
+            {corridors.map((path, index) => (
+              <ListRow
+                key={path.id}
+                title={`${path.sport} path ${index + 1}`}
+                detail="Report a geometry or access problem"
+                onPress={() =>
+                  void act(async (id) => {
+                    await reportCorridor(id, path.id, "geometry");
+                    if (ownerRef.current === id)
+                      setCorridors((old) =>
+                        old.filter((value) => value.id !== path.id),
+                      );
+                  })
+                }
+              />
+            ))}
+          </SettingsSection>
+        )}
+        {reviewer && (
+          <Button
+            title="Review proposed tracks"
+            variant="quiet"
+            onPress={() => router.push("/track-review" as Href)}
+          />
         )}
         {!!pathError && (
           <Txt size="caption" color={c.muted}>

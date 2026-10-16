@@ -63,7 +63,8 @@ const RouteRow = memo(function RouteRow({ route }: { route: RoutePlan }) {
           </Txt>
           <Txt mono weight="600">
             {km(route.distance)} km
-            {route.routing === "recorded" || !route.routing
+            {(route.routing === "recorded" || !route.routing) &&
+            !route.surface.startsWith("CC BY 4.0")
               ? ` · ${Math.round(route.ascent)} m gain`
               : ""}
           </Txt>
@@ -126,9 +127,12 @@ const RouteRow = memo(function RouteRow({ route }: { route: RoutePlan }) {
             title="Export GPX"
             onPress={() => {
               setError("");
-              void shareGPX(route.name, route.points).catch((e) =>
-                setError(userMessage(e)),
-              );
+              void shareGPX(
+                route.surface.startsWith("CC BY 4.0")
+                  ? `${route.name} | ${route.surface}`
+                  : route.name,
+                route.points,
+              ).catch((e) => setError(userMessage(e)));
             }}
           />
         </Stack>
@@ -241,6 +245,11 @@ export default function Routes() {
               onChangeText={setQuery}
               placeholder="Name, sport, or surface"
               autoCapitalize="none"
+            />
+            <ListRow
+              title="Shared routes"
+              detail="Discover and publish community routes"
+              onPress={() => router.push("/shared-routes")}
             />
             <SectionHeading title="Saved routes" />
           </Screen>

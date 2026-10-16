@@ -35,7 +35,6 @@ import {
   clubs,
   people,
   follow,
-  joinClub,
   type Club,
   type Person,
 } from "../../src/services/social";
@@ -44,6 +43,18 @@ import { challengeProgress } from "../../src/domain/analytics";
 import { ProgressBar } from "../../src/ui/charts";
 
 const destinations = [
+  {
+    title: "Shared routes",
+    detail: "Find a route to save",
+    href: "/shared-routes",
+    Icon: Users,
+  },
+  {
+    title: "Live sharing",
+    detail: "Share with selected friends",
+    href: "/live-sharing",
+    Icon: Users,
+  },
   {
     title: "Segments",
     detail: "Compare your efforts",
@@ -330,7 +341,9 @@ export default function Community() {
             <Txt accessibilityRole="header" size="heading" weight="700">
               Groups
             </Txt>
-            <Txt color={c.muted}>Clubs, challenges and people to move with.</Txt>
+            <Txt color={c.muted}>
+              Clubs, challenges and people to move with.
+            </Txt>
             <Segmented
               compact
               options={[
@@ -375,6 +388,11 @@ export default function Community() {
                     accessibilityLabel="Loading clubs"
                   />
                 )}
+                <Button
+                  title="Create club"
+                  variant="quiet"
+                  onPress={() => router.push("/club-detail" as Href)}
+                />
                 {groups.map((group) => (
                   <Stack
                     key={group.id}
@@ -398,11 +416,12 @@ export default function Community() {
                       {group.joined && <Pill>Joined</Pill>}
                     </Row>
                     <Button
-                      title={group.joined ? "Leave club" : "Join club"}
-                      variant={group.joined ? "secondary" : "primary"}
-                      disabled={!store.online}
+                      title="Open club"
+                      variant="secondary"
                       style={{ alignSelf: "flex-start" }}
-                      onPress={() => act(() => joinClub(store.session!, group))}
+                      onPress={() =>
+                        router.push(`/club-detail?id=${encodeURIComponent(group.id)}` as Href)
+                      }
                     />
                   </Stack>
                 ))}

@@ -10,7 +10,10 @@ import {
   type TrainingHistory,
 } from "../domain/guided-training";
 const queues = new WeakMap<Database, Map<string, Promise<unknown>>>();
-const copyPlan = (plan: TrainingPlan) => ({ ...plan });
+const copyPlan = (plan: TrainingPlan) => ({
+  ...plan,
+  ...(plan.target ? { target: { ...plan.target } } : {}),
+});
 export class TrainingRepository {
   constructor(
     private db: Database,
@@ -205,6 +208,38 @@ export class TrainingRepository {
       } satisfies TrainingSession;
       await this.db.set(this.sessionKey(owner), next);
       return next;
+    });
+  }
+  feedback(
+    owner: string,
+    sessionId: string,
+    feedback: NonNullable<TrainingHistory["feedback"]>,
+  ) {
+    const next = { ...feedback };
+    return this.mutate(owner, async () => {
+      if (
+        !Number.isInteger(next.effort) ||
+        next.effort < 1 ||
+        next.effort > 10 ||
+        !["ready", "tired", "sore"].includes(next.recovery)
+      )
+        throw new AppFailure(
+          "validation",
+          "Choose effort from 1–10 and your recovery.",
+        );
+      const item = (await this.history(owner)).find(
+        (h) => h.session.id === sessionId,
+      );
+      if (!item)
+        throw new AppFailure(
+          "validation",
+          "This session is no longer available.",
+        );
+      await this.auth(owner);
+      await this.db.set(this.prefix(owner) + "history:" + sessionId, {
+        ...item,
+        feedback: next,
+      });
     });
   }
   clearTimer(owner: string) {

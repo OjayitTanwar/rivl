@@ -57,6 +57,7 @@ export function buildTrainingProgression(
         title: `${recovery ? "Recovery" : "Week " + week} · session ${index + 1}`,
         notes: `Work duration ${workSec}s per repetition. ${recovery ? "Recovery week: work reduced by 20%." : "Warm up, recovery and repetitions match your base plan."} Move or edit sessions to fit your recovery.`,
         workout: {
+          ...(plan.target ? { target: { ...plan.target } } : {}),
           warmupSec: plan.warmupSec,
           workSec,
           recoverySec: plan.recoverySec,

@@ -34,6 +34,28 @@ async function connected() {
 }
 afterEach(() => vi.restoreAllMocks());
 describe("automatic wellness", () => {
+  it("imports native HRV samples with stable IDs and explicit methods, rejecting invalid samples", async () => {
+    const { db, repository } = await connected();
+    const value = snapshot({
+      hrvReadings: [
+        { id: "hrv:one", at: now - 1000, value: 45, method: "SDNN" },
+        { id: "bad", at: now - 1000, value: -10, method: "SDNN" },
+      ],
+    });
+    await refreshAutomaticWellness(db, "a", value);
+    await refreshAutomaticWellness(db, "a", value);
+    const records = (await repository.list("a")).filter(
+      (e) => e.kind === "hrv",
+    );
+    expect(records).toHaveLength(1);
+    expect(records[0]).toMatchObject({
+      value: 45,
+      hrvMethod: "SDNN",
+      source: { provider: "HealthKit", recordId: "hrv:one" },
+    });
+    expect(await repository.list("other")).toEqual([]);
+  });
+
   it("replaces daily totals and native water IDs instead of double counting refreshes", async () => {
     const { db, repository } = await connected();
     await refreshAutomaticWellness(db, "a", snapshot());

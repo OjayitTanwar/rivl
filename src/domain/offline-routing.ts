@@ -1,6 +1,7 @@
-import type { Coordinate, Sample } from "./types";
+import type { Coordinate, Sample, Sport } from "./types";
 import type { GuidedRoute, NavigationStep } from "./navigation";
 import { distance } from "./geo";
+import { mappedTrack, type MappedTrack } from "./community-tracks";
 
 type Edge = { to: number; meters: number };
 type QueueItem = { node: number; score: number };
@@ -43,36 +44,98 @@ function bearing(a: Coordinate, b: Coordinate) {
 }
 
 // Route only over saved ways tagged for the selected activity mode. Different
-// ways join at shared OSM coordinates; visual crossings do not create access.
+// ways join at shared OSM node IDs and compatible levels.
 export function offlineReroute(
-  lines: Sample[][],
+  features: MappedTrack[],
   start: Coordinate,
   finish: Coordinate,
+  sport: Sport = "walk",
 ): GuidedRoute | null {
-  if (!lines.length) return null;
+  if (!features.length || features.length > 500) return null;
   const nodes: Coordinate[] = [];
   const edges: Edge[][] = [];
   const indices = new Map<string, number>();
-  const nodeFor = (point: Coordinate) => {
-    const key = `${Math.round(point.lat * 1e7)},${Math.round(point.lng * 1e7)}`;
+  let vertices = 0;
+  const nodeFor = (point: Coordinate, key: string) => {
     let index = indices.get(key);
     if (index === undefined) {
       index = nodes.length;
       nodes.push({ lat: point.lat, lng: point.lng });
       edges.push([]);
       indices.set(key, index);
-    }
+    } else if (distance(nodes[index]!, point) > 1) return -1;
     return index;
   };
-  for (const line of lines) {
+  for (const source of features) {
+    // Recompute claims from retained tags rather than trusting serialized flags.
+    if (
+      !source ||
+      !Array.isArray(source.points) ||
+      !Array.isArray(source.nodeIds) ||
+      source.points.length !== source.nodeIds.length ||
+      source.points.length < 2
+    )
+      continue;
+    vertices += source.points.length;
+    if (vertices > 20000) return null;
+    if (
+      !source.points.every(
+        (p) =>
+          Number.isFinite(p.lat) &&
+          Number.isFinite(p.lng) &&
+          Math.abs(p.lat) <= 85 &&
+          Math.abs(p.lng) <= 180,
+      )
+    )
+      continue;
+    const way = mappedTrack(
+      {
+        id: source.wayId,
+        version: source.version,
+        nodes: source.nodeIds,
+        tags: source.tags,
+      },
+      source.points,
+    );
+    if (
+      !way.wayId ||
+      !way.version ||
+      !way.nodeIds ||
+      way.geometryKind !== "line"
+    )
+      continue;
+    const mode = sport === "ride" ? "bicycle" : "foot";
+    if (
+      (mode === "bicycle" ? way.bicycleAccess : way.footAccess) !==
+      "mapped_allowed"
+    )
+      continue;
+    const tags = way.tags;
+    if (tags["oneway:conditional"] || tags[`oneway:${mode}:conditional`])
+      continue;
+    const rawDirection =
+      mode === "foot"
+        ? tags["oneway:foot"]
+        : (tags["oneway:bicycle"] ??
+          tags.oneway ??
+          (tags.junction === "roundabout" ? "yes" : undefined));
+    if (
+      rawDirection !== undefined &&
+      !["yes", "1", "-1", "no", "0"].includes(rawDirection)
+    )
+      continue;
+    const forward = rawDirection !== "-1",
+      backward = rawDirection !== "yes" && rawDirection !== "1";
+    // Same OSM IDs only; level/structure differences never become inferred junctions.
+    const level = `${tags.layer ?? "0"}:${way.bridge === true ? "bridge" : "ground"}:${way.tunnel === true ? "tunnel" : "open"}`;
     let previous = -1;
-    for (const point of line) {
-      const current = nodeFor(point);
-      if (previous >= 0 && previous !== current) {
+    for (let i = 0; i < way.points.length; i++) {
+      const current = nodeFor(way.points[i]!, `${way.nodeIds[i]}:${level}`);
+      if (current >= 0 && previous >= 0 && previous !== current) {
         const meters = distance(nodes[previous]!, nodes[current]!);
         if (meters > 0 && meters <= 250) {
-          edges[previous]!.push({ to: current, meters });
-          edges[current]!.push({ to: previous, meters });
+          if (forward) edges[previous]!.push({ to: current, meters });
+          if (backward) edges[current]!.push({ to: previous, meters });
         }
       }
       previous = current;
@@ -148,7 +211,10 @@ export function offlineReroute(
       steps.push({
         location: points[i]!,
         distanceAlong: along,
-        instruction: turn > 0 ? "Turn left on the mapped path." : "Turn right on the mapped path.",
+        instruction:
+          turn > 0
+            ? "Turn left on the mapped path."
+            : "Turn right on the mapped path.",
         kind: "turn",
       });
   }

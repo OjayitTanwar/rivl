@@ -123,6 +123,12 @@ async function readHealth(requestPermission: boolean): Promise<HealthSnapshot> {
         ml: s.quantity,
       })),
       waterComplete: water !== null && water.length <= 1000,
+      hrvReadings: hrv.map((s) => ({
+        id: s.uuid,
+        at: s.startDate.getTime(),
+        value: s.quantity,
+        method: "SDNN" as const,
+      })),
       restingHR: hr[0]?.quantity ?? null,
       steps: steps?.sumQuantity?.quantity ?? null,
       floorsClimbed: floors?.sumQuantity?.quantity ?? null,
@@ -273,6 +279,14 @@ async function readHealth(requestPermission: boolean): Promise<HealthSnapshot> {
       activeEnergyKcal: activeEnergy?.dataOrigins.length
         ? activeEnergy.ACTIVE_CALORIES_TOTAL.inKilocalories
         : null,
+      hrvReadings: samples
+        .filter((s) => !!s.metadata?.id)
+        .map((s) => ({
+          id: s.metadata!.id!,
+          at: Date.parse(s.time),
+          value: s.heartRateVariabilityMillis,
+          method: "RMSSD" as const,
+        })),
       weightKg: kg,
       weightMeasuredAt: latestWeight ? Date.parse(latestWeight.time) : null,
       restingHR:

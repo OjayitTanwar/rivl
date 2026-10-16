@@ -1,3 +1,7 @@
+import {
+  validateTrainingTarget,
+  type TrainingTarget,
+} from "./training-targets";
 import { AppFailure } from "../security/errors";
 import {
   trainingSports,
@@ -7,7 +11,7 @@ import {
 } from "./guided-training";
 export type CreatorWorkout = Pick<
   TrainingPlan,
-  "warmupSec" | "workSec" | "recoverySec" | "repeats" | "cooldownSec"
+  "warmupSec" | "workSec" | "recoverySec" | "repeats" | "cooldownSec" | "target"
 >;
 export type CreatorSession = {
   id: string;
@@ -185,6 +189,9 @@ function publicFields(input: unknown, owner: string): PublicCreatorProgram {
       recoverySec: work.recoverySec as number,
       repeats: work.repeats as number,
       cooldownSec: work.cooldownSec as number,
+      ...(work.target === undefined
+        ? {}
+        : { target: validateTrainingTarget(work.target as TrainingTarget) }),
     };
     validateTrainingPlan({
       ...workout,

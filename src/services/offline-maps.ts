@@ -5,8 +5,11 @@ import { database } from "../storage/database";
 import { loadPathNetwork } from "./path-network";
 import { routeProvider } from "./route-planning";
 import { distance } from "../domain/geo";
+import type { MappedTrack } from "../domain/community-tracks";
 import { AppFailure } from "../security/errors";
 export interface OfflineArea {
+  cacheVersion?: 2;
+  features?: MappedTrack[];
   id: string;
   name: string;
   center: Coordinate;
@@ -30,6 +33,19 @@ export const offlineMapStyle = {
 };
 export const offlineAreas = (owner: string) =>
   database.list<OfflineArea>(`offline-area:${owner}:`);
+export function routingFeatures(
+  area: OfflineArea,
+  now = Date.now(),
+): MappedTrack[] {
+  return area.cacheVersion === 2 &&
+    !area.limited &&
+    Array.isArray(area.features) &&
+    Number.isFinite(area.downloadedAt) &&
+    area.downloadedAt <= now &&
+    now - area.downloadedAt <= 30 * 86400000
+    ? area.features
+    : [];
+}
 export async function saveOfflineArea(
   owner: string,
   name: string,
@@ -47,6 +63,7 @@ export async function saveOfflineArea(
       "No roads or paths were returned for this area. Nothing was downloaded.",
     );
   const area: OfflineArea = {
+    cacheVersion: 2,
     id: Crypto.randomUUID(),
     name: name.trim().slice(0, 100) || "Nearby paths",
     center,

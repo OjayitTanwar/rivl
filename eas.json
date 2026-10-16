@@ -15,10 +15,10 @@
       }
     },
     "device": {
-      "developmentClient": true,
+      "developmentClient": false,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_ENABLE_DEMO": "true"
+        "EXPO_PUBLIC_ENABLE_DEMO": "false"
       }
     },
     "production": {

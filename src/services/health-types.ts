@@ -2,6 +2,12 @@ export interface HealthSnapshot {
   source: "HealthKit" | "Health Connect";
   readAt: number;
   measuredAt?: number | null;
+  hrvReadings?: {
+    id: string;
+    at: number;
+    value: number;
+    method: "SDNN" | "RMSSD";
+  }[];
   restingHR: number | null;
   hrv: number | null;
   baselineHRV: number | null;

@@ -4,6 +4,7 @@ import {
   pathNetworkProvider,
   pathQuery,
 } from "../src/services/path-network";
+import { mappedTrack } from "../src/domain/community-tracks";
 import { offlineReroute } from "../src/domain/offline-routing";
 import { upcomingInfrastructureWarning } from "../src/domain/infrastructure-warning";
 import type { Sample } from "../src/domain/types";
@@ -84,7 +85,18 @@ it("reroutes only over connected saved ways near both endpoints", () => {
     [point(0, 0), point(0, 0.001), point(0, 0.002)],
     [point(0, 0.001), point(0.001, 0.001)],
   ];
-  const route = offlineReroute(lines, point(0, 0), point(0.001, 0.001));
+  const features = lines.map((points, i) =>
+    mappedTrack(
+      {
+        id: i + 1,
+        version: 1,
+        nodes: i ? [2, 4] : [1, 2, 3],
+        tags: { highway: "path", foot: "yes" },
+      },
+      points,
+    ),
+  );
+  const route = offlineReroute(features, point(0, 0), point(0.001, 0.001));
   expect(route?.points.map((p) => [p.lat, p.lng])).toEqual([
     [0, 0],
     [0, 0.001],
@@ -96,13 +108,24 @@ it("reroutes only over connected saved ways near both endpoints", () => {
   ).toContain("left");
   expect(
     offlineReroute(
-      [lines[0]!, [point(0.003, 0.003), point(0.004, 0.004)]],
+      [
+        features[0]!,
+        mappedTrack(
+          {
+            id: 3,
+            version: 1,
+            nodes: [10, 11],
+            tags: { highway: "path", foot: "yes" },
+          },
+          [point(0.003, 0.003), point(0.004, 0.004)],
+        ),
+      ],
       point(0, 0),
       point(0.004, 0.004),
     ),
   ).toBeNull();
   expect(
-    offlineReroute(lines, point(0.01, 0.01), point(0.001, 0.001)),
+    offlineReroute(features, point(0.01, 0.01), point(0.001, 0.001)),
   ).toBeNull();
 });
 it("warns only when upcoming mapped infrastructure is unconfirmed", () => {
