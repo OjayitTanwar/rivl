@@ -1,5 +1,8 @@
 # Community GPS pilot source contract
 
+Latest, 16 October 2026: the contribution foundation and new mapped-path reconstruction are deployed to the dedicated hosted RIVL backend. See COMMUNITY-TRACK-MAPPING-PLAN.md for the exact bounded scope, hosted checks and remaining unmapped-path work. Historical “nothing deployed” statements below refer to the original 14 October pilot.
+
+
 Implemented in source on 14 October 2026. This is a bounded observed-use pilot, not a completed infrastructure-mapping service. Nothing was deployed to hosted Supabase. No real community observations or simulated app data were added.
 
 ## Collection and sync

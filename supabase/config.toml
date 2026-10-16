@@ -11,3 +11,5 @@ verify_jwt = false
 verify_jwt = false
 [functions.route-intent]
 verify_jwt = false
+[functions.process-track-mapping]
+verify_jwt = false

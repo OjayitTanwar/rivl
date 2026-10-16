@@ -20,7 +20,7 @@ afterEach(() => vi.useRealTimers());
 it("uses a bounded area and distinct walking and cycling queries", () => {
   expect(pathQuery(center, "walk")).toContain("around:1200,51.50700,-0.12800");
   expect(pathQuery(center, "ride")).toContain("cycleway:right");
-  expect(pathQuery(center, "run")).toContain("out body geom 501");
+  expect(pathQuery(center, "run")).toContain("out meta geom 501");
   expect(() => pathQuery({ lat: Infinity, lng: 0 }, "run")).toThrow();
 });
 it("keeps disconnected ways separate and excludes restricted access", () => {
@@ -91,9 +91,19 @@ it("reroutes only over connected saved ways near both endpoints", () => {
     [0.001, 0.001],
   ]);
   expect(route?.steps.at(-1)?.kind).toBe("arrive");
-  expect(route?.steps.find((step) => step.kind === "turn")?.instruction).toContain("left");
-  expect(offlineReroute([lines[0]!, [point(0.003, 0.003), point(0.004, 0.004)]], point(0, 0), point(0.004, 0.004))).toBeNull();
-  expect(offlineReroute(lines, point(0.01, 0.01), point(0.001, 0.001))).toBeNull();
+  expect(
+    route?.steps.find((step) => step.kind === "turn")?.instruction,
+  ).toContain("left");
+  expect(
+    offlineReroute(
+      [lines[0]!, [point(0.003, 0.003), point(0.004, 0.004)]],
+      point(0, 0),
+      point(0.004, 0.004),
+    ),
+  ).toBeNull();
+  expect(
+    offlineReroute(lines, point(0.01, 0.01), point(0.001, 0.001)),
+  ).toBeNull();
 });
 it("warns only when upcoming mapped infrastructure is unconfirmed", () => {
   const point = (lng: number, lat = 0): Sample => ({
@@ -107,10 +117,21 @@ it("warns only when upcoming mapped infrastructure is unconfirmed", () => {
   const mapped = [[point(0), point(0.001), point(0.002), point(0.003)]];
   expect(upcomingInfrastructureWarning(route, mapped, 0, "ride")).toBeNull();
   expect(
-    upcomingInfrastructureWarning(route, [[point(0, 0.01), point(0.003, 0.01)]], 0, "ride"),
+    upcomingInfrastructureWarning(
+      route,
+      [[point(0, 0.01), point(0.003, 0.01)]],
+      0,
+      "ride",
+    ),
   ).toContain("can't confirm a mapped cycle track");
   expect(
-    upcomingInfrastructureWarning(route, [[point(0, 0.01), point(0.003, 0.01)]], 0, "ride", true),
+    upcomingInfrastructureWarning(
+      route,
+      [[point(0, 0.01), point(0.003, 0.01)]],
+      0,
+      "ride",
+      true,
+    ),
   ).toBeNull();
 });
 it("bounds rendering and rejects incomplete server responses", () => {
@@ -159,4 +180,30 @@ it("cancels an active read without waiting for the service", async () => {
   ).rejects.toThrow("cancelled");
   controller.abort();
   await pending;
+});
+
+it("retains versioned OSM geometry without contributor metadata", () => {
+  const result = decodePathNetwork(
+    {
+      elements: [
+        {
+          ...way({ highway: "path", foot: "yes" }),
+          id: 19,
+          version: 4,
+          nodes: [71, 72],
+          user: "not-retained",
+          uid: 7,
+          changeset: 9,
+        },
+      ],
+    },
+    "all",
+  );
+  expect(result.features?.[0]).toMatchObject({
+    wayId: 19,
+    version: 4,
+    nodeIds: [71, 72],
+  });
+  expect(result.features?.[0]).not.toHaveProperty("user");
+  expect(result.features?.[0]).not.toHaveProperty("uid");
 });

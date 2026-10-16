@@ -1,9 +1,21 @@
 # RIVL — development handoff
 
-Updated: 14 October 2026, Asia/Kolkata.
+Updated: 16 October 2026, Asia/Kolkata.
 Project: `/Users/ojayitsinghtanwar/Desktop/rivl`
 
 ## 1. Read this first
+
+### Current priority, UI delivery and Community GPS — 16 October 2026
+
+Latest user direction: Community GPS tracks takes first priority, ahead of further UI polish. User also asked to download more reference apps and use REA. OpenTracks, Organic Maps and OsmAnd packages were acquired, hashed, inspected including focused decompiled methods, then temporary packages removed; evidence/report docs/COMMUNITY-MAPPING-REA.md. Original implementations/assets only.
+
+UI source batch: Activity-led flat sections and less visible copy across workspaces/support pages; details behind disclosures; Health/Nutrition/Training no longer register global fullscreen refresh jobs and retain same-owner restored content/drafts on refocus. Their NativeTabs minimizeBehavior is never. Record fullscreen loading remains. Header title/action alignment fixed; collapsed Settings HR editor remains mounted to preserve drafts. Fifteen actual dark simulator captures: artifacts/screenshots/activity-polish-oct16. Full contextual tab walkthrough passed after clean app launch. Earlier walkthroughs started underneath the prior screenshot Settings modal and failed; those are not proof of a physical app freeze. No physical FPS certification and this UI batch is not yet installed on phone.
+
+Community GPS mapped-path slice: migrations 202610160001_track_reconstruction and 202610160002_track_worker_dispatch deployed to xsfxptlnmcxtrsudjkdq; process-track-mapping deployed. Existing queue-only scheduler active, extends approved existing GPS worker credential (no new Vault secret). New worker accepts optional RIVL_TRACK_WORKER_SECRET override, falling back to existing RIVL_SEGMENT_WORKER_SECRET. Private reference jobs, current source/preference/lease checks, endpoint/zone/gap filtering, ambiguity against sparse parallel alternatives, per-section OSM support, inward planar-fraction conversion, normalized fingerprints, live read eligibility and withdrawal cascades. Discovery only, not routing. Pilot100claims/day,100queuedjobs,5attempts,20MB map-payload cap. See latest mapping plan for exact limits. Entirely unmapped path centerlines/review, mode-aware graph/routing and offline revocation remain real gaps; do not claim full track reconstruction complete.
+
+Checks: TypeScript,505tests/73suites, development security and Deno function check passed. Existing community and new reconstruction SQL passed locally; reconstruction lifecycle suite also passed hosted inside guarded rolled-back transaction (no committed fixtures). New worker missingsecret401/GET405; anonymous candidate read401/clientclaim401. Live Auth+seven data reachability probes all200; hosted project ACTIVE_HEALTHY, database21MB. These are not load tests or a supported-user guarantee. Existing free Supabase limits were checked against official docs:50k authMAU,500MB database,1GB files,5GBuncachedegress,200Realtime connections. Authentication quota is not RIVL athletecapacity. Authenticated hosted worker smoke returned200, state idle, no timeout/transporterror. Hosted fixture-user residue verified0. Main-phone build remains prior accent/freeze candidate.
+
+Shared-route status clarified: planning/saving/navigation/GPXexchange exist; a public publish/save/browse route library is missing. Personal records/milestone/exploration achievements exist. Segment/LocalLegend source is present but real workout E2E remains a gate. Preserve these distinctions in status answers.
 
 ### Accent colours — 15 October 2026
 

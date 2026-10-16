@@ -1,4 +1,8 @@
 import {
+  nearbyReconstructedTracks,
+  type ReconstructedTrack,
+} from "../../../src/services/reconstructed-tracks";
+import {
   classifyTrackCandidates,
   type TrackCandidate,
 } from "../../../src/domain/track-candidates";
@@ -50,6 +54,8 @@ export default function CommunityTracks() {
     generation = useRef(0);
   const [candidates, setCandidates] = useState<TrackCandidate[] | null>(null);
   const [limitedMap, setLimitedMap] = useState(false);
+  const [paths, setPaths] = useState<ReconstructedTrack[]>([]);
+  const [pathError, setPathError] = useState("");
   const [area, setArea] = useState<Coordinate>(),
     [cells, setCells] = useState<ObservedTrackCell[]>([]),
     [loaded, setLoaded] = useState(false);
@@ -59,6 +65,8 @@ export default function CommunityTracks() {
       setError("");
       setSnapshot(null);
       setCells([]);
+      setPaths([]);
+      setPathError("");
       setCandidates(null);
       setLoaded(false);
       setArea(undefined);
@@ -106,6 +114,8 @@ export default function CommunityTracks() {
         await repository.deletePrevious(id);
         await sync(true);
         setCells([]);
+        setPaths([]);
+        setPathError("");
         setLoaded(false);
       });
     if (Platform.OS === "web") {
@@ -150,17 +160,19 @@ export default function CommunityTracks() {
             }
           />
         </Row>
-        <Txt size="caption" color={c.muted}>
-          Imports, manual entries and simulated workouts do not contribute.
-          Short or inaccurate GPS fragments are skipped. Turning this off stops
-          new contributions here. Shared evidence is hidden once the change
-          syncs; you can also remove previous contributions below.
-        </Txt>
-        <Txt color={c.muted}>
-          {session?.local
-            ? "Contributions stay queued on this device until cloud sharing is connected."
-            : "Contributions upload after the original workout syncs."}
-        </Txt>
+        <SettingsSection title="How mapping works" collapsible>
+          <Txt size="caption" color={c.muted}>
+            Imports, manual entries and simulated workouts do not contribute.
+            Short or inaccurate GPS fragments are skipped. Turning this off
+            stops new contributions here. Shared evidence is hidden once the
+            change syncs; you can also remove previous contributions below.
+          </Txt>
+          <Txt color={c.muted}>
+            {session?.local
+              ? "Contributions stay queued on this device until cloud sharing is connected."
+              : "Contributions upload after the original workout syncs."}
+          </Txt>
+        </SettingsSection>
         {data && (
           <Txt>
             {data.drafts.filter((d) => d.state === "pending").length} pending ·{" "}
@@ -224,10 +236,21 @@ export default function CommunityTracks() {
               const version = generation.current;
               const center = await plannerLocation();
               const result = await nearbyObservedTracks(center.lat, center.lng);
+              const reconstructed = await nearbyReconstructedTracks(
+                center,
+              ).then(
+                (value) => ({ value, error: "" }),
+                (error) => ({
+                  value: [] as ReconstructedTrack[],
+                  error: userMessage(error),
+                }),
+              );
               if (ownerRef.current === id && generation.current === version) {
                 setCandidates(null);
                 setArea(center);
                 setCells(result);
+                setPaths(reconstructed.value);
+                setPathError(reconstructed.error);
                 setLoaded(true);
               }
             })
@@ -236,6 +259,16 @@ export default function CommunityTracks() {
         {area && (
           <RouteMap
             points={[]}
+            lines={paths
+              .filter((path) => Date.parse(path.expiresAt) > Date.now())
+              .map((path, index) =>
+                path.way.points.map((point) => ({
+                  ...point,
+                  t: 0,
+                  accuracy: 0,
+                  segment: index,
+                })),
+              )}
             center={area}
             localFocus
             allowMapboxFallback
@@ -248,6 +281,20 @@ export default function CommunityTracks() {
               visits: 1,
             }))}
           />
+        )}
+        {loaded && paths.length > 0 && (
+          <Stack gap={4}>
+            <Txt weight="600">Community-supported paths</Txt>
+            <Txt size="caption" color={c.muted}>
+              Observed sections · OpenStreetMap, ODbL. Access and conditions may
+              differ.
+            </Txt>
+          </Stack>
+        )}
+        {!!pathError && (
+          <Txt size="caption" color={c.muted}>
+            {pathError}
+          </Txt>
         )}
         {area && loaded && (
           <Button

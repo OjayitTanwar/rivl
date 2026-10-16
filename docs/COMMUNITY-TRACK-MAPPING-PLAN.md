@@ -1,5 +1,16 @@
 # Community track mapping implementation plan
 
+## Latest delivery — 16 October 2026
+
+The dedicated RIVL backend now has the first mapped-path reconstruction slice deployed: migrations 202610160001/002, process-track-mapping and the existing queue-only scheduler extended with bounded mapping. The worker rereads original private samples, clips endpoints/zones, preserves gaps and compares contiguous per-way runs against versioned OSM geometry. Parallel/sparse/unversioned alternatives block unsupported unique matches. Only observed partial-way intervals can corroborate; metre endpoints are converted to the planar fractions used by PostGIS before inward rounding. Shared output requires five distinct owners, five distinct normalized geometry fingerprints and three independent owner-vote dates. These are pilot heuristics, not GPS attestation.
+
+Source: supabase/functions/_shared/track-reconstruction.ts, track-mapping-worker.ts, process-track-mapping/index.ts; source client integration is in community-tracks.tsx and reconstructed-tracks.ts. Maximum 100 claims/day, 100 queued jobs, five attempts, one bounded OSM region per job, 500 comparison ways, at most64 retained supported ways, 12,000 provider vertices, 20 MB retained OSM payload budget and 200 public sections. Empty queues make no worker calls. Reuses the existing approved GPS worker Vault credential; no new secret or paid provider was added. The mapping-specific environment override is optional.
+
+Verification: TypeScript, 505 tests/73 suites, development security and Deno server checks passed. New reconstruction SQL lifecycle tests passed on local PostgreSQL/PostGIS and against the hosted schema inside a rolled-back transaction. Hosted rejection checks: worker missing secret401, GET405, anonymous candidate read401 and client-level claim401. Scheduler active; no real mapping jobs or observations were manufactured. Authenticated worker invocation returned HTTP200/state idle with no timeout/transporterror; hosted fixture-user residue is0. This is not field validation.
+
+Still unfinished: entirely unmapped trail centerlines, review/report operations for those proposed paths, calibrated abuse/quality thresholds, wider-area processing, validated mode-aware topology/routing and expiring/revocable offline snapshots. Current reconstructed paths are discovery evidence only; they do not establish legal access, protection, safety or route connectivity. The older source-pilot narrative below describes the earlier revision and is superseded by this dated delivery.
+
+
 Status: source pilot implemented, 14 October 2026. Durable collection, source-referenced ingestion, coarse corroboration, quarantine and retention RPCs now exist. Dedicated track reconstruction and hosted operation remain outstanding. The source includes typed OSM metadata, conservative GPS evidence preparation, a durable reference outbox and server-derived coarse observed-use cells. This document remains the roadmap for the full topology-aware track system. No hosted infrastructure was deployed.
 
 ## Outcome and current boundary

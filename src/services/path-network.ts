@@ -41,7 +41,7 @@ export function pathQuery(center: Coordinate, sport: Sport | "all") {
               ? ['[leisure=track][sport~"^(running|athletics)$"]']
               : []),
           ];
-  return `[out:json][timeout:15][maxsize:8388608];(${selectors.map((s) => `way${around}${s};`).join("")});out body geom 501;`;
+  return `[out:json][timeout:15][maxsize:8388608];(${selectors.map((s) => `way${around}${s};`).join("")});out meta geom 501;`;
 }
 export function decodePathNetwork(
   value: unknown,
