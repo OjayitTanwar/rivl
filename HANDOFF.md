@@ -15,7 +15,7 @@ Other additions: shared route publish/browse/save/report with trimmed endpoints 
 
 Existing approved cron now invokes bounded once-daily retention before queue dispatch, updated with cron.alter_job through the Management API. Migration007 deliberately does not modify cron.job: hosted migration roles lack that privilege. Fresh deployments still require operator scheduler activation. No new Vault credentials or paid provider were enabled.
 
-Encrypted hosted-runner backup tooling is dormant until an operator configures a recipient/destination and performs a disposable restore. SMTP/OAuth, named moderation/support, genuine GPS/health/Watch/BLE testing, load capacity and store distribution remain launch gates. Do not claim everything complete. Phone build/install outcome must be recorded separately.
+Encrypted hosted-runner backup tooling is dormant until an operator configures a recipient/destination and performs a disposable restore. SMTP/OAuth, named moderation/support, genuine GPS/health/Watch/BLE testing, load capacity and store distribution remain launch gates. Do not claim everything complete. Latest standalone Release build succeeded and was installed in place on physical iPhone 00008120-000E05E00C81A01E, preserving its container. Camera/microphone/speech permission descriptions verified in the signed artifact. Evidence: /private/tmp/rivl-phone-completion-build.log and rivl-phone-completion-install.json. Launch verification is pending unlock: CoreDevice explicitly returned Locked; this is not an app crash.
 
 ### Current priority, UI delivery and Community GPS — 16 October 2026
 
