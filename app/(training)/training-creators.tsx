@@ -35,10 +35,13 @@ import {
   Button,
   ListRow,
   Notice,
+  Empty,
+  Row,
+  Metric,
+  SectionHeading,
 } from "../../src/ui/primitives";
 import { SettingsSection } from "../../src/ui/SettingsSection";
 import { useTheme } from "../../src/ui/theme";
-import { useFullScreenLoading } from "../../src/ui/loading-state";
 import { WorkspaceExit } from "../../src/ui/WorkspaceExit";
 import { AppFailure, userMessage } from "../../src/security/errors";
 const repository = new CreatorTrainingRepository(database);
@@ -112,12 +115,14 @@ export default function TrainingCreators() {
     >(null),
     [json, setJson] = useState(""),
     [importOpen, setImportOpen] = useState(false);
-  useFullScreenLoading(loading && !!owner, "Loading training programs");
+  const restoredOwner = useRef<string | undefined>(undefined);
   useFocusEffect(
     useCallback(() => {
       let active = true;
-      setLoading(true);
-      setLoadedOwner(undefined);
+      if (restoredOwner.current !== owner) {
+        setLoading(true);
+        setLoadedOwner(undefined);
+      }
       setError("");
       setLibraryState({
         owner,
@@ -135,6 +140,7 @@ export default function TrainingCreators() {
         draftOwner.current = owner;
       }
       if (!owner) {
+        restoredOwner.current = undefined;
         setPrograms([]);
         setLibraryState({
           owner: undefined,
@@ -151,6 +157,7 @@ export default function TrainingCreators() {
         .programs(owner)
         .then((next) => {
           if (active) {
+            restoredOwner.current = owner;
             setPrograms(next);
             setLoadedOwner(owner);
           }
@@ -392,10 +399,7 @@ export default function TrainingCreators() {
       contentStyle={{ paddingBottom: 120 }}
     >
       <Stack gap={20}>
-        <Txt color={c.muted}>
-          Train from a creator’s program or build your own schedule. Every
-          session starts only when you choose it.
-        </Txt>
+        {loading && !!owner && <Txt size="caption" color={c.muted}>Loading your programs…</Txt>}
         {!owner ? (
           <Notice text="Sign in to save and create training programs." />
         ) : (
@@ -498,9 +502,7 @@ export default function TrainingCreators() {
                   }}
                 />
                 <Txt size="caption" color={c.muted}>
-                  CC BY requires creator credit. CC0 permits reuse without that
-                  condition. Saving a draft keeps it on this account; Publish is
-                  a separate action.
+                  CC BY requires credit. CC0 allows reuse without credit.
                 </Txt>
                 <ListRow
                   title="Read license terms"
@@ -657,9 +659,7 @@ export default function TrainingCreators() {
                   <SettingsSection title="Published programs">
                     {!creatorTrainingCloudConfigured ? (
                       <Txt color={c.muted}>
-                        The public library needs a configured RIVL cloud
-                        connection. You can create local drafts and import or
-                        export programs now.
+                        Library unavailable. Your drafts and imports still work.
                       </Txt>
                     ) : (
                       <>
@@ -677,9 +677,7 @@ export default function TrainingCreators() {
                           />
                         )}
                         {librarySettled && !library.length && (
-                          <Txt color={c.muted}>
-                            No published programs are available yet.
-                          </Txt>
+                          <Empty title="No programs yet" body="Create a program or import one below." action={<Button title="Create a program" variant="secondary" onPress={() => { setTab("mine"); open(); }} disabled={!ready || !!pending} />} />
                         )}
                         {library.slice(0, 20).map((program) => (
                           <ListRow
@@ -702,15 +700,21 @@ export default function TrainingCreators() {
                   </SettingsSection>
                 ) : (
                   <SettingsSection title="My programs">
+                    {loadedOwner === owner && ready && programs.length > 0 && (
+                      <Stack gap={12}>
+                        <Row style={{ gap: 16, flexWrap: "wrap" }}>
+                          <Metric small value={String(programs.length)} label="Programs" />
+                          <Metric small value={String(programs.reduce((total, program) => total + program.sessions.length, 0))} label="Scheduled sessions" />
+                        </Row>
+                      </Stack>
+                    )}
                     <Button
                       title="Create program"
                       onPress={() => open()}
                       disabled={!ready || !!pending}
                     />
                     {loadedOwner === owner && !programs.length && ready && (
-                      <Txt color={c.muted}>
-                        Your saved drafts and imported programs appear here.
-                      </Txt>
+                      <Txt color={c.muted}>Your saved and imported programs appear here.</Txt>
                     )}
                     {(loadedOwner === owner ? programs : [])
                       .slice(0, 100)
@@ -895,12 +899,10 @@ export default function TrainingCreators() {
                 )}
                 <SettingsSection title="Import a shared program" collapsible>
                   <Txt color={c.muted}>
-                    Paste a RIVL program JSON export. Preview its sessions and
-                    license before saving your own copy. Importing never starts
-                    a timer.
+                    Paste the shared file’s text to preview it.
                   </Txt>
                   <Field
-                    label="Program JSON"
+                    label="Shared program text"
                     autoCorrect={false}
                     spellCheck={false}
                     autoCapitalize="none"
@@ -930,8 +932,7 @@ export default function TrainingCreators() {
         )}
         <SettingsSection title="Open training resources" collapsible>
           <Txt color={c.muted}>
-            Explore open source tools and workouts. These links open the
-            original projects; they are not imported into your library.
+            External tools and workout libraries.
           </Txt>
           <ListRow
             title="OpenHIIT"

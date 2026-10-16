@@ -27,10 +27,12 @@ import {
   Notice,
   Segmented,
   ListRow,
+  SectionHeading,
+  Metric,
+  Empty,
 } from "../../src/ui/primitives";
 import { SettingsSection } from "../../src/ui/SettingsSection";
 import { useTheme } from "../../src/ui/theme";
-import { useFullScreenLoading } from "../../src/ui/loading-state";
 import { userMessage } from "../../src/security/errors";
 const repository = new SleepRepository(database);
 const labels: Record<SleepStage, string> = {
@@ -70,7 +72,8 @@ export default function Sleep() {
     [error, setError] = useState(""),
     [page, setPage] = useState(1),
     lock = useRef(false);
-  useFullScreenLoading(loading && !!owner, "Loading your sleep history");
+  const restoredOwner = useRef<string | undefined>(undefined);
+
   const refresh = useCallback(async () => {
     if (!owner || lock.current) return;
     lock.current = true;
@@ -104,13 +107,14 @@ export default function Sleep() {
         setLoading(false);
         return;
       }
-      setLoading(true);
+      setLoading(restoredOwner.current !== owner);
       void Promise.all([
         repository.read(owner),
         database.get("health:" + owner),
       ])
         .then(([read, connection]) => {
           if (!active || ownerRef.current !== owner) return;
+          restoredOwner.current = owner;
           setSnapshot({ owner, read });
           setConnected(!!connection);
           if (connection) void refresh();
@@ -154,11 +158,11 @@ export default function Sleep() {
   return (
     <Screen
       title="Sleep"
-      subtitle="Your recorded sleep, together with your health."
       action={<WorkspaceExit />}
-      contentStyle={{ paddingBottom: 120 }}
+      contentStyle={{ gap: 24, paddingBottom: 120 }}
     >
       {error ? <Notice text={error} /> : null}
+      {loading && <Txt color={c.muted}>Loading sleep records…</Txt>}
       <Segmented
         compact
         options={[
@@ -171,57 +175,83 @@ export default function Sleep() {
           setPage(1);
         }}
       />
-      <ListRow
-        title={connected ? "Refresh sleep history" : "Connect health data"}
-        detail={
-          connected
-            ? busy
-              ? "Reading connected sleep records…"
-              : "Reads your existing health connection."
-            : "Connect Apple Health or Health Connect from Health."
-        }
-        onPress={
-          busy
-            ? undefined
-            : connected
-              ? () => void refresh()
-              : () => router.push("/health-settings")
-        }
-      />
+      {sessions.length > 0 && (
+        <ListRow
+          title={connected ? "Refresh sleep history" : "Connect health data"}
+          detail={
+            connected
+              ? busy
+                ? "Reading connected sleep records…"
+                : undefined
+              : "Connect Apple Health or Health Connect from Health."
+          }
+          onPress={
+            busy
+              ? undefined
+              : connected
+                ? () => void refresh()
+                : () => router.push("/health-settings")
+          }
+        />
+      )}
       {read && read.to - read.from < Number(days) * 86400000 - 60000 ? (
         <Txt color={c.muted}>
           Stored history covers {Math.round((read.to - read.from) / 86400000)}{" "}
           days. Refresh to load the selected range.
         </Txt>
       ) : null}
-      {!sessions.length ? (
-        <Stack gap={12}>
-          <Txt size="heading" weight="700">
-            No recorded sleep yet
-          </Txt>
-          <Txt color={c.muted}>
-            Sleep appears when your watch or a connected app records it in Apple
-            Health or Health Connect. Missing data stays unknown.
-          </Txt>
-        </Stack>
-      ) : (
-        <SettingsSection title="Recorded sleep">
-          <ListRow
-            title="Average recorded sleep per session"
-            detail={`${summary.sessionsWithSleep} complete sessions with asleep readings`}
-            tail={
-              <Txt weight="700">
-                {summary.averageSleepHours === null
-                  ? "Not recorded"
-                  : hours(summary.averageSleepHours)}
-              </Txt>
-            }
-          />
+      {!loading && !sessions.length ? (
+        <Empty
+          title="No recorded sleep yet"
+          body="Sync sleep from your watch or a connected health app."
+          action={
+            <Button
+              title={
+                connected ? "Refresh sleep history" : "Connect health data"
+              }
+              variant="secondary"
+              disabled={busy}
+              loading={busy}
+              onPress={
+                connected
+                  ? () => void refresh()
+                  : () => router.push("/health-settings")
+              }
+              style={{ alignSelf: "flex-start" }}
+            />
+          }
+        />
+      ) : sessions.length ? (
+        <Stack
+          gap={16}
+          style={{
+            paddingBottom: 24,
+            borderBottomWidth: 1,
+            borderBottomColor: c.line,
+          }}
+        >
+          <SectionHeading title="Recorded sleep" />
+          <Row style={{ flexWrap: "wrap", gap: 20, alignItems: "flex-start" }}>
+            <Metric
+              small
+              value={
+                summary.averageSleepHours === null
+                  ? "—"
+                  : hours(summary.averageSleepHours)
+              }
+              label="Average per complete session"
+            />
+            <Metric
+              small
+              value={String(summary.sessionsWithSleep)}
+              label="Sessions with sleep readings"
+            />
+          </Row>
           <ListRow
             title="Session start variation"
-            detail="Smallest clock-time range covering the recorded starts. Includes naps; no sleep score."
+
             tail={
-              <Txt weight="700">
+              <Txt weight="700" mono>
                 {summary.startVariationMinutes === null
                   ? "Needs 3 sessions"
                   : `${Math.round(summary.startVariationMinutes)} min`}
@@ -230,11 +260,11 @@ export default function Sleep() {
           />
           <Txt size="caption" color={c.muted}>
             {read?.provider} · refreshed{" "}
-            {read ? new Date(read.readAt).toLocaleString() : ""}. A missing day
-            is not zero sleep.
+            {read ? new Date(read.readAt).toLocaleString() : ""}.
           </Txt>
-        </SettingsSection>
-      )}
+        </Stack>
+      ) : null}
+      {!!sessions.length && <SectionHeading title="Your sessions" />}
       {sessions.slice(0, page * 50).map((s) => (
         <SettingsSection
           key={s.id}
@@ -245,7 +275,7 @@ export default function Sleep() {
           })}
           collapsible
         >
-          <Row between>
+          <Row between style={{ flexWrap: "wrap", gap: 8 }}>
             <Txt>
               {clock(s.start)}–{clock(s.end)}
             </Txt>
@@ -288,7 +318,7 @@ export default function Sleep() {
                   paddingVertical: 8,
                 }}
               >
-                <Row between>
+                <Row between style={{ flexWrap: "wrap", gap: 8 }}>
                   <Txt>{labels[stage]}</Txt>
                   <Txt mono>{hours(s.durations[stage]!)}</Txt>
                 </Row>
@@ -303,10 +333,13 @@ export default function Sleep() {
           onPress={() => setPage((v) => v + 1)}
         />
       ) : null}
-      <Txt color={c.muted} size="caption">
-        Only supplied stages are shown. Session gaps are kept separate, and
-        overlapping sources are counted once.
-      </Txt>
+      <SettingsSection title="About sleep data" collapsible>
+        <Txt color={c.muted} size="caption">
+          Only supplied stages are shown. Session gaps stay separate and
+          overlapping sources are counted once. Missing days remain unknown.
+          Start variation includes naps and is not a sleep score.
+        </Txt>
+      </SettingsSection>
     </Screen>
   );
 }

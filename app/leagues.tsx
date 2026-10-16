@@ -8,6 +8,8 @@ import {
   Pill,
   Empty,
   Button,
+  Stack,
+  SectionHeading,
 } from "../src/ui/primitives";
 import { rankEfforts } from "../src/domain/competition";
 import { router } from "expo-router";
@@ -16,6 +18,10 @@ export default function Leagues() {
     ranked = rankEfforts(efforts, "improved");
   return (
     <Screen title="Leagues" back>
+      <Stack gap={8}>
+        <SectionHeading title="Progress with your people" />
+        <Txt>Compare improvement across recorded segment efforts.</Txt>
+      </Stack>
       {ranked.length ? (
         <Card>
           <Txt size="heading" weight="700">
@@ -32,17 +38,16 @@ export default function Leagues() {
               </Txt>
               <Txt mono weight="700">
                 {e.previous
-                  ? ((1 - e.seconds / e.previous) * 100).toFixed(1)
-                  : "—"}
-                %
+                  ? `${((1 - e.seconds / e.previous) * 100).toFixed(1)}%`
+                  : "First effort"}
               </Txt>
             </Row>
           ))}
         </Card>
       ) : (
         <Empty
-          title="Your league starts with your people."
-          body="Find a club and compare verified progress. Personal improvement matters more than absolute speed."
+          title="Your first standings are ahead"
+          body="Standings appear when segment efforts are available. Connect with athletes and clubs to build your community."
         />
       )}
       <Button

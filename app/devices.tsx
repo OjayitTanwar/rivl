@@ -62,6 +62,10 @@ export default function Devices() {
   }
   return (
     <Screen title="Devices & sensors" back>
+      <Stack gap={8}>
+        <SectionHeading title="Bring your measurements along" />
+        <Txt color={c.muted}>Connect your watch or a nearby Bluetooth sensor to record heart rate and cycling power.</Txt>
+      </Stack>
       {!!error && <Notice text={error} />}
       <ListRow
         title="Apple Watch"
@@ -69,10 +73,7 @@ export default function Devices() {
         icon={<Watch size={22} color={c.text} />}
         onPress={() => router.push("./watch")}
       />
-      <Txt color={c.muted}>
-        Pair a Bluetooth heart-rate strap or cycling power meter. Fresh readings
-        are saved with your GPS recording; missing readings stay blank.
-      </Txt>
+      <Txt size="caption" color={c.muted}>Sensor readings are saved with your GPS recording.</Txt>
       <SectionHeading title="Connected" />
       {connected.map((device) => (
         <Stack

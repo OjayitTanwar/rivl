@@ -22,6 +22,7 @@ import {
   Field,
   ListRow,
   Notice,
+  SectionHeading,
 } from "../src/ui/primitives";
 import { useTheme } from "../src/ui/theme";
 import { userMessage } from "../src/security/errors";
@@ -141,11 +142,14 @@ export default function GearPage() {
         <Notice text="Sign in to manage your gear." />
       ) : (
         <Stack gap={20}>
-          <Txt color={c.muted}>
-            {activityId
-              ? "Choose the shoes or bike used for this activity."
-              : "Track every kilometre on your shoes and bikes."}
-          </Txt>
+          <Stack gap={8}>
+            <SectionHeading title={activityId ? "What took you there?" : "Every kilometre adds up"} />
+            <Txt color={c.muted}>
+              {activityId
+                ? "Choose the shoes or bike used for this activity."
+                : "Track distance on your shoes and bikes, and choose your defaults for new recordings."}
+            </Txt>
+          </Stack>
           <Txt size="caption" color={c.muted}>
             Gear is private and saved on this device. Defaults apply to new
             recordings.

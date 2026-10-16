@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import { Alert, Platform, Share, View, AppState } from "react-native";
 import { router, useFocusEffect } from "expo-router";
+import { Heart, Footprints, Moon, Droplets, Watch } from "lucide-react-native";
 import { randomUUID } from "expo-crypto";
 import { useStore } from "../../src/state/store";
 import { database } from "../../src/storage/database";
@@ -35,10 +36,13 @@ import {
   Button,
   ListRow,
   Notice,
+  Metric,
+  SectionHeading,
+  Empty,
+  Pill,
 } from "../../src/ui/primitives";
 import { SettingsSection } from "../../src/ui/SettingsSection";
 import { useTheme } from "../../src/ui/theme";
-import { useFullScreenLoading } from "../../src/ui/loading-state";
 import { userMessage } from "../../src/security/errors";
 
 const repository = new WellnessRepository(database);
@@ -104,20 +108,24 @@ export default function HealthLog({
   const [time, setTime] = useState("");
   const [note, setNote] = useState("");
   const [historyPage, setHistoryPage] = useState(0);
-  useFullScreenLoading(loading && !!owner, "Loading your health log");
+  const restoredOwner = useRef<string | undefined>(undefined);
+
   const draftOwner = useRef(owner);
   useFocusEffect(
     useCallback(() => {
       let active = true;
-      setLoading(true);
-      setReady(false);
+      const restoring = restoredOwner.current !== owner;
+      setLoading(restoring);
+      setReady(!restoring);
       setError("");
       if (draftOwner.current !== owner) {
         setEditing(null);
         draftOwner.current = owner;
       }
-      setHistoryPage(0);
-      setConnected(false);
+      if (restoring) {
+        setHistoryPage(0);
+        setConnected(false);
+      }
       if (!owner) {
         setData(null);
         setLoading(false);
@@ -130,6 +138,7 @@ export default function HealthLog({
       ])
         .then(([entries, fast, connection]) => {
           if (active) {
+            restoredOwner.current = owner;
             setData({ owner, entries, fast });
             setReady(true);
             setConnected(!!connection);
@@ -155,6 +164,18 @@ export default function HealthLog({
   const snapshot = data && data.owner === owner ? data : null;
   const entries = snapshot?.entries ?? [];
   const fast = snapshot?.fast ?? null;
+  const availableKinds = kinds.filter(
+    (kind) =>
+      wellnessValue(entries, kind) !== null &&
+      (kind !== "water" ||
+        entries.some(
+          (entry) =>
+            entry.kind === "water" &&
+            entry.at <= Date.now() &&
+            formatWellnessLocalTime(entry.at).slice(0, 10) ===
+              formatWellnessLocalTime(Date.now()).slice(0, 10),
+        )),
+  );
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (state) => {
       if (state === "active" && connected && owner && !editing)
@@ -301,60 +322,127 @@ export default function HealthLog({
             : "Health"
       }
       action={<WorkspaceExit />}
-      contentStyle={{ paddingBottom: 120 }}
+      contentStyle={{ gap: 24, paddingBottom: 120 }}
     >
       {!owner ? (
         <Notice text="Sign in to keep your health log." />
       ) : (
-        <Stack gap={20}>
+        <Stack gap={24}>
           {view === "connection" && (
             <>
-              <Txt color={c.muted}>
-                Connect once to keep daily movement and sleep up to date. Water
-                imports from apps that record your drinks.
-              </Txt>
-              <Button
-                title={
-                  connected ? "Refresh health data" : "Connect health data"
-                }
-                variant="secondary"
-                disabled={!ready || !!pending}
-                onPress={() => void refreshHealth(!connected)}
-              />
-              {connected ? (
+              <Stack
+                gap={16}
+                style={{
+                  paddingBottom: 24,
+                  borderBottomWidth: 1,
+                  borderBottomColor: c.line,
+                }}
+              >
+                <Row between style={{ flexWrap: "wrap", gap: 12 }}>
+                  <Watch size={28} color={c.accent} />
+                  <Pill>
+                    {connected ? "Health connection enabled" : "Not connected"}
+                  </Pill>
+                </Row>
+                <Txt size="heading" weight="700">
+                  Your health, in one place
+                </Txt>
+                <Txt color={c.muted}>
+                  Sync readings from your health apps and watch.
+                </Txt>
                 <Button
-                  title="Manage health access"
-                  variant="quiet"
+                  title={
+                    connected ? "Refresh health data" : "Connect health data"
+                  }
                   disabled={!ready || !!pending}
-                  onPress={() => void refreshHealth(true)}
+                  onPress={() => void refreshHealth(!connected)}
                 />
-              ) : null}
-              <Txt size="caption" color={c.muted}>
-                Floors are platform-recorded flights or floors, not estimated
-                from steps. Active energy excludes resting energy; it is not a
-                food allowance.
-              </Txt>
-              <Txt size="caption" color={c.muted}>
-                Synced water takes priority over manual intake for that day.
-                Edit synced records in their original app.
-              </Txt>
+                {connected ? (
+                  <Button
+                    title="Manage health access"
+                    variant="quiet"
+                    disabled={!ready || !!pending}
+                    onPress={() => void refreshHealth(true)}
+                  />
+                ) : null}
+              </Stack>
+              <SettingsSection title="What syncs and how it works" collapsible>
+                <ListRow
+                  title="Daily movement"
+                  detail="Steps, flights or floors, and active energy."
+                  icon={<Footprints size={22} color={c.accent} />}
+                />
+                <ListRow
+                  title="Sleep and weight"
+                  detail="Readings from your watch or connected apps."
+                  icon={<Moon size={22} color={c.accent} />}
+                />
+                <ListRow
+                  title="Water intake"
+                  detail="Synced water takes priority over manual intake for the day."
+                  icon={<Droplets size={22} color={c.accent} />}
+                />
+                <Txt size="caption" color={c.muted}>
+                  Availability depends on the apps and access you grant. Edit
+                  synced records in their original app. Floors are recorded, not
+                  estimated from steps. Active energy excludes resting energy
+                  and is not a food allowance.
+                </Txt>
+              </SettingsSection>
             </>
+          )}
+          {view === "overview" && ready && (
+            <Stack
+              gap={16}
+              style={{
+                paddingBottom: 24,
+                borderBottomWidth: 1,
+                borderBottomColor: c.line,
+              }}
+            >
+              <SectionHeading
+                title="Daily overview"
+                action="Health log"
+                onPress={() => router.push("/health-history")}
+              />
+              <Row
+                style={{ gap: 20, flexWrap: "wrap", alignItems: "flex-start" }}
+              >
+                <Metric
+                  small
+                  value={
+                    wellnessValue(entries, "steps") === null
+                      ? "—"
+                      : displayValue(wellnessValue(entries, "steps")!)
+                  }
+                  label="Steps today"
+                />
+                <Metric
+                  small
+                  value={highest === null ? "—" : String(highest)}
+                  unit={highest === null ? undefined : "bpm"}
+                  label="Recorded heart-rate peak"
+                />
+              </Row>
+            </Stack>
           )}
           {view === "overview" && (
             <ListRow
-              title="Recorded heart-rate peak"
-              detail={
-                highest === null
-                  ? "No sustained sensor readings yet"
-                  : `${highest} bpm · Logged automatically from saved workouts`
-              }
+              title="Heart-rate settings"
+              detail="Review your recorded peak and training zones"
+              icon={<Heart size={22} color={c.accent} />}
               onPress={() => router.push("/settings")}
             />
           )}
-          {view === "overview" && !connected && (
+          {view === "overview" && (
             <ListRow
-              title="Connect health data"
-              detail="Import movement, sleep and supported readings"
+              title={connected ? "Health connection" : "Connect health data"}
+              detail={
+                connected
+                  ? "Manage access and refresh your readings"
+                  : "Import movement, sleep and supported readings"
+              }
+              icon={<Heart size={22} color={c.accent} />}
               onPress={() => router.push("/health-settings")}
             />
           )}
@@ -465,8 +553,14 @@ export default function HealthLog({
             ) : (
               <>
                 {view === "overview" && (
-                  <SettingsSection title="Your latest entries">
-                    {kinds.map((kind) => {
+                  <Stack gap={0}>
+                    <SectionHeading title="Your readings" />
+                    {!availableKinds.length && (
+                      <Txt color={c.muted}>
+                        Connect health data or add your first record.
+                      </Txt>
+                    )}
+                    {availableKinds.map((kind) => {
                       const amount = wellnessValue(entries, kind);
                       const latest =
                         (kind === "water"
@@ -523,16 +617,25 @@ export default function HealthLog({
                                 kind === "activeEnergy"
                                 ? "No connected reading"
                                 : "No entry yet"
-                              : `${displayValue(amount)} ${wellnessUnit({ kind, source: latest?.source })}${latest?.source ? ` · ${latest.source.provider}${kind === "sleep" ? " · Last 24 hours" : ""}` : " · User-entered"}${(kind === "floorsClimbed" || kind === "activeEnergy") && latest ? ` · Read ${new Date(latest.at).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}` : ""}${(kind === "sleep" || kind === "weight") && latest ? ` · ${new Date(latest.at).toLocaleDateString()}` : ""}`
+                              : `${displayValue(amount)} ${wellnessUnit({ kind, source: latest?.source })}${(kind === "sleep" || kind === "weight") && latest ? ` · ${new Date(latest.at).toLocaleDateString()}` : ""}`
                           }
                         />
                       );
                     })}
                     <ListRow
                       title="Your health log"
-                      detail="Add records, review history and fasting"
                       onPress={() => router.push("/health-history")}
                     />
+                  </Stack>
+                )}
+                {view === "overview" && (
+                  <SettingsSection title="About these readings" collapsible>
+                    <Txt size="caption" color={c.muted}>
+                      Heart-rate peaks use sustained sensor readings from saved
+                      workouts. Missing readings stay unrecorded. Water totals
+                      use synced intake when available. Readings show their
+                      source and date; sleep imports cover the last 24 hours.
+                    </Txt>
                   </SettingsSection>
                 )}
                 {view === "history" && (
@@ -546,8 +649,7 @@ export default function HealthLog({
                       {fast === null ? (
                         <>
                           <Txt color={c.muted}>
-                            Track elapsed time with a start and finish. No
-                            schedule is prescribed.
+                            Track time between a start and finish.
                           </Txt>
                           <Button
                             title="Start timer"
@@ -590,10 +692,10 @@ export default function HealthLog({
                     </SettingsSection>
                     <SettingsSection title="History">
                       {!entries.length && (
-                        <Txt color={c.muted}>
-                          Your saved records will appear here. Tap any entry to
-                          edit its value, time or note.
-                        </Txt>
+                        <Empty
+                          title="Your health log starts here"
+                          body="Add water, weight, sleep or steps."
+                        />
                       )}
                       {entries
                         .slice(historyPage * 50, (historyPage + 1) * 50)

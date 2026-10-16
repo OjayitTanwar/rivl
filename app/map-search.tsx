@@ -9,6 +9,7 @@ import {
   Txt,
   Notice,
   Empty,
+  SectionHeading,
 } from "../src/ui/primitives";
 import { LoadingJourney } from "../src/ui/LoadingJourney";
 import { useTheme } from "../src/ui/theme";
@@ -53,8 +54,9 @@ export default function MapSearch() {
     };
   }, [query]);
   return (
-    <Screen title="Find a place" back>
+    <Screen title="Find a place" back contentStyle={{ gap: 24 }}>
       <Field
+        leading={<Search size={20} color={c.muted} />}
         label="Search places"
         placeholder="City, park, trailhead or coordinates"
         value={query}
@@ -65,6 +67,7 @@ export default function MapSearch() {
       />
       {busy && <LoadingJourney compact label="Finding places…" />}
       {!!error && <Notice text={error} />}
+      {!!places.length && <SectionHeading title="Places" />}
       {places.map((place) => (
         <ListRow
           key={place.id}
@@ -96,13 +99,13 @@ export default function MapSearch() {
           body="Try a nearby town, another name, or latitude, longitude."
         />
       )}
-      {!query && (
-        <>
-          <Search size={28} color={c.muted} />
-          <Txt color={c.muted}>
-            Choose a place to explore routes and paths around it.
-          </Txt>
-        </>
+      {!busy && !error && !searched && query.trim().length < 3 && (
+        <Empty
+          title={
+            query.trim() ? "Keep typing to search" : "Where will you explore?"
+          }
+          body="Search a city, park or trailhead, or enter latitude and longitude. Choose a result to explore routes and paths around it."
+        />
       )}
     </Screen>
   );

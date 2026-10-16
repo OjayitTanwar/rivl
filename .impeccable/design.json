@@ -407,6 +407,13 @@
       },
       "order": "light accent, dark accent, primary fill",
       "exceptions": "Brand logo artwork and semantic HR/zone colours"
+    },
+    "activityPolishOct16": {
+      "reference": "app/(tabs)/(home)/activity-space.tsx",
+      "copy": "Short actionable copy; optional detail disclosures; retain readable type sizes.",
+      "workspaceTabs": "Health/Nutrition/Training use inline initial restore and retain same-owner state on focus; native minimization disabled. Record fullscreen loading preserved.",
+      "evidence": "artifacts/screenshots/activity-polish-oct16 (15 dark iPhone simulator entry/empty captures); no physical FPS or populated-flow certification.",
+      "installedOnPhone": false
     }
   },
   "components": [

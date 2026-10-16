@@ -34,10 +34,12 @@ import {
   Button,
   ListRow,
   Notice,
+  Metric,
+  SectionHeading,
+  Empty,
 } from "../../src/ui/primitives";
 import { SettingsSection } from "../../src/ui/SettingsSection";
 import { useTheme } from "../../src/ui/theme";
-import { useFullScreenLoading } from "../../src/ui/loading-state";
 import { AppFailure, userMessage } from "../../src/security/errors";
 import {
   buildTrainingProgression,
@@ -157,7 +159,7 @@ function IntervalClock({
         </Txt>
       </View>
       <Txt
-        size="title"
+        size="display"
         weight="700"
         mono
         accessibilityLabel={`${position.remainingSec} seconds remaining`}
@@ -237,20 +239,23 @@ export default function GuidedTraining({
     ]);
     return { owner: id, plans, session, history };
   };
-  useFullScreenLoading(loading && !!owner, "Loading guided training");
   const draftOwner = useRef(owner);
+  const restoredOwner = useRef<string | undefined>(undefined);
   useFocusEffect(
     useCallback(() => {
       let active = true;
       setFocused(true);
-      setLoaded(false);
-      setLoading(true);
+      if (restoredOwner.current !== owner) {
+        setLoaded(false);
+        setLoading(true);
+      }
       if (draftOwner.current !== owner) {
         setEditor(null);
         draftOwner.current = owner;
       }
       setError("");
       if (!owner) {
+        restoredOwner.current = undefined;
         setData(null);
         setLoading(false);
         return;
@@ -258,6 +263,7 @@ export default function GuidedTraining({
       void read(owner)
         .then((snapshot) => {
           if (active) {
+            restoredOwner.current = owner;
             setData(snapshot);
             setLoaded(true);
           }
@@ -385,19 +391,28 @@ export default function GuidedTraining({
       contentStyle={{ paddingBottom: 120 }}
     >
       <Stack gap={20}>
+        {loading && !!owner && <Txt size="caption" color={c.muted}>Loading training…</Txt>}
         {!owner ? (
           <Notice text="Sign in to keep training plans and interval sessions." />
         ) : (
           <>
-            <ListRow
-              title="Training library & creator studio"
-              detail="Discover programs or create and share your own"
-              onPress={() => router.push("/training-creators")}
-            />
-            <Txt color={c.muted}>
-              Build an interval session for your own pace. Guidance uses a timer
-              and foreground cues. Record your GPS workout separately in Record.
-            </Txt>
+            {view === "plans" && (
+              <ListRow
+                title="Explore training programs"
+                detail="Creator schedules, shared programs and your drafts"
+                onPress={() => router.push("/training-creators")}
+              />
+            )}
+            {ready && view !== "session" && (
+              <Stack gap={16} style={{ paddingBottom: 4 }}>
+                <Row style={{ gap: 16, flexWrap: "wrap" }}>
+                  <Metric small value={String(plans.length)} label="Saved plans" />
+                  <Metric small value={String(snapshot.history.filter((item) => item.completed).length)} label="Sessions finished" />
+                  <Metric small value={formatTrainingDuration(snapshot.history.reduce((total, item) => total + item.elapsedMs, 0) / 1000)} label="Timer time" />
+                </Row>
+
+              </Stack>
+            )}
             {!!error && (
               <Notice
                 text={error}
@@ -449,11 +464,10 @@ export default function GuidedTraining({
               />
             )}
             {ready && view === "session" && !session && (
-              <ListRow
-                title="Choose a training plan"
-                detail="Start a saved plan to see your interval timer here"
-                onPress={() => router.push("/training")}
-              />
+              <Stack gap={16}>
+                <Txt color={c.muted}>No session running.</Txt>
+                <Button title="Choose a training plan" onPress={() => router.push("/training")} />
+              </Stack>
             )}
             {ready && view === "session" && session && (
               <SettingsSection title="Active session">
@@ -468,10 +482,7 @@ export default function GuidedTraining({
                   onFinish={complete}
                 />
                 <Txt size="caption" color={c.muted}>
-                  The timer continues while away. Spoken and haptic cues play
-                  only while this screen is open. Spoken guidance uses the same
-                  installed voice as navigation. Ending guidance keeps your
-                  recorded workout.
+                  Keep this page open for cues. Record GPS separately.
                 </Txt>
                 <Button
                   title={
@@ -575,10 +586,7 @@ export default function GuidedTraining({
                   }
                 />
                 <Txt size="caption" color={c.muted}>
-                  Only Comfortable increases work. Every fourth week reduces
-                  work by 20%. Other durations stay the same. Suggested days can
-                  be edited in Creator studio. This uses your feedback, not an
-                  automatic fitness assessment.
+                  Comfortable builds work time; every fourth week eases by 20%.
                 </Txt>
                 {(() => {
                   try {
@@ -667,9 +675,7 @@ export default function GuidedTraining({
                     />
                   ))}
                   <Txt size="caption" color={c.muted}>
-                    Use 0 to omit warm up, recovery or cool down. Recovery runs
-                    between work repetitions. Choose durations that suit your
-                    own session.
+                    Enter 0 to skip warm up, recovery or cool down.
                   </Txt>
                   <Button
                     title="Save plan"
@@ -708,10 +714,7 @@ export default function GuidedTraining({
               ) : (
                 <SettingsSection title="Your plans">
                   {!plans.length && (
-                    <Txt color={c.muted}>
-                      Create your first plan. Saved plans can be reused; no
-                      session starts until you tap Start.
-                    </Txt>
+                    <Txt color={c.muted}>No saved plans yet.</Txt>
                   )}
                   <Button
                     title="Create plan"
@@ -763,10 +766,10 @@ export default function GuidedTraining({
             {ready && view === "history" && (
               <SettingsSection title="Recent interval sessions">
                 {!snapshot.history.length && (
-                  <Txt color={c.muted}>
-                    Your finished and ended sessions appear here. These are
-                    interval-timer logs, separate from recorded activities.
-                  </Txt>
+                  <Stack gap={12}>
+                    <Txt color={c.muted}>Your completed sessions will appear here.</Txt>
+                    <Button title="Find a training plan" variant="secondary" onPress={() => router.push("/training")} />
+                  </Stack>
                 )}
                 {snapshot.history.slice(0, 20).map((item) => (
                   <ListRow

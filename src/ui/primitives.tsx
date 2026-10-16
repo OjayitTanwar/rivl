@@ -661,10 +661,10 @@ export function Screen({
                   {title}
                 </Txt>
               )}
-              {subtitle && <Txt color={c.muted}>{subtitle}</Txt>}
             </Stack>
             {action}
           </Row>
+          {subtitle && <Txt color={c.muted}>{subtitle}</Txt>}
         </Stack>
       )}
       {children}

@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import { router } from "expo-router";
 import { useStore } from "../src/state/store";
-import { Screen, Txt, Stack, Field, Button, Notice } from "../src/ui/primitives";
+import {
+  Screen,
+  Txt,
+  Stack,
+  Field,
+  Button,
+  Notice,
+} from "../src/ui/primitives";
 import { userMessage } from "../src/security/errors";
 export default function ForgotPassword() {
   const { beginPasswordRecovery } = useStore();
@@ -24,18 +31,21 @@ export default function ForgotPassword() {
   if (sent)
     return (
       <Screen title="Check your email" back>
-        <Stack gap={20}>
+        <Stack gap={24}>
           <Txt>
             If that email belongs to an account, a password-reset link is on its
             way. Open it on this device to choose a new password.
           </Txt>
-          <Button title="Back to sign in" onPress={() => router.replace("/auth")} />
+          <Button
+            title="Back to sign in"
+            onPress={() => router.replace("/auth")}
+          />
         </Stack>
       </Screen>
     );
   return (
     <Screen title="Reset your password" back>
-      <Stack gap={20}>
+      <Stack gap={24}>
         <Txt>
           Enter the email on your account and we will send a link to choose a
           new password.
@@ -49,6 +59,7 @@ export default function ForgotPassword() {
           keyboardType="email-address"
           autoComplete="email"
           maxLength={254}
+          editable={!busy}
           onSubmitEditing={() => void request()}
         />
         {!!error && <Notice text={error} />}
@@ -56,6 +67,7 @@ export default function ForgotPassword() {
           testID="recovery-submit"
           title="Send reset link"
           loading={busy}
+          disabled={!email.trim()}
           onPress={() => void request()}
         />
       </Stack>

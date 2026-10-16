@@ -8,6 +8,7 @@ export default function Layout() {
   return (
     <WorkspaceAuth>
       <NativeTabs
+        minimizeBehavior="never"
         tintColor={c.accent}
         backgroundColor={c.nav}
         labelStyle={{ fontSize: 11 }}

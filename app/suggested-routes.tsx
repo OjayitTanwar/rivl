@@ -7,12 +7,16 @@ import {
   Screen,
   Txt,
   Button,
-  Card,
+  Stack,
+  SectionHeading,
+  Empty,
+  Metric,
   Field,
   Segmented,
   Notice,
   Row,
 } from "../src/ui/primitives";
+import { useTheme } from "../src/ui/theme";
 import RouteMap from "../src/ui/RouteMap";
 import { plannerLocation } from "../src/services/route-location";
 import { routeProvider } from "../src/services/route-planning";
@@ -23,6 +27,7 @@ import { km } from "../src/domain/format";
 import { userMessage } from "../src/security/errors";
 import { readRouteIntent } from "../src/services/route-intent";
 export default function SuggestedRoutes() {
+  const { c } = useTheme();
   const params = useLocalSearchParams<{
     lat?: string;
     lng?: string;
@@ -102,74 +107,112 @@ export default function SuggestedRoutes() {
     }
   }
   return (
-    <Screen title="Find your next loop." back>
-      <Field
-        label="Describe an activity and distance"
-        value={request}
-        onChangeText={setRequest}
-        placeholder="A 5 km walk around me"
-        maxLength={500}
-      />
-      <Button
-        title="Use request"
-        variant="secondary"
-        disabled={!request.trim() || busy}
-        onPress={async () => {
-          Keyboard.dismiss();
-          setBusy(true);
-          setError("");
-          try {
-            const intent = await readRouteIntent(request);
-            if (intent.sport) setSport(intent.sport);
-            if (intent.meters) setLength((intent.meters / 1000).toFixed(2));
-            if (intent.uncertain)
-              setError(
-                "Choose one activity and distance using the controls below.",
-              );
-          } catch (e) {
-            setError(userMessage(e));
-          } finally {
-            setBusy(false);
+    <Screen
+      title="Suggested routes"
+      back
+      contentStyle={{ gap: 24, paddingBottom: 120 }}
+    >
+      <Stack gap={8}>
+        <SectionHeading title="Find your next loop" />
+        <Txt color={c.muted}>
+          Choose an activity and target distance. We’ll look for mapped
+          connections around your starting point.
+        </Txt>
+      </Stack>
+      <Stack gap={12}>
+        <Field
+          label="Describe an activity and distance"
+          value={request}
+          onChangeText={setRequest}
+          placeholder="A 5 km walk around me"
+          maxLength={500}
+        />
+        <Button
+          title="Use request"
+          variant="quiet"
+          style={{ alignSelf: "flex-start" }}
+          disabled={!request.trim() || busy}
+          onPress={async () => {
+            Keyboard.dismiss();
+            setBusy(true);
+            setError("");
+            try {
+              const intent = await readRouteIntent(request);
+              if (intent.sport) setSport(intent.sport);
+              if (intent.meters) setLength((intent.meters / 1000).toFixed(2));
+              if (intent.uncertain)
+                setError(
+                  "Choose one activity and distance using the controls below.",
+                );
+            } catch (e) {
+              setError(userMessage(e));
+            } finally {
+              setBusy(false);
+            }
+          }}
+        />
+      </Stack>
+      <Stack gap={16}>
+        <SectionHeading title="Route preferences" />
+        <Segmented
+          options={[
+            { label: "Ride", value: "ride" },
+            { label: "Run", value: "run" },
+            { label: "Walk", value: "walk" },
+            { label: "Hike", value: "hike" },
+          ]}
+          value={sport}
+          onChange={setSport}
+        />
+        <Field
+          label="Target distance · km"
+          keyboardType="decimal-pad"
+          value={length}
+          onChangeText={setLength}
+        />
+        <Button
+          title={
+            supplied ? "Suggest loops in this area" : "Suggest loops around me"
           }
-        }}
-      />
-      <Segmented
-        options={[
-          { label: "Ride", value: "ride" },
-          { label: "Run", value: "run" },
-          { label: "Walk", value: "walk" },
-          { label: "Hike", value: "hike" },
-        ]}
-        value={sport}
-        onChange={setSport}
-      />
-      <Field
-        label="Target distance · km"
-        keyboardType="decimal-pad"
-        value={length}
-        onChangeText={setLength}
-      />
-      <Button
-        title={
-          supplied ? "Suggest loops in this area" : "Suggest loops around me"
-        }
-        loading={busy}
-        onPress={() => void suggest()}
-      />
+          loading={busy}
+          disabled={busy}
+          onPress={() => void suggest()}
+        />
+      </Stack>
       {!!error && <Notice text={error} />}
-      <Txt>
+      <Txt size="caption" color={c.muted}>
         {popular
           ? "Suggestions include nearby community-popular cells where available."
           : "Suggestions use mapped connections around you. Community popularity will contribute when shared routes are available."}{" "}
         Distance varies with the paths available. Check crossings, signs and
         access before setting off.
       </Txt>
+      {!!routes.length && <SectionHeading title="Suggested loops" />}
+      {!routes.length && !busy && !error && (
+        <Empty
+          title="Your route options appear here"
+          body="Suggestions include a map and actual route distance. Save a loop to review it with your other routes."
+        />
+      )}
       {routes.map((route) => (
-        <Card key={route.id}>
+        <Stack
+          key={route.id}
+          gap={16}
+          style={{
+            paddingBottom: 24,
+            borderBottomWidth: 1,
+            borderBottomColor: c.line,
+          }}
+        >
           <Txt size="heading" weight="700">
             {route.name}
           </Txt>
-          <Txt mono>{km(route.distance)} km</Txt>
+          <Metric
+            small
+            value={km(route.distance)}
+            unit="km"
+            label="Route distance"
+          />
           <RouteMap points={route.points} height={220} />
           <Row>
             <Button
@@ -184,7 +227,7 @@ export default function SuggestedRoutes() {
               disabled={busy}
             />
           </Row>
-        </Card>
+        </Stack>
       ))}
     </Screen>
   );

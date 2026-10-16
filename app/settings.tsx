@@ -123,6 +123,63 @@ export default function Settings() {
   return (
     <Screen title="Settings" back>
       {!!message && <Notice text={message} />}
+      <Stack gap={8} style={{ paddingBottom: 12 }}>
+        <SectionHeading title={profile.name || "Your athlete"} />
+        <Txt color={c.muted}>{profile.weeklyGoal / 1000} km weekly goal · {profile.speedUnit === "mph" ? "mph" : "km/h"} speed display</Txt>
+      </Stack>
+      <SettingsSection title="Display & accessibility" collapsible>
+        <Txt size="caption" weight="600">
+          Appearance
+        </Txt>
+        <Segmented
+          options={[
+            { label: "System", value: "system" },
+            { label: "Light", value: "light" },
+            { label: "Dark", value: "dark" },
+          ]}
+          value={profile.theme}
+          onChange={(theme) => void act(() => updateProfile({ theme }))}
+        />
+        <Txt size="caption" weight="600">Accent colour</Txt>
+        <Row style={{ flexWrap: "wrap", gap: 10 }}>
+          {(Object.keys(accentColors) as AccentColor[]).map((key) => {
+            const option = accentColors[key];
+            const selected = (profile.accentColor ?? "orange") === key;
+            return (
+              <Pressable
+                key={key}
+                accessibilityRole="radio"
+                accessibilityLabel={`${option.label} accent`}
+                accessibilityState={{ checked: selected, disabled: busy }}
+                disabled={busy}
+                onPress={() => void act(() => updateProfile({ accentColor: key }))}
+                style={{ minHeight: 48, minWidth: 88, padding: 10, borderRadius: 12,
+                  borderWidth: selected ? 2 : 1, borderColor: selected ? c.accent : c.line,
+                  flexDirection: "row", alignItems: "center", gap: 8 }}
+              >
+                <View style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: option.fill }} />
+                <Txt size="caption" weight={selected ? "700" : "400"}>{option.label}</Txt>
+              </Pressable>
+            );
+          })}
+        </Row>
+        <Row between>
+          <Txt style={{ flex: 1 }}>Increase contrast</Txt>
+          <Switch
+            accessibilityLabel="Increase contrast"
+            disabled={busy}
+            value={profile.highContrast}
+            onValueChange={(highContrast) =>
+              void act(() => updateProfile({ highContrast }))
+            }
+            trackColor={{ true: c.primary }}
+          />
+        </Row>
+        <Txt size="caption" color={c.muted}>
+          Text follows your system size. Reduced motion and transparency
+          preferences are respected.
+        </Txt>
+      </SettingsSection>
       <Stack gap={0}>
         <ListRow
           icon={<Bike size={20} color={c.text} />}
@@ -143,7 +200,7 @@ export default function Settings() {
           onPress={() => router.push("/devices")}
         />
       </Stack>
-      <SettingsSection title="Athlete profile">
+      <SettingsSection title="Athlete profile" collapsible>
         <Field
           label="Name"
           value={name}
@@ -290,7 +347,7 @@ export default function Settings() {
           }
         />
       </SettingsSection>
-      <SettingsSection title="Heart-rate zones">
+      <SettingsSection title="Heart-rate zones" collapsible keepMounted>
         <HeartRateZoneSettings
           key={profile.id}
           disabled={busy}
@@ -379,59 +436,6 @@ export default function Settings() {
         <Txt size="caption" color={c.muted}>
           Age and weight stay private unless you enable the corresponding group.
           Save the profile fields above before turning a group on.
-        </Txt>
-      </SettingsSection>
-      <SettingsSection title="Display & accessibility" collapsible>
-        <Txt size="caption" weight="600">
-          Appearance
-        </Txt>
-        <Segmented
-          options={[
-            { label: "System", value: "system" },
-            { label: "Light", value: "light" },
-            { label: "Dark", value: "dark" },
-          ]}
-          value={profile.theme}
-          onChange={(theme) => void act(() => updateProfile({ theme }))}
-        />
-        <Txt size="caption" weight="600">Accent colour</Txt>
-        <Row style={{ flexWrap: "wrap", gap: 10 }}>
-          {(Object.keys(accentColors) as AccentColor[]).map((key) => {
-            const option = accentColors[key];
-            const selected = (profile.accentColor ?? "orange") === key;
-            return (
-              <Pressable
-                key={key}
-                accessibilityRole="radio"
-                accessibilityLabel={`${option.label} accent`}
-                accessibilityState={{ checked: selected, disabled: busy }}
-                disabled={busy}
-                onPress={() => void act(() => updateProfile({ accentColor: key }))}
-                style={{ minHeight: 48, minWidth: 88, padding: 10, borderRadius: 12,
-                  borderWidth: selected ? 2 : 1, borderColor: selected ? c.accent : c.line,
-                  flexDirection: "row", alignItems: "center", gap: 8 }}
-              >
-                <View style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: option.fill }} />
-                <Txt size="caption" weight={selected ? "700" : "400"}>{option.label}</Txt>
-              </Pressable>
-            );
-          })}
-        </Row>
-        <Row between>
-          <Txt style={{ flex: 1 }}>Increase contrast</Txt>
-          <Switch
-            accessibilityLabel="Increase contrast"
-            disabled={busy}
-            value={profile.highContrast}
-            onValueChange={(highContrast) =>
-              void act(() => updateProfile({ highContrast }))
-            }
-            trackColor={{ true: c.primary }}
-          />
-        </Row>
-        <Txt size="caption" color={c.muted}>
-          Text follows your system size. Reduced motion and transparency
-          preferences are respected.
         </Txt>
       </SettingsSection>
       <SettingsSection title="Recording" collapsible>

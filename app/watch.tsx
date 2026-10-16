@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Platform } from "react-native";
 import { useStore } from "../src/state/store";
-import { Screen, Txt, Button, Notice, Choice } from "../src/ui/primitives";
+import { Screen, Txt, Button, Notice, Choice, Stack, SectionHeading } from "../src/ui/primitives";
 import { SettingsSection } from "../src/ui/SettingsSection";
 import { LoadingJourney } from "../src/ui/LoadingJourney";
 import { watchBridge, connectWatch } from "../src/services/watch";
@@ -67,6 +67,10 @@ export default function Watch() {
   };
   return (
     <Screen title="Apple Watch" back>
+      <Stack gap={8}>
+        <SectionHeading title="Your workout, on your wrist" />
+        <Txt>Record on Apple Watch, then bring completed workouts back to RIVL.</Txt>
+      </Stack>
       <SettingsSection title="Connection">
         {status === "Checking your watch…" ? (
           <LoadingJourney compact label={status} />

@@ -1,6 +1,6 @@
 import React from "react";
 import { router } from "expo-router";
-import { Screen, Empty, Button, Card, Txt, Stack } from "../src/ui/primitives";
+import { Screen, Empty, Button, Card, Txt, Stack, SectionHeading } from "../src/ui/primitives";
 import { useStore } from "../src/state/store";
 import { records } from "../src/domain/analytics";
 export default function Notifications() {
@@ -10,6 +10,10 @@ export default function Notifications() {
     );
   return (
     <Screen title="Notifications" back>
+      <Stack gap={8}>
+        <SectionHeading title="Your recent highlights" />
+        <Txt>Personal bests from the past seven days, ready to revisit.</Txt>
+      </Stack>
       {recent.length ? (
         recent.map((r) => (
           <Card key={r.distance}>
@@ -31,7 +35,7 @@ export default function Notifications() {
         ))
       ) : (
         <Empty
-          title="All caught up."
+          title="All caught up"
           body="Your recent personal bests will appear here. Training reminders can be configured in Settings."
         />
       )}

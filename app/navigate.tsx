@@ -48,6 +48,7 @@ import {
   Button,
   Card,
   Field,
+  Notice,
   Row,
   Screen,
   Segmented,
@@ -446,7 +447,7 @@ export default function Navigate() {
       title="Navigate"
       subtitle="Spoken directions from where you are"
       back
-      contentStyle={{ gap: 18 }}
+      contentStyle={{ gap: 24, paddingBottom: 120 }}
     >
       <View style={{ gap: 16 }}>
         {!active && (
@@ -722,14 +723,14 @@ export default function Navigate() {
       {progress && (
         <Card dark>
           <Txt color="#FFFFFF" size="caption">
-            NEXT TURN · {distanceText}
+            Next turn in {distanceText}
           </Txt>
           <Txt color="#FFFFFF" size="heading" weight="700">
             {progress.step.instruction}
           </Txt>
         </Card>
       )}
-      <Txt color={c.muted}>{notice}</Txt>
+      {notice ? <Notice text={notice} /> : null}
       <View style={{ gap: 6 }}>
         <Txt size="caption" color={c.muted}>
           Voice uses your phone’s installed speech engine and audio output.

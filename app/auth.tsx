@@ -52,7 +52,7 @@ export default function Auth() {
     }
   }
   return (
-    <Screen>
+    <Screen contentStyle={{ gap: 24, paddingBottom: 48 }}>
       <View
         style={{
           flexDirection: width > 850 ? "row" : "column",
@@ -87,15 +87,27 @@ export default function Auth() {
             alignSelf: "center",
             padding: width > 850 ? 28 : 0,
           }}
-          gap={16}
+          gap={20}
         >
+          <Stack gap={8}>
+            <Txt size="heading" weight="700">
+              {mode === "signup" ? "Create your account" : "Welcome back"}
+            </Txt>
+            <Txt color={c.muted}>
+              {mode === "signup"
+                ? "Create your RIVL account to start tracking your training."
+                : "Sign in to pick up your training."}
+            </Txt>
+          </Stack>
           <Segmented
             options={[
               { label: "Create account", value: "signup" },
               { label: "Sign in", value: "signin" },
             ]}
             value={mode}
-            onChange={setMode}
+            onChange={(value) => {
+              if (!busy) setMode(value);
+            }}
           />
           {backendConfigured && (
             <>
@@ -105,7 +117,9 @@ export default function Auth() {
                   { label: "On this device", value: "device" },
                 ]}
                 value={accountMode}
-                onChange={setAccountMode}
+                onChange={(value) => {
+                  if (!busy) setAccountMode(value);
+                }}
               />
               <Txt size="caption" color={c.muted}>
                 {accountMode === "cloud"
@@ -169,6 +183,7 @@ export default function Auth() {
               testID="auth-name"
               value={name}
               onChangeText={setName}
+              editable={!busy}
               autoComplete="name"
               maxLength={100}
             />
@@ -180,6 +195,7 @@ export default function Auth() {
             onChangeText={setEmail}
             autoCapitalize="none"
             keyboardType="email-address"
+            editable={!busy}
             autoComplete="email"
             maxLength={254}
           />
@@ -189,6 +205,7 @@ export default function Auth() {
             value={password}
             onChangeText={setPassword}
             secureTextEntry
+            editable={!busy}
             maxLength={128}
             autoComplete={
               mode === "signup" ? "new-password" : "current-password"
@@ -210,7 +227,8 @@ export default function Auth() {
             <Button
               testID="auth-forgot"
               title="Forgot password?"
-              variant="secondary"
+              variant="quiet"
+              disabled={busy}
               onPress={() => router.push("/forgot-password")}
             />
           )}

@@ -2,7 +2,7 @@ import { importRecipeUrl } from "../../src/services/recipe-import";
 import { WorkspaceExit } from "../../src/ui/WorkspaceExit";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Alert, Platform, Share } from "react-native";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { randomUUID } from "expo-crypto";
 import { useStore } from "../../src/state/store";
 import { database } from "../../src/storage/database";
@@ -41,10 +41,11 @@ import {
   ListRow,
   Notice,
   Segmented,
+  Metric,
+  Empty,
 } from "../../src/ui/primitives";
 import { SettingsSection } from "../../src/ui/SettingsSection";
 import { useTheme } from "../../src/ui/theme";
-import { useFullScreenLoading } from "../../src/ui/loading-state";
 import { AppFailure, userMessage } from "../../src/security/errors";
 import { LabelValueRow } from "../../src/ui/LabelValueRow";
 const repo = new NutritionPlanningRepository(database),
@@ -140,15 +141,14 @@ export default function NutritionInsights({
     ]);
     return { owner: id, goals, recipes, planned, entries };
   };
-  useFullScreenLoading(loading && !!owner, "Loading nutrition tools");
   const draftOwner = useRef(owner);
   useFocusEffect(
     useCallback(() => {
       let active = true;
       setLoading(true);
-      setLoaded(false);
       setError("");
       if (draftOwner.current !== owner) {
+        setLoaded(false);
         setRecipeEdit(null);
         importRevision.current += 1;
         setImporting(false);
@@ -185,7 +185,7 @@ export default function NutritionInsights({
   const weekEnd = tab === "plan" ? planEnd : reportEnd;
   const setWeekEnd = tab === "plan" ? setPlanEnd : setReportEnd;
   const snapshot = data?.owner === owner ? data : null,
-    ready = loaded && !!snapshot && !loading;
+    ready = loaded && !!snapshot;
   const days = useMemo(() => {
     try {
       return nutritionWeekDays(weekEnd);
@@ -358,9 +358,9 @@ export default function NutritionInsights({
             : "Nutrition insights"
       }
       action={<WorkspaceExit />}
-      contentStyle={{ paddingBottom: 120 }}
+      contentStyle={{ gap: 24, paddingBottom: 120 }}
     >
-      <Stack gap={20}>
+      <Stack gap={24}>
         {!owner ? (
           <Notice text="Sign in to keep nutrition goals, recipes and plans." />
         ) : (
@@ -390,9 +390,21 @@ export default function NutritionInsights({
                 }
               />
             )}
+            {loading && (
+              <Txt size="caption" color={c.muted}>
+                {data?.owner === owner ? "Refreshing…" : "Loading…"}
+              </Txt>
+            )}
             {!!pending && <Txt color={c.muted}>{pending}…</Txt>}
             {ready && (tab === "report" || tab === "plan") && (
-              <>
+              <SettingsSection
+                title={
+                  days.length
+                    ? `${new Date(days[0] + "T12:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric" })} – ${new Date(weekEnd + "T12:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric" })}`
+                    : "Choose a valid week"
+                }
+                collapsible
+              >
                 <Field
                   label="Seven-day period ending (YYYY-MM-DD)"
                   value={weekEnd}
@@ -404,37 +416,78 @@ export default function NutritionInsights({
                 {!days.length && (
                   <Notice text="Choose a valid ending date in YYYY-MM-DD format." />
                 )}
-              </>
+              </SettingsSection>
             )}
             {ready && tab === "report" && (
               <>
-                <Txt color={c.muted}>
-                  Actual diary entries only. Unlogged days and unavailable
-                  nutrients stay distinct from measured zero.
+                <Stack gap={16}>
+                  <Txt size="heading" weight="700">
+                    Your week in food
+                  </Txt>
+                  <Row style={{ gap: 16, flexWrap: "wrap" }}>
+                    <Metric
+                      small
+                      label="Days logged"
+                      value={`${report.filter((day) => day.entryCount > 0).length} / ${days.length}`}
+                    />
+                    <Metric
+                      small
+                      label="Foods logged"
+                      value={String(
+                        report.reduce(
+                          (count, day) => count + day.entryCount,
+                          0,
+                        ),
+                      )}
+                    />
+                  </Row>
+                </Stack>
+                <Txt size="caption" color={c.muted}>
+                  Logged intake only · missing values stay unavailable.
                 </Txt>
-                {report.map((day) => (
-                  <SettingsSection
-                    key={day.day}
-                    title={new Date(day.day + "T12:00:00").toLocaleDateString()}
-                  >
-                    {!day.totals ? (
-                      <Txt color={c.muted}>No foods logged</Txt>
-                    ) : (
-                      <>
-                        <Txt size="caption" color={c.muted}>
-                          {day.entryCount} food entries
-                        </Txt>
-                        {nutrientKeys.map((key) => (
-                          <LabelValueRow
-                            key={key}
-                            label={labels[key]}
-                            value={`${number(day.totals![key].known)}${day.totals![key].missing ? " + unavailable" : ""}${snapshot.goals?.targets[key] != null ? ` / ${number(snapshot.goals.targets[key]!)} target` : ""}`}
-                          />
-                        ))}
-                      </>
-                    )}
-                  </SettingsSection>
-                ))}
+                {!report.some((day) => day.entryCount > 0) && (
+                  <Empty
+                    title="No foods logged this week"
+                    body="Your diary entries will appear here."
+                    action={
+                      <Button
+                        title="Open diary"
+                        variant="secondary"
+                        onPress={() => router.push("/nutrition")}
+                      />
+                    }
+                  />
+                )}
+                {report
+                  .filter((day) => day.entryCount > 0)
+                  .map((day) => (
+                    <SettingsSection
+                      key={day.day}
+                      title={new Date(day.day + "T12:00:00").toLocaleDateString(
+                        undefined,
+                        { weekday: "short", month: "short", day: "numeric" },
+                      )}
+                      collapsible
+                      initiallyOpen={day.entryCount > 0}
+                    >
+                      {!day.totals ? (
+                        <Txt color={c.muted}>No foods logged</Txt>
+                      ) : (
+                        <>
+                          <Txt size="caption" color={c.muted}>
+                            {day.entryCount} food entries
+                          </Txt>
+                          {nutrientKeys.map((key) => (
+                            <LabelValueRow
+                              key={key}
+                              label={labels[key]}
+                              value={`${number(day.totals![key].known)}${day.totals![key].missing ? " + unavailable" : ""}${snapshot.goals?.targets[key] != null ? ` / ${number(snapshot.goals.targets[key]!)} target` : ""}`}
+                            />
+                          ))}
+                        </>
+                      )}
+                    </SettingsSection>
+                  ))}
                 <Button
                   title="Export this week"
                   variant="secondary"
@@ -473,8 +526,7 @@ export default function NutritionInsights({
             {ready && tab === "goals" && (
               <SettingsSection title="Your daily targets">
                 <Txt color={c.muted}>
-                  Set your own targets. RIVL does not calculate or prescribe a
-                  diet. Leave a target blank to keep it unset.
+                  Your own daily targets · leave unset values blank.
                 </Txt>
                 {goalsEdit ? (
                   <>
@@ -577,9 +629,7 @@ export default function NutritionInsights({
                     editable={!pending}
                   />
                   <Txt color={c.muted}>
-                    Add weighed ingredients from foods you logged. Measure the
-                    finished batch weight to account for water gained or lost.
-                    Unknown nutrients remain unavailable.
+                    Use weighed ingredients and the finished batch weight.
                   </Txt>
                   {!!recipeSource && (
                     <Txt size="caption" color={c.muted}>
@@ -726,38 +776,48 @@ export default function NutritionInsights({
               ) : (
                 <SettingsSection title="Reusable recipes">
                   <Txt color={c.muted}>
-                    Recipes use your measured ingredients and prepared batch
-                    weight. Planned portions keep a snapshot when a recipe
-                    changes.
+                    Your measured recipes, ready to reuse.
                   </Txt>
                   <Button
                     title="Create recipe"
                     onPress={() => openRecipe()}
                     disabled={!!pending || importing}
                   />
-                  <Field
-                    label="Recipe website link"
-                    value={recipeUrl}
-                    onChangeText={setRecipeUrl}
-                    autoCapitalize="none"
-                    keyboardType="url"
-                    editable={!pending && !importing}
-                    maxLength={2000}
-                    placeholder="https://…"
-                  />
-                  <Txt size="caption" color={c.muted}>
-                    Import a website's structured ingredient list, then match
-                    every ingredient to a logged food and measured grams. The
-                    recipe stays a draft until you save.
-                  </Txt>
-                  <Button
-                    title={importing ? "Opening recipe…" : "Import recipe link"}
-                    variant="secondary"
-                    disabled={!!pending || importing || !recipeUrl.trim()}
-                    onPress={() => void loadRecipe()}
-                  />
+                  <SettingsSection title="Import from a website" collapsible>
+                    <Field
+                      label="Recipe website link"
+                      value={recipeUrl}
+                      onChangeText={setRecipeUrl}
+                      autoCapitalize="none"
+                      keyboardType="url"
+                      editable={!pending && !importing}
+                      maxLength={2000}
+                      placeholder="https://…"
+                    />
+                    <Txt size="caption" color={c.muted}>
+                      Review ingredients and measured grams before saving.
+                    </Txt>
+                    <Button
+                      title={
+                        importing ? "Opening recipe…" : "Import recipe link"
+                      }
+                      variant="secondary"
+                      disabled={!!pending || importing || !recipeUrl.trim()}
+                      onPress={() => void loadRecipe()}
+                    />
+                  </SettingsSection>
                   {!snapshot.recipes.length && (
-                    <Txt color={c.muted}>No recipes saved yet.</Txt>
+                    <Empty
+                      title="Keep your go-to meals"
+                      body="Save measured ingredients as a reusable recipe."
+                      action={
+                        <Button
+                          title="Open food diary"
+                          variant="secondary"
+                          onPress={() => router.push("/nutrition")}
+                        />
+                      }
+                    />
                   )}
                   {snapshot.recipes.slice(0, visibleLimit).map((recipe) => (
                     <ListRow
@@ -856,9 +916,20 @@ export default function NutritionInsights({
               ) : (
                 <>
                   <SettingsSection title="Seven-day meal plan">
-                    <Txt color={c.muted}>
-                      Reuse logged foods or your recipes. Planned meals never
-                      count as eaten automatically.
+                    <Row style={{ gap: 16, flexWrap: "wrap" }}>
+                      <Metric
+                        small
+                        label="Meals planned"
+                        value={String(planned.length)}
+                      />
+                      <Metric
+                        small
+                        label="Days planned"
+                        value={`${new Set(planned.map((meal) => meal.day)).size} / ${days.length}`}
+                      />
+                    </Row>
+                    <Txt size="caption" color={c.muted}>
+                      Planned meals stay separate from your diary.
                     </Txt>
                     <Button
                       title="Plan a meal"
@@ -868,43 +939,69 @@ export default function NutritionInsights({
                       onPress={() => openMeal()}
                     />
                     {!mealOptions.length && (
-                      <Txt color={c.muted}>
-                        Log a food or create a recipe first.
-                      </Txt>
-                    )}
-                    {days.map((day) => (
-                      <Stack key={day} gap={4}>
-                        <Txt weight="600">{day}</Txt>
-                        {planned
-                          .filter((p) => p.day === day)
-                          .slice(0, visibleLimit)
-                          .map((meal) => (
-                            <ListRow
-                              key={meal.id}
-                              title={`${upper(meal.meal)} · ${meal.item.kind === "food" ? meal.item.food.name : meal.item.recipe.name}`}
-                              detail={`${number(meal.grams)} g · ${plannedNutrients(meal).kcal === null ? "Energy unavailable" : `${number(plannedNutrients(meal).kcal!)} kcal planned`}`}
-                              onPress={() => openMeal(meal)}
-                            />
-                          ))}
-                        {planned.filter((p) => p.day === day).length >
-                          visibleLimit && (
+                      <Empty
+                        title="Give your week a starting point"
+                        body="Log a food or save a recipe to begin."
+                        action={
                           <Button
-                            title="Show more planned meals"
-                            variant="quiet"
-                            onPress={() => setVisibleLimit((n) => n + 50)}
+                            title="Open food diary"
+                            variant="secondary"
+                            onPress={() => router.push("/nutrition")}
                           />
-                        )}
-                        {!planned.some((p) => p.day === day) && (
-                          <Txt color={c.muted}>No planned meals</Txt>
-                        )}
-                      </Stack>
-                    ))}
+                        }
+                      />
+                    )}
+                    {!!mealOptions.length && !planned.length && (
+                      <Txt color={c.muted}>No meals planned this week.</Txt>
+                    )}
+                    {days
+                      .filter((day) => planned.some((meal) => meal.day === day))
+                      .map((day) => (
+                        <Stack key={day} gap={8}>
+                          <Txt weight="600">
+                            {new Date(day + "T12:00:00").toLocaleDateString(
+                              undefined,
+                              {
+                                weekday: "long",
+                                month: "short",
+                                day: "numeric",
+                              },
+                            )}
+                          </Txt>
+                          {planned
+                            .filter((p) => p.day === day)
+                            .slice(0, visibleLimit)
+                            .map((meal) => (
+                              <ListRow
+                                key={meal.id}
+                                title={`${upper(meal.meal)} · ${meal.item.kind === "food" ? meal.item.food.name : meal.item.recipe.name}`}
+                                detail={`${number(meal.grams)} g · ${plannedNutrients(meal).kcal === null ? "Energy unavailable" : `${number(plannedNutrients(meal).kcal!)} kcal planned`}`}
+                                onPress={() => openMeal(meal)}
+                              />
+                            ))}
+                          {planned.filter((p) => p.day === day).length >
+                            visibleLimit && (
+                            <Button
+                              title="Show more planned meals"
+                              variant="quiet"
+                              onPress={() => setVisibleLimit((n) => n + 50)}
+                            />
+                          )}
+                          {!planned.some((p) => p.day === day) && (
+                            <Txt size="caption" color={c.muted}>
+                              Nothing planned yet
+                            </Txt>
+                          )}
+                        </Stack>
+                      ))}
                   </SettingsSection>
-                  <SettingsSection title="Grocery list">
+                  <SettingsSection
+                    title={`Grocery list · ${grocery.length} items`}
+                    collapsible
+                    initiallyOpen={grocery.length > 0}
+                  >
                     <Txt size="caption" color={c.muted}>
-                      Ingredient grams derived from this plan. Check what you
-                      already have; package sizes and cooking losses are not
-                      estimated.
+                      Measured ingredients from your plan; check your cupboard.
                     </Txt>
                     {grocery.slice(0, visibleLimit).map((item) => (
                       <LabelValueRow

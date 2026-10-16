@@ -375,3 +375,14 @@ The sidecar's synthesized tonal ramps and HTML/CSS translations support the desi
 ### User-selectable accent — 15 October 2026
 
 Settings → Display & accessibility includes six named accent swatches: Orange (default), Blue, Purple, Green, Teal and Pink. `src/domain/appearance.ts` is the source of their light/dark text accent and bright control fill pairs. The optional profile accentColor persists through existing profile settings storage/sync; old profiles remain orange. Theme `accent` serves readable text/icons/focus/native tabs; `primary` serves filled controls with ink text. Shared buttons, segmented choices, record actions, switches, progress and default chart treatments follow the selection. Brand logo artwork and semantic multicolour HR/zone series retain their meaning. Swatches expose names and selected state; colour alone does not identify the choice.
+
+### Activity-led page completion — 16 October 2026
+
+The current reference is `app/(tabs)/(home)/activity-space.tsx`, with its clear section order, compact real measurement band, 24-unit screen rhythm, flat divided lists and useful first-use actions. Applied source refinement covers Health/Sleep; all Nutrition and Guided Training pages; social directory, competition, notifications and blocking; account/recovery/report forms; Settings, sensors, Watch, gear and map utility screens. Existing Activity detail, Record, Maps/route planner, Offline maps, Progress and Segments retain their established purpose-built layouts where no concrete drift was found. Source summaries show actual records or explicit missing readings. Editing/import tasks are disclosed rather than dominating the overview; opening a workspace does not start GPS, a timer or an import.
+
+Source validation passed TypeScript, 469 tests / 70 suites and development security. Native screenshot evidence is recorded separately; source coverage does not assert every populated, keyboard, light-theme or hardware state was verified.
+
+
+### Quieter workspaces and stable tabs — 16 October 2026
+
+Health, Nutrition and Training use inline first-read feedback rather than the global full-screen overlay. Same-owner tab returns preserve restored content and draft state during background refresh. Account changes still mask prior-owner data. Their native bars use minimizeBehavior=never so scrolling does not resize the bar. Record retains its requested full-screen loading journey. Repetitive empty rows and explanatory paragraphs were shortened or placed behind disclosures; the shared readable text sizes were retained. The 15 actual dark iPhone simulator screenshots in artifacts/screenshots/activity-polish-oct16 cover entry/empty states. They do not measure physical frame rates or certify every populated flow. These source changes are not yet installed on the physical phone.

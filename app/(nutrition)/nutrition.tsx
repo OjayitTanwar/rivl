@@ -28,10 +28,12 @@ import {
   Button,
   ListRow,
   Notice,
+  Row,
+  Metric,
+  Empty,
 } from "../../src/ui/primitives";
 import { SettingsSection } from "../../src/ui/SettingsSection";
 import { useTheme } from "../../src/ui/theme";
-import { useFullScreenLoading } from "../../src/ui/loading-state";
 import { AppFailure, userMessage } from "../../src/security/errors";
 import { LabelValueRow } from "../../src/ui/LabelValueRow";
 const repo = new NutritionRepository(database),
@@ -83,15 +85,14 @@ export default function Nutrition() {
   const lock = useRef(false),
     request = useRef<AbortController | null>(null),
     generation = useRef(0);
-  useFullScreenLoading(loading && !!owner, "Loading your meal diary");
   const draftOwner = useRef(owner);
   useFocusEffect(
     useCallback(() => {
       let active = true;
       const token = ++generation.current;
       setLoading(true);
-      setLoaded(false);
       if (draftOwner.current !== owner) {
+        setLoaded(false);
         setEditor(null);
         draftOwner.current = owner;
       }
@@ -124,7 +125,7 @@ export default function Nutrition() {
       };
     }, [owner, revision]),
   );
-  const ready = loaded && !!data && data.owner === owner && !loading;
+  const ready = loaded && !!data && data.owner === owner;
   const entries = useMemo(
     () =>
       data && data.owner === owner
@@ -259,33 +260,39 @@ export default function Nutrition() {
     <Screen
       title="Food diary"
       action={<WorkspaceExit />}
-      contentStyle={{ paddingBottom: 120 }}
+      contentStyle={{ gap: 24, paddingBottom: 120 }}
     >
-      <Stack gap={20}>
+      <Stack gap={24}>
         {!owner ? (
           <Notice text="Sign in to keep your meal diary." />
         ) : (
           <>
-            <ListRow
-              title="Goals, reports and meal planning"
-              detail="Seven-day diary, reusable recipes and groceries"
-              onPress={() =>
-                router.push("/nutrition-insights" as import("expo-router").Href)
+            <SettingsSection
+              title={
+                validNutritionDay(day)
+                  ? new Date(day + "T12:00:00").toLocaleDateString(undefined, {
+                      weekday: "long",
+                      month: "short",
+                      day: "numeric",
+                    })
+                  : "Choose a diary date"
               }
-            />
-            <Field
-              label="Diary date (YYYY-MM-DD)"
-              value={day}
-              onChangeText={(text) => {
-                if (!editor && !pending) {
-                  setDay(text);
-                  setVisibleLimit(50);
-                }
-              }}
-              editable={!editor && !pending}
-              maxLength={10}
-              autoCapitalize="none"
-            />
+              collapsible
+            >
+              <Field
+                label="Diary date (YYYY-MM-DD)"
+                value={day}
+                onChangeText={(text) => {
+                  if (!editor && !pending) {
+                    setDay(text);
+                    setVisibleLimit(50);
+                  }
+                }}
+                editable={!editor && !pending}
+                maxLength={10}
+                autoCapitalize="none"
+              />
+            </SettingsSection>
             {!!error && (
               <Notice
                 text={error}
@@ -295,6 +302,11 @@ export default function Nutrition() {
                     : undefined
                 }
               />
+            )}
+            {loading && (
+              <Txt size="caption" color={c.muted}>
+                {data?.owner === owner ? "Refreshing…" : "Loading…"}
+              </Txt>
             )}
             {!!pending && (
               <View accessibilityLiveRegion="polite">
@@ -353,8 +365,7 @@ export default function Nutrition() {
                     />
                     {searched && !results.length && (
                       <Txt color={c.muted}>
-                        No matching foods. You can enter the package values
-                        above.
+                        No match. Enter the package values below.
                       </Txt>
                     )}
                     {results.map((food) => (
@@ -415,7 +426,7 @@ export default function Nutrition() {
                       keyboardType="decimal-pad"
                     />
                     <Txt color={c.muted}>
-                      Nutrients per 100 g. Leave unavailable values blank.
+                      Per 100 g · leave unknown values blank.
                     </Txt>
                     {nutrientKeys.map((key) => (
                       <Field
@@ -479,20 +490,41 @@ export default function Nutrition() {
                 <>
                   <SettingsSection title="Daily intake">
                     {!entries.length ? (
-                      <Txt color={c.muted}>No food logged for this date.</Txt>
+                      <Empty
+                        title="Your day starts here"
+                        body="Add your first food to see today’s intake."
+                      />
                     ) : (
                       <>
-                        {nutrientKeys.map((key) => (
-                          <LabelValueRow
-                            key={key}
-                            label={titles[key]}
-                            value={`${display(totals[key].known)}${totals[key].missing ? " + unavailable" : ""}`}
+                        <Row style={{ gap: 16, flexWrap: "wrap" }}>
+                          <Metric
+                            small
+                            label="Energy"
+                            unit="kcal"
+                            value={
+                              totals.kcal.missing === entries.length
+                                ? "—"
+                                : `${display(totals.kcal.known)}${totals.kcal.missing ? "+" : ""}`
+                            }
                           />
-                        ))}
+                          <Metric
+                            small
+                            label="Foods logged"
+                            value={String(entries.length)}
+                          />
+                        </Row>
+                        {nutrientKeys
+                          .filter((key) => key !== "kcal")
+                          .map((key) => (
+                            <LabelValueRow
+                              key={key}
+                              label={titles[key]}
+                              value={`${display(totals[key].known)}${totals[key].missing ? " + unavailable" : ""}`}
+                            />
+                          ))}
                         {nutrientKeys.some((k) => totals[k].missing > 0) && (
                           <Txt size="caption" color={c.muted}>
-                            Totals include known values only. Missing nutrients
-                            are not counted as zero.
+                            Known values only; unavailable nutrients stay blank.
                           </Txt>
                         )}
                       </>
@@ -503,38 +535,47 @@ export default function Nutrition() {
                       disabled={!!pending || !validNutritionDay(day)}
                     />
                   </SettingsSection>
-                  {meals.map((group) => (
-                    <SettingsSection key={group} title={title(group)}>
-                      {entries
-                        .filter((e) => e.meal === group)
-                        .slice(0, visibleLimit)
-                        .map((entry) => {
-                          const n = entryNutrients(entry);
-                          return (
-                            <ListRow
-                              key={entry.id}
-                              title={entry.food.name}
-                              detail={`${display(entry.grams)} g · ${n.kcal === null ? "Energy unavailable" : `${display(n.kcal)} kcal`} · ${entry.food.source === "manual" ? "Label entered" : "Open Food Facts"}`}
-                              onPress={() => open(entry)}
-                            />
-                          );
-                        })}
-                      {!entries.some((e) => e.meal === group) && (
-                        <Txt color={c.muted}>No entries</Txt>
-                      )}
-                      {entries.filter((e) => e.meal === group).length >
-                        visibleLimit && (
-                        <Button
-                          title="Show more entries"
-                          variant="quiet"
-                          onPress={() => setVisibleLimit((n) => n + 50)}
-                        />
-                      )}
-                    </SettingsSection>
-                  ))}
+                  {meals
+                    .filter((group) =>
+                      entries.some((entry) => entry.meal === group),
+                    )
+                    .map((group) => (
+                      <SettingsSection
+                        key={group}
+                        title={`${title(group)} · ${entries.filter((entry) => entry.meal === group).length}`}
+                      >
+                        {entries
+                          .filter((e) => e.meal === group)
+                          .slice(0, visibleLimit)
+                          .map((entry) => {
+                            const n = entryNutrients(entry);
+                            return (
+                              <ListRow
+                                key={entry.id}
+                                title={entry.food.name}
+                                detail={`${display(entry.grams)} g · ${n.kcal === null ? "Energy unavailable" : `${display(n.kcal)} kcal`} · ${entry.food.source === "manual" ? "Label entered" : "Open Food Facts"}`}
+                                onPress={() => open(entry)}
+                              />
+                            );
+                          })}
+                        {entries.filter((e) => e.meal === group).length >
+                          visibleLimit && (
+                          <Button
+                            title="Show more entries"
+                            variant="quiet"
+                            onPress={() => setVisibleLimit((n) => n + 50)}
+                          />
+                        )}
+                      </SettingsSection>
+                    ))}
                 </>
               ))}
 
+            <ListRow
+              title="Daily targets & weekly report"
+              detail="Review your logged intake in Insights"
+              onPress={() => router.push("/nutrition-insights")}
+            />
             <Button
               title="Food data: Open Food Facts (ODbL)"
               variant="quiet"

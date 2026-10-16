@@ -76,7 +76,7 @@ export default function Heatmap() {
     gap: 16,
   };
   return (
-    <Screen title="Heatmap" back>
+    <Screen title="Heatmap" back contentStyle={{ gap: 24, paddingBottom: 120 }}>
       <Segmented
         options={[
           { label: "Explore", value: "explore" },

@@ -10,6 +10,7 @@ import {
   Button,
   Notice,
 } from "../src/ui/primitives";
+import { SettingsSection } from "../src/ui/SettingsSection";
 import { userMessage } from "../src/security/errors";
 export default function DeleteAccount() {
   const {
@@ -118,7 +119,7 @@ export default function DeleteAccount() {
   }
   return (
     <Screen title="Delete your account" back>
-      <Stack gap={20}>
+      <Stack gap={24}>
         <Txt>
           This permanently removes your profile, workouts, routes, health cache,
           photos, comments and reactions. This action cannot be undone.
@@ -126,74 +127,78 @@ export default function DeleteAccount() {
         {activities.some((a) => a.sync !== "synced") && (
           <Notice text="You have workouts stored only on this device. They will also be deleted." />
         )}
-        {session?.local ? (
-          <Notice text="This is a local development account. Deletion removes its data from this device." />
-        ) : method === null ? (
-          <Txt>Checking your account…</Txt>
-        ) : method === "password" ? (
-          <>
-            <Field
-              label="Current password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              autoComplete="current-password"
-              maxLength={128}
-            />
-            <Button
-              title="Confirm with an email code instead"
-              variant="secondary"
-              disabled={busy}
-              onPress={() => {
-                setMethod("code");
-                setPassword("");
-                setError("");
-              }}
-            />
-          </>
-        ) : codeSent ? (
-          <>
-            <Txt>
-              Enter the code we emailed to {session?.email || "your address"}.
-              It expires shortly.
-            </Txt>
-            <Field
-              label="Code from the email"
-              testID="delete-code"
-              value={code}
-              onChangeText={(next) =>
-                setCode(next.replace(/\D/g, "").slice(0, 10))
-              }
-              keyboardType="number-pad"
-              textContentType="oneTimeCode"
-              maxLength={10}
-              onSubmitEditing={() => confirm("", () => void removeWithCode())}
-            />
-            <Button
-              testID="delete-resend"
-              title="Email me a code again"
-              variant="secondary"
-              loading={busy}
-              disabled={!session}
-              onPress={() => void requestCode()}
-            />
-          </>
-        ) : (
-          <>
-            <Txt>
-              This account signs in through Apple or Google, so reconfirm with a
-              code emailed to {session?.email || "your address"}.
-            </Txt>
-            <Button
-              testID="delete-send-code"
-              title="Email me a code"
-              variant="secondary"
-              loading={busy}
-              disabled={!session}
-              onPress={() => void requestCode()}
-            />
-          </>
-        )}
+        <SettingsSection title="Confirm your identity">
+          {session?.local ? (
+            <Notice text="This is a local development account. Deletion removes its data from this device." />
+          ) : method === null ? (
+            <Txt>Checking your account…</Txt>
+          ) : method === "password" ? (
+            <>
+              <Field
+                label="Current password"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                editable={!busy}
+                autoComplete="current-password"
+                maxLength={128}
+              />
+              <Button
+                title="Confirm with an email code instead"
+                variant="secondary"
+                disabled={busy}
+                onPress={() => {
+                  setMethod("code");
+                  setPassword("");
+                  setError("");
+                }}
+              />
+            </>
+          ) : codeSent ? (
+            <>
+              <Txt>
+                Enter the code we emailed to {session?.email || "your address"}.
+                It expires shortly.
+              </Txt>
+              <Field
+                label="Code from the email"
+                testID="delete-code"
+                value={code}
+                onChangeText={(next) =>
+                  setCode(next.replace(/\D/g, "").slice(0, 10))
+                }
+                keyboardType="number-pad"
+                textContentType="oneTimeCode"
+                maxLength={10}
+                editable={!busy}
+                onSubmitEditing={() => confirm("", () => void removeWithCode())}
+              />
+              <Button
+                testID="delete-resend"
+                title="Email me a code again"
+                variant="secondary"
+                loading={busy}
+                disabled={!session}
+                onPress={() => void requestCode()}
+              />
+            </>
+          ) : (
+            <>
+              <Txt>
+                This account signs in through Apple or Google, so reconfirm with
+                a code emailed to {session?.email || "your address"}.
+              </Txt>
+              <Button
+                testID="delete-send-code"
+                title="Email me a code"
+                variant="secondary"
+                loading={busy}
+                disabled={!session}
+                onPress={() => void requestCode()}
+              />
+            </>
+          )}
+        </SettingsSection>
         {!!error && <Notice text={error} />}
         <Button
           title="Delete account and data"

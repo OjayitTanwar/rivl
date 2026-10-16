@@ -29,16 +29,19 @@ export default function People() {
     [q, setQ] = useState(""),
     [athletes, setAthletes] = useState<Person[]>([]),
     [groups, setGroups] = useState<Club[]>([]),
-    [error, setError] = useState("");
+    [error, setError] = useState(""),
+    [loading, setLoading] = useState(true);
   async function load() {
-    if (!session) return;
+    if (!session) { setLoading(false); return; }
+    setLoading(true);
     try {
       const [p, c] = await Promise.all([people(session, q), clubs(session)]);
       setAthletes(p);
       setGroups(c);
+      setError("");
     } catch (e) {
       setError(userMessage(e));
-    }
+    } finally { setLoading(false); }
   }
   useEffect(() => {
     void load();
@@ -53,6 +56,10 @@ export default function People() {
   }
   return (
     <Screen title="People & clubs" back>
+      <Stack gap={8}>
+        <SectionHeading title="Find your community" />
+        <Txt color={c.muted}>Connect with athletes, accept requests and discover clubs.</Txt>
+      </Stack>
       {!!error && <Notice text={error} retry={() => void load()} />}
       <Field
         label="Search athletes"
@@ -62,6 +69,7 @@ export default function People() {
       />
       <Stack>
         <SectionHeading title="Athletes" />
+        {loading && <Txt color={c.muted}>Finding athletes and clubs…</Txt>}
         {athletes.map((p) => (
           <Card key={p.id}>
             <Row between>
@@ -87,7 +95,7 @@ export default function People() {
             </Row>
           </Card>
         ))}
-        {!athletes.length && (
+        {!loading && !error && !athletes.length && (
           <Empty
             title="No matches yet"
             body="Try another name. Your connected community will appear here."
@@ -96,6 +104,7 @@ export default function People() {
       </Stack>
       <Stack>
         <SectionHeading title="Clubs" />
+        {!loading && !groups.length && !error && <Empty title="More company for the journey" body="Clubs appear here when they’re available. Search for an athlete above to start connecting." />}
         {groups.map((g) => (
           <Card key={g.id}>
             <Txt size="heading" weight="700">

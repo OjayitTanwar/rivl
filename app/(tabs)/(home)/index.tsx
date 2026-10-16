@@ -16,6 +16,7 @@ import {
   ListRow,
   IconButton,
   Notice,
+  SectionHeading,
 } from "../../../src/ui/primitives";
 import { useTheme } from "../../../src/ui/theme";
 import { useStore } from "../../../src/state/store";
@@ -72,7 +73,7 @@ export default function Home() {
         <Notice text="You’re offline. Saved workouts, health records and meals remain available." />
       )}
       <Stack gap={8}>
-        <Txt size="title" weight="700">
+        <Txt size="heading" weight="700">
           Your day, together.
         </Txt>
         <Txt color={c.muted}>
@@ -80,6 +81,7 @@ export default function Home() {
         </Txt>
       </Stack>
       <Stack gap={0}>
+        <SectionHeading title="Your spaces" action="Record" onPress={() => router.navigate("/record")} />
         {spaces.map(({ title, detail, route, Icon }) => (
           <ListRow
             key={title}

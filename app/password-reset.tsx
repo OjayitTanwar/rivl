@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { useStore } from "../src/state/store";
-import { Screen, Txt, Stack, Field, Button, Notice } from "../src/ui/primitives";
+import {
+  Screen,
+  Txt,
+  Stack,
+  Field,
+  Button,
+  Notice,
+} from "../src/ui/primitives";
 import { userMessage } from "../src/security/errors";
 export default function PasswordReset() {
   const { code, error: linkError } = useLocalSearchParams<{
@@ -22,7 +29,10 @@ export default function PasswordReset() {
     setBusy(true);
     setError("");
     try {
-      await completePasswordRecovery(Array.isArray(code) ? code[0] : code!, password);
+      await completePasswordRecovery(
+        Array.isArray(code) ? code[0] : code!,
+        password,
+      );
       router.replace("/");
     } catch (problem) {
       setError(userMessage(problem));
@@ -33,7 +43,7 @@ export default function PasswordReset() {
   if (broken)
     return (
       <Screen title="Link expired" back>
-        <Stack gap={20}>
+        <Stack gap={24}>
           <Txt>
             This password-reset link is incomplete or has expired. Request a
             fresh email to continue.
@@ -47,7 +57,7 @@ export default function PasswordReset() {
     );
   return (
     <Screen title="Choose a new password" back>
-      <Stack gap={20}>
+      <Stack gap={24}>
         <Txt>
           Use 12–128 characters. After saving, you stay signed in on this
           device.
@@ -58,6 +68,7 @@ export default function PasswordReset() {
           value={password}
           onChangeText={setPassword}
           secureTextEntry
+          editable={!busy}
           maxLength={128}
           autoComplete="new-password"
         />
@@ -67,6 +78,7 @@ export default function PasswordReset() {
           value={confirm}
           onChangeText={setConfirm}
           secureTextEntry
+          editable={!busy}
           maxLength={128}
           autoComplete="new-password"
           onSubmitEditing={() => void save()}

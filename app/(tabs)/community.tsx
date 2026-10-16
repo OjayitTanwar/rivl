@@ -330,6 +330,7 @@ export default function Community() {
             <Txt accessibilityRole="header" size="heading" weight="700">
               Groups
             </Txt>
+            <Txt color={c.muted}>Clubs, challenges and people to move with.</Txt>
             <Segmented
               compact
               options={[

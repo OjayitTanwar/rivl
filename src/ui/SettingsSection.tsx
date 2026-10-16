@@ -10,11 +10,13 @@ export function SettingsSection({
   children,
   collapsible = false,
   initiallyOpen = false,
+  keepMounted = false,
 }: {
   title: string;
   children: React.ReactNode;
   collapsible?: boolean;
   initiallyOpen?: boolean;
+  keepMounted?: boolean;
 }) {
   const { c } = useTheme();
   const [open, setOpen] = useState(initiallyOpen);
@@ -42,8 +44,8 @@ export function SettingsSection({
           {title}
         </Txt>
       )}
-      {(!collapsible || open) && (
-        <Stack gap={16} style={{ paddingBottom: 12 }}>
+      {(!collapsible || open || keepMounted) && (
+        <Stack gap={16} style={{ paddingBottom: 12, ...(collapsible && !open ? { display: "none" } : {}) }}>
           {children}
         </Stack>
       )}
