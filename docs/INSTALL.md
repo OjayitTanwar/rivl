@@ -1,6 +1,6 @@
 # Install RIVL
 
-RIVL is a native app under development. This release distributes source with an installation helper. It is not an App Store/TestFlight release or a universal signed iPhone download.
+RIVL is a native app under development. **For the ready-built iPhone preview, start with the [download and installation guide](SIDELOADING.md) or [video](https://github.com/OjayitTanwar/rivl/releases/download/v1.0.0-sideload.20261017/RIVL-installation.mp4).** Each recipient signs the IPA using their own Apple account. The build-from-source instructions below are for developers.
 
 ## iPhone: standalone installation
 
@@ -22,7 +22,7 @@ Free Apple provisioning expires; reinstalling refreshes the profile. An IPA sign
 
 ## Free installation without the App Store
 
-[SideStore setup and limits](SIDELOADING.md) describes a free sideloading route: initial computer setup, each user's own Apple account, and signing refreshes before the seven-day expiry. RIVL has not yet been validated through SideStore; native entitlements and encrypted data transfer must be checked before replacing a working installation.
+[SideStore setup and download](SIDELOADING.md) includes the native IPA, video and renewal instructions. SideStore installation, native entitlements and encrypted data transfer still need validation before replacing a working installation.
 
 ## Simulator
 

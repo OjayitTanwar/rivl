@@ -4,6 +4,12 @@
 
 <p align="center"><a href="docs/INSTALL.md">Install</a> · <a href="docs/HOSTED-BACKEND.md">Hosted backend</a> · <a href="docs/REMAINING.md">What’s next</a> · <a href="docs/CREATOR-TRAINING.md">Creator training</a></p>
 
+## Install on iPhone
+
+**[Open the installation page](https://ojayittanwar.github.io/rivl/) · [Download the native app](https://github.com/OjayitTanwar/rivl/releases/tag/v1.0.0-sideload.20261017) · [Watch the installation video](https://github.com/OjayitTanwar/rivl/releases/download/v1.0.0-sideload.20261017/RIVL-installation.mp4)**
+
+Native iPhone preview, iOS 16+. Use SideStore with your own free Apple account; initial setup needs a computer, and signing needs renewal within seven days. [Full guide and preview limits](docs/SIDELOADING.md). Watch companion is excluded from the download.
+
 ## A connected routine
 
 **Activity** — record runs, rides, walks and hikes; review routes, splits and measured effort.

@@ -1,0 +1,48 @@
+{
+  "name": "RIVL",
+  "subtitle": "Activity, health, nutrition and training",
+  "description": "Official RIVL iPhone sideloading preview. Requires recipient Apple signing and seven-day refresh on a free account.",
+  "iconURL": "https://github.com/OjayitTanwar/rivl/raw/main/assets/brand/rivl-app-512.png",
+  "website": "https://ojayittanwar.github.io/rivl/",
+  "tintColor": "DF4B28",
+  "apps": [
+    {
+      "name": "RIVL",
+      "bundleIdentifier": "app.rivl.training",
+      "developerName": "RIVL contributors",
+      "localizedDescription": "Record activity, track health and nutrition, and follow training programs. iPhone-only preview; Watch companion excluded. Health and background GPS need validation after recipient re-signing.",
+      "iconURL": "https://github.com/OjayitTanwar/rivl/raw/main/assets/brand/rivl-app-512.png",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "buildVersion": "1",
+          "date": "2026-10-17T00:00:00Z",
+          "downloadURL": "https://github.com/OjayitTanwar/rivl/releases/download/v1.0.0-sideload.20261017/RIVL.ipa",
+          "size": 16620327,
+          "minOSVersion": "16.0"
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [
+          "com.apple.developer.healthkit",
+          "com.apple.developer.healthkit.background-delivery"
+        ],
+        "privacy": {
+          "NSBluetoothAlwaysUsageDescription": "RIVL connects to your heart-rate strap and power meter to record measured workout data.",
+          "NSCameraUsageDescription": "RIVL uses the camera to scan food barcodes.",
+          "NSFaceIDUsageDescription": "Allow RIVL to access your Face ID biometric data.",
+          "NSHealthShareUsageDescription": "RIVL reads your chosen heart rate, HRV, sleep, steps, water and weight data for your health dashboard.",
+          "NSHealthUpdateUsageDescription": "RIVL can save completed workouts to Apple Health.",
+          "NSLocationAlwaysAndWhenInUseUsageDescription": "RIVL records your route during workouts, including while the screen is locked.",
+          "NSLocationAlwaysUsageDescription": "Allow RIVL to access your location",
+          "NSLocationWhenInUseUsageDescription": "RIVL uses GPS to measure your workout.",
+          "NSMicrophoneUsageDescription": "RIVL uses the microphone when you choose to describe a food.",
+          "NSMotionUsageDescription": "RIVL uses motion signals, when you enable automatic start, to distinguish exercise from vehicle travel.",
+          "NSPhotoLibraryUsageDescription": "Choose workout photos or a temporary food reference.",
+          "NSSpeechRecognitionUsageDescription": "RIVL transcribes the food you describe so you can review it before logging."
+        }
+      }
+    }
+  ],
+  "news": []
+}
