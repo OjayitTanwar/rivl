@@ -47,11 +47,18 @@ for i,(title,lines,narration) in enumerate(scenes):
  segment=work/f'{i:02}.mp4'
  subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-loop','1','-i',str(png),'-i',str(audio),'-t',str(duration),'-vf','fade=t=in:st=0:d=0.25,format=yuv420p','-af','apad=pad_dur=1','-c:v','libx264','-preset','ultrafast','-crf','23','-r','24','-c:a','aac','-b:a','128k','-movflags','+faststart',str(segment)],check=True)
  segments.append(segment.resolve())
- subtitles.append(f'{i+1}\n{stamp(elapsed)} --> {stamp(elapsed+duration-0.4)}\n'+ '\n'.join(textwrap.wrap(narration,85))+'\n')
+ words=narration.split(); groups=[words[n:n+12] for n in range(0,len(words),12)]
+ spoken=duration-1; offset=0
+ for group in groups:
+  end=offset+spoken*len(group)/len(words)
+  subtitles.append(f'{len(subtitles)+1}\n{stamp(elapsed+offset)} --> {stamp(elapsed+end)}\n'+ '\n'.join(textwrap.wrap(' '.join(group),48))+'\n')
+  offset=end
  elapsed+=duration
  print(f'Scene {i+1}/{len(scenes)} ready',flush=True)
 concat=work/'concat.txt';concat.write_text(''.join(f"file '{p}'\n"for p in segments))
 subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-f','concat','-safe','0','-i',str(concat),'-c','copy','-movflags','+faststart',str(out/'RIVL-installation.mp4')],check=True)
 (out/'RIVL-installation.en.srt').write_text('\n'.join(subtitles))
+import re
+Path('docs/installation.vtt').write_text('WEBVTT\n\n'+re.sub(r'(\d{2}:\d{2}:\d{2}),(\d{3})',r'\1.\2','\n'.join(subtitles)))
 (out/'RIVL-installation-transcript.txt').write_text('\n\n'.join(t+'\n'+n for t,_,n in scenes)+'\n')
 print(f'Video ready: {elapsed:.1f} seconds',flush=True)
