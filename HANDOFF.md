@@ -5,6 +5,13 @@ Project: `/Users/ojayitsinghtanwar/Desktop/rivl`
 
 ## 1. Read this first
 
+### Brevo SMTP connected — 17 October 2026
+
+User created and verified a Brevo account and SMTP key, then explicitly approved storing that key in the dedicated RIVL project's Supabase SMTP settings and sending one test email to the verified sender address. Deployed seven SMTP properties: enabled, smtp-relay.brevo.com, port 587, account SMTP login, server-only password, verified sender and RIVL display name. No key entered the app or repository. Config push succeeded; a fresh config diff against the intended SMTP settings reports zero differences, with password masked by the API. Config pull omits SMTP in this CLI version and is not reliable SMTP readback; use config diff.
+
+Exactly one direct SMTP connection-test email was accepted by Brevo and its Real time page showed Delivered 1, Bounced 0 for the expected subject. Brevo rewrote the freemail sender to its compliant provider domain. Screenshot /private/tmp/rivl-brevo-delivery-proof.jpg. This proves provider connection/delivery, not complete Supabase signup/confirmation/recovery E2E. User should now retry Create account or Resend confirmation in the installed build. Email confirmation remains enabled. No account was auto-confirmed and no second test was sent. Provider Free limits and temporary sender rewriting remain; key expiry/inactivity rotation and a custom domain are later operating tasks. Temporary setup directories were removed.
+
+
 ### Cloud signup recovery and compact UI — 17 October 2026
 
 Auth now has compact branding, one signup/sign-in selector, secondary device-account switching, inline field validation, pre-submit password requirements and a synchronous duplicate-submit guard. Successful pending signup opens a dedicated confirmation screen instead of an error notice; it clears the password, shows the target email, offers sign-in/edit-email and server-backed resend with a 60-second UI cooldown. Unconfirmed sign-in reaches that recovery screen; email restriction/rate-limit/weak-password failures have specific messages. Recovery/callback return links open sign-in mode. Resend success is a requested-link acknowledgment, not proof of delivery.
