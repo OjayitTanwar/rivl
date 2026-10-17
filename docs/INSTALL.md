@@ -20,6 +20,10 @@ Choose your connected phone and signing team when prompted. This builds a Releas
 
 Free Apple provisioning expires; reinstalling refreshes the profile. An IPA signed for another person's phone cannot be installed universally. TestFlight distribution requires Apple's developer/distribution setup and is not included here.
 
+## Free installation without the App Store
+
+[SideStore setup and limits](SIDELOADING.md) describes a free sideloading route: initial computer setup, each user's own Apple account, and signing refreshes before the seven-day expiry. RIVL has not yet been validated through SideStore; native entitlements and encrypted data transfer must be checked before replacing a working installation.
+
 ## Simulator
 
 ```sh
