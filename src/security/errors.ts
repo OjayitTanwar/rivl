@@ -32,6 +32,36 @@ export function failure(error: unknown): AppFailure {
       : {};
   if (e.name === "AbortError")
     return new AppFailure("cancelled", "The request was cancelled.");
+  if (e.code === "email_not_confirmed")
+    return new AppFailure(
+      "auth",
+      "Confirm your email before signing in. Request a new confirmation link if needed.",
+    );
+  if (
+    ["over_email_send_rate_limit", "email_rate_limit_exceeded"].includes(
+      e.code ?? "",
+    )
+  )
+    return new AppFailure(
+      "rate_limit",
+      "Confirmation email is temporarily limited. Wait a few minutes before requesting another link.",
+      true,
+    );
+  if (e.code === "email_address_not_authorized")
+    return new AppFailure(
+      "server",
+      "RIVL’s email service cannot send to this address yet. Email delivery needs to be enabled before you can confirm your account.",
+    );
+  if (e.code === "weak_password")
+    return new AppFailure(
+      "validation",
+      "Choose a stronger password with at least 12 characters. Avoid common or exposed passwords.",
+    );
+  if (e.code === "user_already_exists")
+    return new AppFailure(
+      "auth",
+      "Try signing in with this email, or reset your password.",
+    );
   if (
     e.status === 401 ||
     ["refresh_token_not_found", "refresh_token_already_used"].includes(

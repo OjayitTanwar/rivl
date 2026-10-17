@@ -37,7 +37,7 @@ export default function AuthCallback() {
           <Notice text={error} />
           <Button
             title="Back to sign in"
-            onPress={() => router.replace("/auth")}
+            onPress={() => router.replace("/auth?mode=signin")}
           />
         </>
       ) : (

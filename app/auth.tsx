@@ -1,7 +1,7 @@
-import { AppFailure, userMessage } from "../src/security/errors";
-import React, { useState } from "react";
+import { userMessage } from "../src/security/errors";
+import React, { useRef, useState } from "react";
 import { View, useWindowDimensions } from "react-native";
-import { router, Redirect } from "expo-router";
+import { router, Redirect, useLocalSearchParams } from "expo-router";
 import { ArrowRight } from "lucide-react-native";
 import { useStore } from "../src/state/store";
 import {
@@ -16,12 +16,17 @@ import {
 } from "../src/ui/primitives";
 import { brand, useTheme } from "../src/ui/theme";
 import { backendConfigured, config } from "../src/services/config";
+import { ConfirmEmail } from "../src/ui/ConfirmEmail";
+import { emailInput, passwordInput } from "../src/security/validation";
 import { RivlLogo } from "../src/ui/RivlLogo";
 export default function Auth() {
+  const { mode: requestedMode } = useLocalSearchParams<{ mode?: string }>();
   const { session, authenticate, authenticateProvider } = useStore(),
     { c } = useTheme(),
     { width } = useWindowDimensions(),
-    [mode, setMode] = useState<"signup" | "signin">("signup"),
+    [mode, setMode] = useState<"signup" | "signin">(
+      requestedMode === "signin" ? "signin" : "signup",
+    ),
     [accountMode, setAccountMode] = useState<"device" | "cloud">(
       backendConfigured ? "cloud" : "device",
     ),
@@ -29,30 +34,84 @@ export default function Auth() {
     [email, setEmail] = useState(""),
     [password, setPassword] = useState(""),
     [busy, setBusy] = useState(false),
-    [error, setError] = useState("");
+    [error, setError] = useState(""),
+    [confirmation, setConfirmation] = useState<{
+      email: string;
+      cooldown: boolean;
+    } | null>(null),
+    [fieldErrors, setFieldErrors] = useState<{
+      name?: string;
+      email?: string;
+      password?: string;
+    }>({});
+  const pending = useRef(false);
   if (session) return <Redirect href="/" />;
   async function submit() {
+    if (pending.current) return;
+    const invalid: typeof fieldErrors = {};
+    if (mode === "signup" && !name.trim()) invalid.name = "Enter your name.";
+    try {
+      emailInput(email.trim());
+    } catch (e) {
+      invalid.email = email.trim()
+        ? "Enter a valid email address."
+        : "Enter your email address.";
+    }
+    try {
+      passwordInput(password, mode === "signup");
+    } catch (e) {
+      invalid.password =
+        mode === "signup"
+          ? "Use at least 12 characters."
+          : "Enter your password.";
+    }
+    setFieldErrors(invalid);
+    if (Object.keys(invalid).length) return;
+    pending.current = true;
     setBusy(true);
     setError("");
     try {
-      if (mode === "signup" && !name.trim())
-        throw new AppFailure("validation", "Tell us what to call you.");
       const message = await authenticate(
         email.trim(),
         password,
         mode === "signup" ? name.trim() : undefined,
         accountMode,
       );
-      if (message) setError(message);
-      else router.replace("/");
+      if (message) {
+        setConfirmation({ email: email.trim(), cooldown: true });
+        setPassword("");
+      } else router.replace("/");
     } catch (e) {
-      setError(userMessage(e));
+      if ((e as { code?: string })?.code === "email_not_confirmed") {
+        setConfirmation({ email: email.trim(), cooldown: false });
+        setPassword("");
+      } else setError(userMessage(e));
     } finally {
+      pending.current = false;
       setBusy(false);
     }
   }
+  if (confirmation)
+    return (
+      <ConfirmEmail
+        email={confirmation.email}
+        initialCooldown={confirmation.cooldown}
+        onSignIn={() => {
+          setConfirmation(null);
+          setMode("signin");
+          setError("");
+          setFieldErrors({});
+        }}
+        onEdit={() => {
+          setConfirmation(null);
+          setMode("signup");
+          setError("");
+          setFieldErrors({});
+        }}
+      />
+    );
   return (
-    <Screen contentStyle={{ gap: 24, paddingBottom: 48 }}>
+    <Screen contentStyle={{ gap: 20, paddingBottom: 32 }}>
       <View
         style={{
           flexDirection: width > 850 ? "row" : "column",
@@ -62,22 +121,19 @@ export default function Auth() {
       >
         <Stack style={{ flex: width > 850 ? 1 : undefined }} gap={10}>
           <Row>
-            <RivlLogo size={56} />
-            <Txt size="title" weight="900" style={{ fontStyle: "italic" }}>
+            <RivlLogo size={40} />
+            <Txt size="heading" weight="900" style={{ fontStyle: "italic" }}>
               RIVL
             </Txt>
             <View
               style={{
-                width: 9,
-                height: 9,
+                width: 6,
+                height: 6,
                 backgroundColor: brand.coral,
                 borderRadius: 5,
               }}
             />
           </Row>
-          <Txt color={c.muted} style={{ maxWidth: 410 }}>
-            Your training. Your progress. Your people.
-          </Txt>
         </Stack>
         <Stack
           style={{
@@ -93,9 +149,11 @@ export default function Auth() {
             <Txt size="heading" weight="700">
               {mode === "signup" ? "Create your account" : "Welcome back"}
             </Txt>
-            <Txt color={c.muted}>
+            <Txt size="caption" color={c.muted}>
               {mode === "signup"
-                ? "Create your RIVL account to start tracking your training."
+                ? accountMode === "cloud"
+                  ? "Save your workouts and join the community."
+                  : "Keep your workouts on this device."
                 : "Sign in to pick up your training."}
             </Txt>
           </Stack>
@@ -106,28 +164,13 @@ export default function Auth() {
             ]}
             value={mode}
             onChange={(value) => {
-              if (!busy) setMode(value);
+              if (!busy) {
+                setMode(value);
+                setError("");
+                setFieldErrors({});
+              }
             }}
           />
-          {backendConfigured && (
-            <>
-              <Segmented
-                options={[
-                  { label: "Sync online", value: "cloud" },
-                  { label: "On this device", value: "device" },
-                ]}
-                value={accountMode}
-                onChange={(value) => {
-                  if (!busy) setAccountMode(value);
-                }}
-              />
-              <Txt size="caption" color={c.muted}>
-                {accountMode === "cloud"
-                  ? "Workouts can sync across your devices."
-                  : "Sign in to your existing device account; its workouts stay here."}
-              </Txt>
-            </>
-          )}
           {accountMode === "cloud" &&
             backendConfigured &&
             config.googleSignInEnabled && (
@@ -177,12 +220,17 @@ export default function Auth() {
               Your account and workouts stay on this device.
             </Txt>
           )}
+          {!!error && <Notice text={error} />}
           {mode === "signup" && (
             <Field
               label="Your name"
               testID="auth-name"
               value={name}
-              onChangeText={setName}
+              onChangeText={(value) => {
+                setName(value);
+                setFieldErrors((old) => ({ ...old, name: undefined }));
+              }}
+              error={fieldErrors.name}
               editable={!busy}
               autoComplete="name"
               maxLength={100}
@@ -192,7 +240,11 @@ export default function Auth() {
             label="Email"
             testID="auth-email"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(value) => {
+              setEmail(value);
+              setFieldErrors((old) => ({ ...old, email: undefined }));
+            }}
+            error={fieldErrors.email}
             autoCapitalize="none"
             keyboardType="email-address"
             editable={!busy}
@@ -203,8 +255,13 @@ export default function Auth() {
             label="Password"
             testID="auth-password"
             value={password}
-            onChangeText={setPassword}
+            onChangeText={(value) => {
+              setPassword(value);
+              setFieldErrors((old) => ({ ...old, password: undefined }));
+            }}
+            error={fieldErrors.password}
             secureTextEntry
+            helper={mode === "signup" ? "At least 12 characters" : undefined}
             editable={!busy}
             maxLength={128}
             autoComplete={
@@ -212,17 +269,37 @@ export default function Auth() {
             }
             onSubmitEditing={() => void submit()}
           />
-          {!!error && <Notice text={error} />}
           <Button
             testID="auth-submit"
-            title={mode === "signup" ? "Create account" : "Sign in"}
+            title={
+              busy
+                ? mode === "signup"
+                  ? "Creating account…"
+                  : "Signing in…"
+                : mode === "signup"
+                  ? "Create account"
+                  : "Sign in"
+            }
             onPress={submit}
             loading={busy}
             icon={<ArrowRight size={19} color={brand.ink} />}
           />
-          <Txt size="caption" color={c.muted}>
-            You choose what you share. Every activity starts private.
-          </Txt>
+          {backendConfigured && (
+            <Button
+              title={
+                accountMode === "cloud"
+                  ? "Use an account on this device instead"
+                  : "Use a cloud account instead"
+              }
+              variant="quiet"
+              disabled={busy}
+              onPress={() => {
+                setAccountMode(accountMode === "cloud" ? "device" : "cloud");
+                setError("");
+                setFieldErrors({});
+              }}
+            />
+          )}
           {accountMode === "cloud" && backendConfigured && (
             <Button
               testID="auth-forgot"

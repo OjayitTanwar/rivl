@@ -5,6 +5,15 @@ Project: `/Users/ojayitsinghtanwar/Desktop/rivl`
 
 ## 1. Read this first
 
+### Cloud signup recovery and compact UI — 17 October 2026
+
+Auth now has compact branding, one signup/sign-in selector, secondary device-account switching, inline field validation, pre-submit password requirements and a synchronous duplicate-submit guard. Successful pending signup opens a dedicated confirmation screen instead of an error notice; it clears the password, shows the target email, offers sign-in/edit-email and server-backed resend with a 60-second UI cooldown. Unconfirmed sign-in reaches that recovery screen; email restriction/rate-limit/weak-password failures have specific messages. Recovery/callback return links open sign-in mode. Resend success is a requested-link acknowledgment, not proof of delivery.
+
+Hosted config was pulled read-only into a temporary directory: confirmations enabled; no custom SMTP configured in the returned email settings. Temporary config removed. Supabase default mail is not public signup delivery. User has no domain/provider and allowed Cloudflare Pages, Neon, Clerk, Resend and R2 as options, not an explicit migration instruction. Brevo Free is a zero-purchase pilot candidate (300 emails/day; temporary sender rewriting); it needs a human-created/verified account and SMTP credentials. No sender enabled, confirmation bypassed or new provider account created. See docs/FREE-EMAIL-SETUP.md. Resend arbitrary recipients and Clerk production require domain setup; pages.dev does not grant sender DNS ownership.
+
+TypeScript and 16 targeted auth/security tests passed. Native empty-form validation passed; final compact screenshot artifacts/screenshots/signup-oct17/validation.png. This is not end-to-end inbox/callback verification. Signed build/install evidence recorded after completion.
+
+
 ### Shared text fields — 17 October 2026
 
 All 86 Field instances across 30 screens/components now use the Strava-informed shared treatment: plain surface, thin neutral outline, 8-unit corners, 50-unit minimum height, 17-unit body text and quiet labels. Focus strengthens the neutral outline; errors/caret remain themed. Native passwords/clear/multiline/keyboard options remain, with Done default only for single-line inputs. No app-level raw TextInput exists outside the shared primitive. Evidence ledger: docs/STRAVA-REA-INSPECTION.md (three focused REA/JADX methods; static Android evidence plus retained visualreference, not iOS runtime equivalence). TypeScript passes. Simulator native typing, clearing and password Show/Hide passed without submitting a login. Creator walkthrough blocked by simulator SecureStore missing entitlement with the unsigned Debug artifact, not a field failure; no full multiline/whole-app visual certification. Signed standalone Release succeeded, installed in place on the iPhone and launched successfully. Evidence: /private/tmp/rivl-strava-fields-phone.log, rivl-strava-fields-install.json and rivl-strava-fields-launch.json. Light/dark screenshots: artifacts/screenshots/strava-fields-oct17.

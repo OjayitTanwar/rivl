@@ -485,8 +485,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           })
         : await supabase.auth.signInWithPassword({ email, password });
       if (result.error) throw result.error;
-      if (!result.data.session)
-        return "Check your email to confirm your account, then sign in.";
+      if (!result.data.session) {
+        if (name !== undefined) return "confirmation_required";
+        throw new AppFailure("auth", "Sign-in did not finish. Try again.", true);
+      }
       await acceptCloudUser(result.data.session.user, name);
       return;
     }

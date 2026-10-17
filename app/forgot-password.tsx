@@ -38,7 +38,7 @@ export default function ForgotPassword() {
           </Txt>
           <Button
             title="Back to sign in"
-            onPress={() => router.replace("/auth")}
+            onPress={() => router.replace("/auth?mode=signin")}
           />
         </Stack>
       </Screen>
