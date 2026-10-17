@@ -11,7 +11,7 @@ Auth now has compact branding, one signup/sign-in selector, secondary device-acc
 
 Hosted config was pulled read-only into a temporary directory: confirmations enabled; no custom SMTP configured in the returned email settings. Temporary config removed. Supabase default mail is not public signup delivery. User has no domain/provider and allowed Cloudflare Pages, Neon, Clerk, Resend and R2 as options, not an explicit migration instruction. Brevo Free is a zero-purchase pilot candidate (300 emails/day; temporary sender rewriting); it needs a human-created/verified account and SMTP credentials. No sender enabled, confirmation bypassed or new provider account created. See docs/FREE-EMAIL-SETUP.md. Resend arbitrary recipients and Clerk production require domain setup; pages.dev does not grant sender DNS ownership.
 
-TypeScript and 16 targeted auth/security tests passed. Native empty-form validation passed; final compact screenshot artifacts/screenshots/signup-oct17/validation.png. This is not end-to-end inbox/callback verification. Signed build/install evidence recorded after completion.
+TypeScript and 16 targeted auth/security tests passed. Native empty-form validation passed; final compact screenshot artifacts/screenshots/signup-oct17/validation.png. This is not end-to-end inbox/callback verification. Final signed Release succeeded, installed in place and launched successfully on the iPhone. Evidence: /private/tmp/rivl-signup-phone.log, rivl-signup-install.json and rivl-signup-launch.json.
 
 
 ### Shared text fields — 17 October 2026
