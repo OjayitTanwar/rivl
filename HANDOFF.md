@@ -5,6 +5,11 @@ Project: `/Users/ojayitsinghtanwar/Desktop/rivl`
 
 ## 1. Read this first
 
+### Shared text fields — 17 October 2026
+
+All 86 Field instances across 30 screens/components now use the Strava-informed shared treatment: plain surface, thin neutral outline, 8-unit corners, 50-unit minimum height, 17-unit body text and quiet labels. Focus strengthens the neutral outline; errors/caret remain themed. Native passwords/clear/multiline/keyboard options remain, with Done default only for single-line inputs. No app-level raw TextInput exists outside the shared primitive. Evidence ledger: docs/STRAVA-REA-INSPECTION.md (three focused REA/JADX methods; static Android evidence plus retained visualreference, not iOS runtime equivalence). TypeScript passes. Simulator native typing, clearing and password Show/Hide passed without submitting a login. Creator walkthrough blocked by simulator SecureStore missing entitlement with the unsigned Debug artifact, not a field failure; no full multiline/whole-app visual certification. Phone installation recorded after completion.
+
+
 ### Completion batch and phone build — 16 October 2026
 
 Dedicated hosted project now has 23 migrations through 202610160009. Seven new transactional hosted suites passed with rolled-back fixtures: unmapped corridors, shared routes, training targets, live sharing, retention, club events and moderation. Full local database regression: 23 suites passed. Final app regression: 605 tests / 88 suites, TypeScript, development security and Deno worker checks passed. Backup manifest tests: two passed. GPS integration covers real-source preparation, neighbor privacy, stale completion and split-way ambiguity.

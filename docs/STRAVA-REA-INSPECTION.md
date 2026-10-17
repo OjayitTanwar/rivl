@@ -25,3 +25,17 @@ Retained class inventory from evidence ev_15ef981bd5fc0afffb509d7df966253fb8520a
 Focused Maps class evidence ev_27753deb746d328ec46c17db42a3fe879fe66a1cb773846b8faae8a3a08add28 and complete onViewCreated method evidence ev_12056584ff332b78165411e8d1246fb76c3f340607e7acaa02a31a04f808b3a3 observe places-search, editing, saved-routes and location-permission contracts. This supports separating the nearby discovery view from place selection and route editing. It does not establish current iOS pixel layout or prove server algorithms. No competitor code or assets were copied into RIVL.
 
 Official behavior references: Strava Community Routes (sport/distance/elevation/surface preferences), mobile Route Builder (waypoints/undo/manual mode), and About Strava Maps (Mapbox + OSM + first-party popularity). RIVL uses its own recorded route geometry and backend, with Google as the current renderer; no claim to Strava's population data.
+
+## Text fields — 17 October 2026
+
+Reused the user-downloaded Strava 484.10 XAPK; extracted base APK SHA-256 aeb2bcb897d3ed0407d3d36bade118e8ee931d52ff5d1b088e22a51b713d5b23. Static REA/JADX observations:
+
+- SpandexTextInputView.Content delegates to a shared Compose callback: ev_ef921f49fe5ac3e352b85bd15d1e6f3b8e5d6f020b1221b185f2e4814cbfba2a.
+- defpackage.ow6.invoke, case1, wires focus changes, optional leading/trailing icons, configuration/value and value-change callback into a common renderer: ev_efbbb089d441b92b928abd41fc1317fc23619c7c24858078346ebf6897318a0f.
+- defpackage.hc40.d uses an 8-unit rounded shape and passes enabled/error, line bounds, keyboard/visual-transformation state and supporting labels into the text control: ev_e02986efa32aa42eb52b82c1a6494dd1f1533018b7818d4f586d25e1e6444690. JADX reports duplicated blocks; this is static evidence, not runtime execution.
+
+The retained save-activity.jpg visual reference shows a plain surface and thin neutral outline. RIVL's original shared Field now uses that visual treatment: 8-unit corners, 1-unit border, 50-unit minimum outer height, muted persistent label, readable native 17-unit text, neutral focus border and themed caret. All 86 Field instances across 30 components/screens inherit it. Password visibility, clear buttons, keyboard types, multiline editing, disabled states and errors remain native. Single-line default Return action is Done; explicit caller actions take precedence.
+
+This does not establish current iOS Strava internals or exact pixel equivalence. No competitor code/assets are included in RIVL. Raw decompiler results remain temporary local investigation evidence.
+
+Verification: TypeScript passed. Native sign-in typing, clearing and password visibility passed without submitting a login. Light/dark captures: artifacts/screenshots/strava-fields-oct17. Multiline uses the same primitive but the Creator walkthrough was blocked by an unsigned simulator SecureStore entitlement error; no whole-app interaction claim follows.

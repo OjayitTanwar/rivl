@@ -444,7 +444,7 @@ export function Field({
           accessible={false}
           onPress={() => editable && input.current?.focus()}
         >
-          <Txt size="caption" weight="600" color={error ? c.accent : c.muted}>
+          <Txt size="caption" weight="500" color={error ? c.accent : c.muted}>
             {label}
           </Txt>
         </Pressable>
@@ -454,13 +454,12 @@ export function Field({
           flexDirection: "row",
           alignItems: props.multiline ? "flex-start" : "center",
           gap: 10,
-          minHeight: 52,
-          paddingHorizontal: 16,
-          borderRadius: 12,
-          backgroundColor: c.soft,
+          minHeight: 50,
+          paddingHorizontal: 14,
+          borderRadius: 8,
+          backgroundColor: c.surface,
           borderWidth: 1,
-          borderColor:
-            error || active ? c.accent : contrast ? c.muted : "transparent",
+          borderColor: error ? c.accent : active || contrast ? c.muted : c.line,
           opacity: editable ? 1 : 0.65,
         }}
       >
@@ -469,6 +468,9 @@ export function Field({
           {...props}
           ref={input}
           secureTextEntry={password && !passwordVisible}
+          returnKeyType={
+            props.returnKeyType ?? (props.multiline ? undefined : "done")
+          }
           clearButtonMode="never"
           accessibilityLabel={props.accessibilityLabel ?? label}
           accessibilityState={{
@@ -491,8 +493,8 @@ export function Field({
             {
               flex: 1,
               minWidth: 0,
-              minHeight: props.multiline ? 108 : 50,
-              paddingVertical: 12,
+              minHeight: props.multiline ? 104 : 48,
+              paddingVertical: 11,
               paddingHorizontal: 0,
               fontSize: type.body,
               color: editable ? c.text : c.muted,
