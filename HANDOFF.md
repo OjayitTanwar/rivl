@@ -5,6 +5,14 @@ Project: `/Users/ojayitsinghtanwar/Desktop/rivl`
 
 ## 1. Read this first
 
+### Native sideloading release — 17 October 2026
+
+Prepared public iPhone-only `build/sideloading/RIVL.ipa` from the installed standalone Release app (1.0.0 build 1, iOS 16+). Sanitized ad-hoc signature preserves only two HealthKit capability requests; personal provisioning profiles, team/signing identities and Watch bundle removed. ZIP/signature/entitlements checked. Source bundle scanned for SMTP/service-role markers. Reproducible packaging: `python3 scripts/package-sideload.py /path/to/RIVL.app`. Recipient Apple signing is required.
+
+Installation page: https://ojayittanwar.github.io/rivl/ . Release: https://github.com/OjayitTanwar/rivl/releases/tag/v1.0.0-sideload.20261017 . Corrected origin to OjayitTanwar/rivl (previous remote pointed to nonexistent/inaccessible account). Narrated illustrated 144-second installation video, English captions/transcript, guide, source feed and checksum accompany IPA. `scripts/make-install-video.py` generates the video locally using Pillow, macOS Samantha voice and ffmpeg. Release files are ignored under build/sideloading and uploaded as GitHub assets. docs/source.json is the optional SideStore update feed; future native builds must increment version/build and update download size, permissions and URLs.
+
+Do not claim SideStore E2E validation: public IPA import, encrypted data transfer, Health and locked-screen GPS after recipient re-signing remain untested. No SideStore/Apple-account changes or app replacement were performed on the phone. Existing installation retained. Guide states backup first, initial computer setup, Wi-Fi+LocalDevVPN refresh, seven-day expiry and free-account limits. README installation section selectively staged; unrelated existing README changes and reference artifacts preserved locally.
+
 ### Brevo SMTP connected — 17 October 2026
 
 User created and verified a Brevo account and SMTP key, then explicitly approved storing that key in the dedicated RIVL project's Supabase SMTP settings and sending one test email to the verified sender address. Deployed seven SMTP properties: enabled, smtp-relay.brevo.com, port 587, account SMTP login, server-only password, verified sender and RIVL display name. No key entered the app or repository. Config push succeeded; a fresh config diff against the intended SMTP settings reports zero differences, with password masked by the API. Config pull omits SMTP in this CLI version and is not reliable SMTP readback; use config diff.
